@@ -9,6 +9,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
+	"go-wind-cms/app/core/service/internal/data/ent/cardlabel"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
@@ -17,6 +18,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"go-wind-cms/app/core/service/internal/data/ent/language"
 	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/loginpolicy"
@@ -169,6 +171,15 @@ func init() {
 	cardDescID := cardMixinFields0[0].Descriptor()
 	// card.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	card.IDValidator = cardDescID.Validators[0].(func(uint32) error)
+	cardlabelMixin := schema.CardLabel{}.Mixin()
+	cardlabelMixinFields0 := cardlabelMixin[0].Fields()
+	_ = cardlabelMixinFields0
+	cardlabelFields := schema.CardLabel{}.Fields()
+	_ = cardlabelFields
+	// cardlabelDescID is the schema descriptor for id field.
+	cardlabelDescID := cardlabelMixinFields0[0].Descriptor()
+	// cardlabel.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	cardlabel.IDValidator = cardlabelDescID.Validators[0].(func(uint32) error)
 	columnMixin := schema.Column{}.Mixin()
 	column.Policy = privacy.NewPolicies(columnMixin[3], schema.Column{})
 	column.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -439,6 +450,38 @@ func init() {
 	internalmessagerecipientDescID := internalmessagerecipientMixinFields0[0].Descriptor()
 	// internalmessagerecipient.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	internalmessagerecipient.IDValidator = internalmessagerecipientDescID.Validators[0].(func(uint32) error)
+	labelMixin := schema.Label{}.Mixin()
+	label.Policy = privacy.NewPolicies(labelMixin[3], schema.Label{})
+	label.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := label.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	labelMixinFields0 := labelMixin[0].Fields()
+	_ = labelMixinFields0
+	labelMixinFields3 := labelMixin[3].Fields()
+	_ = labelMixinFields3
+	labelFields := schema.Label{}.Fields()
+	_ = labelFields
+	// labelDescTenantID is the schema descriptor for tenant_id field.
+	labelDescTenantID := labelMixinFields3[0].Descriptor()
+	// label.DefaultTenantID holds the default value on creation for the tenant_id field.
+	label.DefaultTenantID = labelDescTenantID.Default.(uint32)
+	// labelDescName is the schema descriptor for name field.
+	labelDescName := labelFields[0].Descriptor()
+	// label.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	label.NameValidator = labelDescName.Validators[0].(func(string) error)
+	// labelDescVersion is the schema descriptor for version field.
+	labelDescVersion := labelFields[3].Descriptor()
+	// label.DefaultVersion holds the default value on creation for the version field.
+	label.DefaultVersion = labelDescVersion.Default.(uint32)
+	// labelDescID is the schema descriptor for id field.
+	labelDescID := labelMixinFields0[0].Descriptor()
+	// label.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	label.IDValidator = labelDescID.Validators[0].(func(uint32) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinFields0 := languageMixin[0].Fields()
 	_ = languageMixinFields0

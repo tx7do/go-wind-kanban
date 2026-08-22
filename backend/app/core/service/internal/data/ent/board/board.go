@@ -39,6 +39,8 @@ const (
 	EdgeColumns = "columns"
 	// EdgeCards holds the string denoting the cards edge name in mutations.
 	EdgeCards = "cards"
+	// EdgeLabels holds the string denoting the labels edge name in mutations.
+	EdgeLabels = "labels"
 	// Table holds the table name of the board in the database.
 	Table = "sys_kanban_boards"
 	// ColumnsTable is the table that holds the columns relation/edge.
@@ -55,6 +57,13 @@ const (
 	CardsInverseTable = "sys_kanban_cards"
 	// CardsColumn is the table column denoting the cards relation/edge.
 	CardsColumn = "board_id"
+	// LabelsTable is the table that holds the labels relation/edge.
+	LabelsTable = "sys_kanban_labels"
+	// LabelsInverseTable is the table name for the Label entity.
+	// It exists in this package in order to avoid circular dependency with the "label" package.
+	LabelsInverseTable = "sys_kanban_labels"
+	// LabelsColumn is the table column denoting the labels relation/edge.
+	LabelsColumn = "board_id"
 )
 
 // Columns holds all SQL columns for board fields.
@@ -191,6 +200,20 @@ func ByCards(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCardsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLabelsCount orders the results by labels count.
+func ByLabelsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLabelsStep(), opts...)
+	}
+}
+
+// ByLabels orders the results by labels terms.
+func ByLabels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLabelsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newColumnsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -203,5 +226,12 @@ func newCardsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CardsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CardsTable, CardsColumn),
+	)
+}
+func newLabelsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LabelsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LabelsTable, LabelsColumn),
 	)
 }

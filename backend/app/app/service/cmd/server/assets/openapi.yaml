@@ -318,6 +318,47 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/board.service.v1.Card'
+    /app/v1/cards/{cardId}/labels:
+        get:
+            tags:
+                - LabelService
+            operationId: LabelService_GetCardLabels
+            parameters:
+                - name: cardId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/board.service.v1.ListLabelResponse'
+    /app/v1/cards/{cardId}:set-labels:
+        post:
+            tags:
+                - LabelService
+            operationId: LabelService_SetCardLabels
+            parameters:
+                - name: cardId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/board.service.v1.SetCardLabelsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/cards/{id}:
         get:
             tags:
@@ -598,6 +639,163 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/board.service.v1.Column'
+    /app/v1/labels:
+        get:
+            tags:
+                - LabelService
+            operationId: LabelService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/board.service.v1.ListLabelResponse'
+        post:
+            tags:
+                - LabelService
+            operationId: LabelService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/board.service.v1.CreateLabelRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/board.service.v1.Label'
+    /app/v1/labels/{id}:
+        get:
+            tags:
+                - LabelService
+            operationId: LabelService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/board.service.v1.Label'
+        put:
+            tags:
+                - LabelService
+            operationId: LabelService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/board.service.v1.UpdateLabelRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/board.service.v1.Label'
+        delete:
+            tags:
+                - LabelService
+            operationId: LabelService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/login:
         post:
             tags:
@@ -1073,6 +1271,62 @@ components:
                 data:
                     $ref: '#/components/schemas/board.service.v1.Column'
             description: 创建列 - 请求
+        board.service.v1.CreateLabelRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/board.service.v1.Label'
+            description: 创建标签 - 请求
+        board.service.v1.Label:
+            required:
+                - name
+                - color
+                - boardId
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 标签ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 标签名称
+                color:
+                    type: string
+                    description: 标签颜色（如 red/blue/#hex）
+                boardId:
+                    type: integer
+                    description: 所属看板ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 看板标签（Planka 同款：board 级 + 颜色）
         board.service.v1.ListBoardResponse:
             type: object
             properties:
@@ -1103,6 +1357,16 @@ components:
                 total:
                     type: string
             description: 查询列列表 - 回应
+        board.service.v1.ListLabelResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/board.service.v1.Label'
+                total:
+                    type: string
+            description: 查询标签列表 - 回应
         board.service.v1.MoveBoardRequest:
             required:
                 - id
@@ -1173,6 +1437,22 @@ components:
                     description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
                     format: uint32
             description: 移动列 - 请求
+        board.service.v1.SetCardLabelsRequest:
+            required:
+                - cardId
+            type: object
+            properties:
+                cardId:
+                    type: integer
+                    description: 卡片ID
+                    format: uint32
+                labelIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 目标标签ID全集（差量增删）
+            description: 设置卡片标签 - 请求（全量替换）
         board.service.v1.UpdateBoardRequest:
             type: object
             properties:
@@ -1236,6 +1516,27 @@ components:
                     description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
                     format: uint32
             description: 更新列 - 请求
+        board.service.v1.UpdateLabelRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/board.service.v1.Label'
+                updateMask:
+                    example: id,name,color
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT
+                    format: uint32
+            description: 更新标签 - 请求
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -1541,5 +1842,7 @@ tags:
       description: 看板卡片服务
     - name: ColumnService
       description: 看板列服务
+    - name: LabelService
+      description: 看板标签服务
     - name: UserProfileService
       description: 用户个人资料服务

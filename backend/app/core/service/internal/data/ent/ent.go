@@ -10,6 +10,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
+	"go-wind-cms/app/core/service/internal/data/ent/cardlabel"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
@@ -18,6 +19,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"go-wind-cms/app/core/service/internal/data/ent/language"
 	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/loginpolicy"
@@ -116,6 +118,7 @@ func checkColumn(t, c string) error {
 			apiauditlog.Table:              apiauditlog.ValidColumn,
 			board.Table:                    board.ValidColumn,
 			card.Table:                     card.ValidColumn,
+			cardlabel.Table:                cardlabel.ValidColumn,
 			column.Table:                   column.ValidColumn,
 			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,
 			dictentry.Table:                dictentry.ValidColumn,
@@ -124,6 +127,7 @@ func checkColumn(t, c string) error {
 			internalmessage.Table:          internalmessage.ValidColumn,
 			internalmessagecategory.Table:  internalmessagecategory.ValidColumn,
 			internalmessagerecipient.Table: internalmessagerecipient.ValidColumn,
+			label.Table:                    label.ValidColumn,
 			language.Table:                 language.ValidColumn,
 			loginauditlog.Table:            loginauditlog.ValidColumn,
 			loginpolicy.Table:              loginpolicy.ValidColumn,

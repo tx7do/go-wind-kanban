@@ -10,6 +10,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"math"
 
@@ -29,6 +30,7 @@ type BoardQuery struct {
 	predicates  []predicate.Board
 	withColumns *ColumnQuery
 	withCards   *CardQuery
+	withLabels  *LabelQuery
 	modifiers   []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -103,6 +105,28 @@ func (_q *BoardQuery) QueryCards() *CardQuery {
 			sqlgraph.From(board.Table, board.FieldID, selector),
 			sqlgraph.To(card.Table, card.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, board.CardsTable, board.CardsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLabels chains the current query on the "labels" edge.
+func (_q *BoardQuery) QueryLabels() *LabelQuery {
+	query := (&LabelClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(board.Table, board.FieldID, selector),
+			sqlgraph.To(label.Table, label.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, board.LabelsTable, board.LabelsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -304,6 +328,7 @@ func (_q *BoardQuery) Clone() *BoardQuery {
 		predicates:  append([]predicate.Board{}, _q.predicates...),
 		withColumns: _q.withColumns.Clone(),
 		withCards:   _q.withCards.Clone(),
+		withLabels:  _q.withLabels.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -330,6 +355,17 @@ func (_q *BoardQuery) WithCards(opts ...func(*CardQuery)) *BoardQuery {
 		opt(query)
 	}
 	_q.withCards = query
+	return _q
+}
+
+// WithLabels tells the query-builder to eager-load the nodes that are connected to
+// the "labels" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BoardQuery) WithLabels(opts ...func(*LabelQuery)) *BoardQuery {
+	query := (&LabelClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withLabels = query
 	return _q
 }
 
@@ -417,9 +453,10 @@ func (_q *BoardQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Board,
 	var (
 		nodes       = []*Board{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withColumns != nil,
 			_q.withCards != nil,
+			_q.withLabels != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -454,6 +491,13 @@ func (_q *BoardQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Board,
 		if err := _q.loadCards(ctx, query, nodes,
 			func(n *Board) { n.Edges.Cards = []*Card{} },
 			func(n *Board, e *Card) { n.Edges.Cards = append(n.Edges.Cards, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withLabels; query != nil {
+		if err := _q.loadLabels(ctx, query, nodes,
+			func(n *Board) { n.Edges.Labels = []*Label{} },
+			func(n *Board, e *Label) { n.Edges.Labels = append(n.Edges.Labels, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -505,6 +549,36 @@ func (_q *BoardQuery) loadCards(ctx context.Context, query *CardQuery, nodes []*
 	}
 	query.Where(predicate.Card(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(board.CardsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.BoardID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "board_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *BoardQuery) loadLabels(ctx context.Context, query *LabelQuery, nodes []*Board, init func(*Board), assign func(*Board, *Label)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uint32]*Board)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(label.FieldBoardID)
+	}
+	query.Where(predicate.Label(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(board.LabelsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

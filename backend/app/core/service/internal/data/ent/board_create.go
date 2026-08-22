@@ -9,6 +9,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -214,6 +215,21 @@ func (_c *BoardCreate) AddCards(v ...*Card) *BoardCreate {
 	return _c.AddCardIDs(ids...)
 }
 
+// AddLabelIDs adds the "labels" edge to the Label entity by IDs.
+func (_c *BoardCreate) AddLabelIDs(ids ...uint32) *BoardCreate {
+	_c.mutation.AddLabelIDs(ids...)
+	return _c
+}
+
+// AddLabels adds the "labels" edges to the Label entity.
+func (_c *BoardCreate) AddLabels(v ...*Label) *BoardCreate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddLabelIDs(ids...)
+}
+
 // Mutation returns the BoardMutation object of the builder.
 func (_c *BoardCreate) Mutation() *BoardMutation {
 	return _c.mutation
@@ -379,6 +395,22 @@ func (_c *BoardCreate) createSpec() (*Board, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.LabelsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
 			},
 		}
 		for _, k := range nodes {

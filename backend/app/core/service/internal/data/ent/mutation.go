@@ -13,6 +13,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
+	"go-wind-cms/app/core/service/internal/data/ent/cardlabel"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
@@ -21,6 +22,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"go-wind-cms/app/core/service/internal/data/ent/language"
 	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/loginpolicy"
@@ -70,6 +72,7 @@ const (
 	TypeApiAuditLog              = "ApiAuditLog"
 	TypeBoard                    = "Board"
 	TypeCard                     = "Card"
+	TypeCardLabel                = "CardLabel"
 	TypeColumn                   = "Column"
 	TypeDataAccessAuditLog       = "DataAccessAuditLog"
 	TypeDictEntry                = "DictEntry"
@@ -78,6 +81,7 @@ const (
 	TypeInternalMessage          = "InternalMessage"
 	TypeInternalMessageCategory  = "InternalMessageCategory"
 	TypeInternalMessageRecipient = "InternalMessageRecipient"
+	TypeLabel                    = "Label"
 	TypeLanguage                 = "Language"
 	TypeLoginAuditLog            = "LoginAuditLog"
 	TypeLoginPolicy              = "LoginPolicy"
@@ -4024,6 +4028,9 @@ type BoardMutation struct {
 	cards          map[uint32]struct{}
 	removedcards   map[uint32]struct{}
 	clearedcards   bool
+	labels         map[uint32]struct{}
+	removedlabels  map[uint32]struct{}
+	clearedlabels  bool
 	done           bool
 	oldValue       func(context.Context) (*Board, error)
 	predicates     []predicate.Board
@@ -4871,6 +4878,60 @@ func (m *BoardMutation) ResetCards() {
 	m.removedcards = nil
 }
 
+// AddLabelIDs adds the "labels" edge to the Label entity by ids.
+func (m *BoardMutation) AddLabelIDs(ids ...uint32) {
+	if m.labels == nil {
+		m.labels = make(map[uint32]struct{})
+	}
+	for i := range ids {
+		m.labels[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLabels clears the "labels" edge to the Label entity.
+func (m *BoardMutation) ClearLabels() {
+	m.clearedlabels = true
+}
+
+// LabelsCleared reports if the "labels" edge to the Label entity was cleared.
+func (m *BoardMutation) LabelsCleared() bool {
+	return m.clearedlabels
+}
+
+// RemoveLabelIDs removes the "labels" edge to the Label entity by IDs.
+func (m *BoardMutation) RemoveLabelIDs(ids ...uint32) {
+	if m.removedlabels == nil {
+		m.removedlabels = make(map[uint32]struct{})
+	}
+	for i := range ids {
+		delete(m.labels, ids[i])
+		m.removedlabels[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLabels returns the removed IDs of the "labels" edge to the Label entity.
+func (m *BoardMutation) RemovedLabelsIDs() (ids []uint32) {
+	for id := range m.removedlabels {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LabelsIDs returns the "labels" edge IDs in the mutation.
+func (m *BoardMutation) LabelsIDs() (ids []uint32) {
+	for id := range m.labels {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLabels resets all changes to the "labels" edge.
+func (m *BoardMutation) ResetLabels() {
+	m.labels = nil
+	m.clearedlabels = false
+	m.removedlabels = nil
+}
+
 // Where appends a list predicates to the BoardMutation builder.
 func (m *BoardMutation) Where(ps ...predicate.Board) {
 	m.predicates = append(m.predicates, ps...)
@@ -5300,12 +5361,15 @@ func (m *BoardMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BoardMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.columns != nil {
 		edges = append(edges, board.EdgeColumns)
 	}
 	if m.cards != nil {
 		edges = append(edges, board.EdgeCards)
+	}
+	if m.labels != nil {
+		edges = append(edges, board.EdgeLabels)
 	}
 	return edges
 }
@@ -5326,18 +5390,27 @@ func (m *BoardMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case board.EdgeLabels:
+		ids := make([]ent.Value, 0, len(m.labels))
+		for id := range m.labels {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BoardMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedcolumns != nil {
 		edges = append(edges, board.EdgeColumns)
 	}
 	if m.removedcards != nil {
 		edges = append(edges, board.EdgeCards)
+	}
+	if m.removedlabels != nil {
+		edges = append(edges, board.EdgeLabels)
 	}
 	return edges
 }
@@ -5358,18 +5431,27 @@ func (m *BoardMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case board.EdgeLabels:
+		ids := make([]ent.Value, 0, len(m.removedlabels))
+		for id := range m.removedlabels {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BoardMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedcolumns {
 		edges = append(edges, board.EdgeColumns)
 	}
 	if m.clearedcards {
 		edges = append(edges, board.EdgeCards)
+	}
+	if m.clearedlabels {
+		edges = append(edges, board.EdgeLabels)
 	}
 	return edges
 }
@@ -5382,6 +5464,8 @@ func (m *BoardMutation) EdgeCleared(name string) bool {
 		return m.clearedcolumns
 	case board.EdgeCards:
 		return m.clearedcards
+	case board.EdgeLabels:
+		return m.clearedlabels
 	}
 	return false
 }
@@ -5403,6 +5487,9 @@ func (m *BoardMutation) ResetEdge(name string) error {
 		return nil
 	case board.EdgeCards:
 		m.ResetCards()
+		return nil
+	case board.EdgeLabels:
+		m.ResetLabels()
 		return nil
 	}
 	return fmt.Errorf("unknown Board edge %s", name)
@@ -6889,6 +6976,1044 @@ func (m *CardMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Card edge %s", name)
+}
+
+// CardLabelMutation represents an operation that mutates the CardLabel nodes in the graph.
+type CardLabelMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	card_id       *uint32
+	addcard_id    *int32
+	label_id      *uint32
+	addlabel_id   *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CardLabel, error)
+	predicates    []predicate.CardLabel
+}
+
+var _ ent.Mutation = (*CardLabelMutation)(nil)
+
+// cardlabelOption allows management of the mutation configuration using functional options.
+type cardlabelOption func(*CardLabelMutation)
+
+// newCardLabelMutation creates new mutation for the CardLabel entity.
+func newCardLabelMutation(c config, op Op, opts ...cardlabelOption) *CardLabelMutation {
+	m := &CardLabelMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCardLabel,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCardLabelID sets the ID field of the mutation.
+func withCardLabelID(id uint32) cardlabelOption {
+	return func(m *CardLabelMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CardLabel
+		)
+		m.oldValue = func(ctx context.Context) (*CardLabel, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CardLabel.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCardLabel sets the old CardLabel of the mutation.
+func withCardLabel(node *CardLabel) cardlabelOption {
+	return func(m *CardLabelMutation) {
+		m.oldValue = func(context.Context) (*CardLabel, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CardLabelMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CardLabelMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CardLabel entities.
+func (m *CardLabelMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CardLabelMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CardLabelMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CardLabel.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CardLabelMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CardLabelMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *CardLabelMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[cardlabel.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *CardLabelMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CardLabelMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, cardlabel.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CardLabelMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CardLabelMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *CardLabelMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[cardlabel.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *CardLabelMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CardLabelMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, cardlabel.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CardLabelMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CardLabelMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *CardLabelMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[cardlabel.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *CardLabelMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CardLabelMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, cardlabel.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CardLabelMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CardLabelMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *CardLabelMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CardLabelMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *CardLabelMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[cardlabel.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *CardLabelMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CardLabelMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, cardlabel.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CardLabelMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CardLabelMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *CardLabelMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CardLabelMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *CardLabelMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[cardlabel.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *CardLabelMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CardLabelMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, cardlabel.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *CardLabelMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *CardLabelMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *CardLabelMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *CardLabelMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *CardLabelMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[cardlabel.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *CardLabelMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *CardLabelMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, cardlabel.FieldDeletedBy)
+}
+
+// SetCardID sets the "card_id" field.
+func (m *CardLabelMutation) SetCardID(u uint32) {
+	m.card_id = &u
+	m.addcard_id = nil
+}
+
+// CardID returns the value of the "card_id" field in the mutation.
+func (m *CardLabelMutation) CardID() (r uint32, exists bool) {
+	v := m.card_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCardID returns the old "card_id" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldCardID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCardID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCardID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCardID: %w", err)
+	}
+	return oldValue.CardID, nil
+}
+
+// AddCardID adds u to the "card_id" field.
+func (m *CardLabelMutation) AddCardID(u int32) {
+	if m.addcard_id != nil {
+		*m.addcard_id += u
+	} else {
+		m.addcard_id = &u
+	}
+}
+
+// AddedCardID returns the value that was added to the "card_id" field in this mutation.
+func (m *CardLabelMutation) AddedCardID() (r int32, exists bool) {
+	v := m.addcard_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCardID clears the value of the "card_id" field.
+func (m *CardLabelMutation) ClearCardID() {
+	m.card_id = nil
+	m.addcard_id = nil
+	m.clearedFields[cardlabel.FieldCardID] = struct{}{}
+}
+
+// CardIDCleared returns if the "card_id" field was cleared in this mutation.
+func (m *CardLabelMutation) CardIDCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldCardID]
+	return ok
+}
+
+// ResetCardID resets all changes to the "card_id" field.
+func (m *CardLabelMutation) ResetCardID() {
+	m.card_id = nil
+	m.addcard_id = nil
+	delete(m.clearedFields, cardlabel.FieldCardID)
+}
+
+// SetLabelID sets the "label_id" field.
+func (m *CardLabelMutation) SetLabelID(u uint32) {
+	m.label_id = &u
+	m.addlabel_id = nil
+}
+
+// LabelID returns the value of the "label_id" field in the mutation.
+func (m *CardLabelMutation) LabelID() (r uint32, exists bool) {
+	v := m.label_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLabelID returns the old "label_id" field's value of the CardLabel entity.
+// If the CardLabel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardLabelMutation) OldLabelID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLabelID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLabelID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLabelID: %w", err)
+	}
+	return oldValue.LabelID, nil
+}
+
+// AddLabelID adds u to the "label_id" field.
+func (m *CardLabelMutation) AddLabelID(u int32) {
+	if m.addlabel_id != nil {
+		*m.addlabel_id += u
+	} else {
+		m.addlabel_id = &u
+	}
+}
+
+// AddedLabelID returns the value that was added to the "label_id" field in this mutation.
+func (m *CardLabelMutation) AddedLabelID() (r int32, exists bool) {
+	v := m.addlabel_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLabelID clears the value of the "label_id" field.
+func (m *CardLabelMutation) ClearLabelID() {
+	m.label_id = nil
+	m.addlabel_id = nil
+	m.clearedFields[cardlabel.FieldLabelID] = struct{}{}
+}
+
+// LabelIDCleared returns if the "label_id" field was cleared in this mutation.
+func (m *CardLabelMutation) LabelIDCleared() bool {
+	_, ok := m.clearedFields[cardlabel.FieldLabelID]
+	return ok
+}
+
+// ResetLabelID resets all changes to the "label_id" field.
+func (m *CardLabelMutation) ResetLabelID() {
+	m.label_id = nil
+	m.addlabel_id = nil
+	delete(m.clearedFields, cardlabel.FieldLabelID)
+}
+
+// Where appends a list predicates to the CardLabelMutation builder.
+func (m *CardLabelMutation) Where(ps ...predicate.CardLabel) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CardLabelMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CardLabelMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CardLabel, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CardLabelMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CardLabelMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CardLabel).
+func (m *CardLabelMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CardLabelMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, cardlabel.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, cardlabel.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, cardlabel.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, cardlabel.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, cardlabel.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, cardlabel.FieldDeletedBy)
+	}
+	if m.card_id != nil {
+		fields = append(fields, cardlabel.FieldCardID)
+	}
+	if m.label_id != nil {
+		fields = append(fields, cardlabel.FieldLabelID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CardLabelMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cardlabel.FieldCreatedAt:
+		return m.CreatedAt()
+	case cardlabel.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case cardlabel.FieldDeletedAt:
+		return m.DeletedAt()
+	case cardlabel.FieldCreatedBy:
+		return m.CreatedBy()
+	case cardlabel.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case cardlabel.FieldDeletedBy:
+		return m.DeletedBy()
+	case cardlabel.FieldCardID:
+		return m.CardID()
+	case cardlabel.FieldLabelID:
+		return m.LabelID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CardLabelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cardlabel.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case cardlabel.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case cardlabel.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case cardlabel.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case cardlabel.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case cardlabel.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case cardlabel.FieldCardID:
+		return m.OldCardID(ctx)
+	case cardlabel.FieldLabelID:
+		return m.OldLabelID(ctx)
+	}
+	return nil, fmt.Errorf("unknown CardLabel field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CardLabelMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cardlabel.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case cardlabel.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case cardlabel.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case cardlabel.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case cardlabel.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case cardlabel.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case cardlabel.FieldCardID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCardID(v)
+		return nil
+	case cardlabel.FieldLabelID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLabelID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CardLabel field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CardLabelMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, cardlabel.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, cardlabel.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, cardlabel.FieldDeletedBy)
+	}
+	if m.addcard_id != nil {
+		fields = append(fields, cardlabel.FieldCardID)
+	}
+	if m.addlabel_id != nil {
+		fields = append(fields, cardlabel.FieldLabelID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CardLabelMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cardlabel.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case cardlabel.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case cardlabel.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case cardlabel.FieldCardID:
+		return m.AddedCardID()
+	case cardlabel.FieldLabelID:
+		return m.AddedLabelID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CardLabelMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cardlabel.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case cardlabel.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case cardlabel.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case cardlabel.FieldCardID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCardID(v)
+		return nil
+	case cardlabel.FieldLabelID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLabelID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CardLabel numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CardLabelMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(cardlabel.FieldCreatedAt) {
+		fields = append(fields, cardlabel.FieldCreatedAt)
+	}
+	if m.FieldCleared(cardlabel.FieldUpdatedAt) {
+		fields = append(fields, cardlabel.FieldUpdatedAt)
+	}
+	if m.FieldCleared(cardlabel.FieldDeletedAt) {
+		fields = append(fields, cardlabel.FieldDeletedAt)
+	}
+	if m.FieldCleared(cardlabel.FieldCreatedBy) {
+		fields = append(fields, cardlabel.FieldCreatedBy)
+	}
+	if m.FieldCleared(cardlabel.FieldUpdatedBy) {
+		fields = append(fields, cardlabel.FieldUpdatedBy)
+	}
+	if m.FieldCleared(cardlabel.FieldDeletedBy) {
+		fields = append(fields, cardlabel.FieldDeletedBy)
+	}
+	if m.FieldCleared(cardlabel.FieldCardID) {
+		fields = append(fields, cardlabel.FieldCardID)
+	}
+	if m.FieldCleared(cardlabel.FieldLabelID) {
+		fields = append(fields, cardlabel.FieldLabelID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CardLabelMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CardLabelMutation) ClearField(name string) error {
+	switch name {
+	case cardlabel.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case cardlabel.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case cardlabel.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case cardlabel.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case cardlabel.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case cardlabel.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case cardlabel.FieldCardID:
+		m.ClearCardID()
+		return nil
+	case cardlabel.FieldLabelID:
+		m.ClearLabelID()
+		return nil
+	}
+	return fmt.Errorf("unknown CardLabel nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CardLabelMutation) ResetField(name string) error {
+	switch name {
+	case cardlabel.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case cardlabel.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case cardlabel.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case cardlabel.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case cardlabel.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case cardlabel.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case cardlabel.FieldCardID:
+		m.ResetCardID()
+		return nil
+	case cardlabel.FieldLabelID:
+		m.ResetLabelID()
+		return nil
+	}
+	return fmt.Errorf("unknown CardLabel field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CardLabelMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CardLabelMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CardLabelMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CardLabelMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CardLabelMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CardLabelMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CardLabelMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CardLabel unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CardLabelMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CardLabel edge %s", name)
 }
 
 // ColumnMutation represents an operation that mutates the Column nodes in the graph.
@@ -18617,6 +19742,1297 @@ func (m *InternalMessageRecipientMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *InternalMessageRecipientMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown InternalMessageRecipient edge %s", name)
+}
+
+// LabelMutation represents an operation that mutates the Label nodes in the graph.
+type LabelMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	tenant_id     *uint32
+	addtenant_id  *int32
+	name          *string
+	color         *string
+	version       *uint32
+	addversion    *int32
+	clearedFields map[string]struct{}
+	board         *uint32
+	clearedboard  bool
+	done          bool
+	oldValue      func(context.Context) (*Label, error)
+	predicates    []predicate.Label
+}
+
+var _ ent.Mutation = (*LabelMutation)(nil)
+
+// labelOption allows management of the mutation configuration using functional options.
+type labelOption func(*LabelMutation)
+
+// newLabelMutation creates new mutation for the Label entity.
+func newLabelMutation(c config, op Op, opts ...labelOption) *LabelMutation {
+	m := &LabelMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLabel,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLabelID sets the ID field of the mutation.
+func withLabelID(id uint32) labelOption {
+	return func(m *LabelMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Label
+		)
+		m.oldValue = func(ctx context.Context) (*Label, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Label.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLabel sets the old Label of the mutation.
+func withLabel(node *Label) labelOption {
+	return func(m *LabelMutation) {
+		m.oldValue = func(context.Context) (*Label, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LabelMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LabelMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Label entities.
+func (m *LabelMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LabelMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LabelMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Label.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LabelMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LabelMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *LabelMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[label.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *LabelMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[label.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LabelMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, label.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LabelMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LabelMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *LabelMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[label.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *LabelMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[label.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LabelMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, label.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LabelMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LabelMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *LabelMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[label.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *LabelMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[label.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LabelMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, label.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *LabelMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *LabelMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *LabelMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *LabelMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *LabelMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[label.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *LabelMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[label.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *LabelMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, label.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *LabelMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *LabelMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *LabelMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *LabelMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *LabelMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[label.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *LabelMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[label.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *LabelMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, label.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *LabelMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *LabelMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *LabelMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *LabelMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *LabelMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[label.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *LabelMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[label.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *LabelMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, label.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *LabelMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *LabelMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *LabelMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *LabelMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *LabelMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[label.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *LabelMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[label.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *LabelMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, label.FieldTenantID)
+}
+
+// SetName sets the "name" field.
+func (m *LabelMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *LabelMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *LabelMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[label.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *LabelMutation) NameCleared() bool {
+	_, ok := m.clearedFields[label.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *LabelMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, label.FieldName)
+}
+
+// SetColor sets the "color" field.
+func (m *LabelMutation) SetColor(s string) {
+	m.color = &s
+}
+
+// Color returns the value of the "color" field in the mutation.
+func (m *LabelMutation) Color() (r string, exists bool) {
+	v := m.color
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldColor returns the old "color" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldColor(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldColor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldColor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldColor: %w", err)
+	}
+	return oldValue.Color, nil
+}
+
+// ClearColor clears the value of the "color" field.
+func (m *LabelMutation) ClearColor() {
+	m.color = nil
+	m.clearedFields[label.FieldColor] = struct{}{}
+}
+
+// ColorCleared returns if the "color" field was cleared in this mutation.
+func (m *LabelMutation) ColorCleared() bool {
+	_, ok := m.clearedFields[label.FieldColor]
+	return ok
+}
+
+// ResetColor resets all changes to the "color" field.
+func (m *LabelMutation) ResetColor() {
+	m.color = nil
+	delete(m.clearedFields, label.FieldColor)
+}
+
+// SetBoardID sets the "board_id" field.
+func (m *LabelMutation) SetBoardID(u uint32) {
+	m.board = &u
+}
+
+// BoardID returns the value of the "board_id" field in the mutation.
+func (m *LabelMutation) BoardID() (r uint32, exists bool) {
+	v := m.board
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBoardID returns the old "board_id" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldBoardID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBoardID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBoardID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBoardID: %w", err)
+	}
+	return oldValue.BoardID, nil
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (m *LabelMutation) ClearBoardID() {
+	m.board = nil
+	m.clearedFields[label.FieldBoardID] = struct{}{}
+}
+
+// BoardIDCleared returns if the "board_id" field was cleared in this mutation.
+func (m *LabelMutation) BoardIDCleared() bool {
+	_, ok := m.clearedFields[label.FieldBoardID]
+	return ok
+}
+
+// ResetBoardID resets all changes to the "board_id" field.
+func (m *LabelMutation) ResetBoardID() {
+	m.board = nil
+	delete(m.clearedFields, label.FieldBoardID)
+}
+
+// SetVersion sets the "version" field.
+func (m *LabelMutation) SetVersion(u uint32) {
+	m.version = &u
+	m.addversion = nil
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *LabelMutation) Version() (r uint32, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the Label entity.
+// If the Label object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelMutation) OldVersion(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// AddVersion adds u to the "version" field.
+func (m *LabelMutation) AddVersion(u int32) {
+	if m.addversion != nil {
+		*m.addversion += u
+	} else {
+		m.addversion = &u
+	}
+}
+
+// AddedVersion returns the value that was added to the "version" field in this mutation.
+func (m *LabelMutation) AddedVersion() (r int32, exists bool) {
+	v := m.addversion
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *LabelMutation) ResetVersion() {
+	m.version = nil
+	m.addversion = nil
+}
+
+// ClearBoard clears the "board" edge to the Board entity.
+func (m *LabelMutation) ClearBoard() {
+	m.clearedboard = true
+	m.clearedFields[label.FieldBoardID] = struct{}{}
+}
+
+// BoardCleared reports if the "board" edge to the Board entity was cleared.
+func (m *LabelMutation) BoardCleared() bool {
+	return m.BoardIDCleared() || m.clearedboard
+}
+
+// BoardIDs returns the "board" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// BoardID instead. It exists only for internal usage by the builders.
+func (m *LabelMutation) BoardIDs() (ids []uint32) {
+	if id := m.board; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetBoard resets all changes to the "board" edge.
+func (m *LabelMutation) ResetBoard() {
+	m.board = nil
+	m.clearedboard = false
+}
+
+// Where appends a list predicates to the LabelMutation builder.
+func (m *LabelMutation) Where(ps ...predicate.Label) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LabelMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LabelMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Label, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LabelMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LabelMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Label).
+func (m *LabelMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LabelMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, label.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, label.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, label.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, label.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, label.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, label.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, label.FieldTenantID)
+	}
+	if m.name != nil {
+		fields = append(fields, label.FieldName)
+	}
+	if m.color != nil {
+		fields = append(fields, label.FieldColor)
+	}
+	if m.board != nil {
+		fields = append(fields, label.FieldBoardID)
+	}
+	if m.version != nil {
+		fields = append(fields, label.FieldVersion)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LabelMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case label.FieldCreatedAt:
+		return m.CreatedAt()
+	case label.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case label.FieldDeletedAt:
+		return m.DeletedAt()
+	case label.FieldCreatedBy:
+		return m.CreatedBy()
+	case label.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case label.FieldDeletedBy:
+		return m.DeletedBy()
+	case label.FieldTenantID:
+		return m.TenantID()
+	case label.FieldName:
+		return m.Name()
+	case label.FieldColor:
+		return m.Color()
+	case label.FieldBoardID:
+		return m.BoardID()
+	case label.FieldVersion:
+		return m.Version()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LabelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case label.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case label.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case label.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case label.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case label.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case label.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case label.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case label.FieldName:
+		return m.OldName(ctx)
+	case label.FieldColor:
+		return m.OldColor(ctx)
+	case label.FieldBoardID:
+		return m.OldBoardID(ctx)
+	case label.FieldVersion:
+		return m.OldVersion(ctx)
+	}
+	return nil, fmt.Errorf("unknown Label field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LabelMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case label.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case label.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case label.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case label.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case label.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case label.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case label.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case label.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case label.FieldColor:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetColor(v)
+		return nil
+	case label.FieldBoardID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBoardID(v)
+		return nil
+	case label.FieldVersion:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Label field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LabelMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, label.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, label.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, label.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, label.FieldTenantID)
+	}
+	if m.addversion != nil {
+		fields = append(fields, label.FieldVersion)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LabelMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case label.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case label.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case label.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case label.FieldTenantID:
+		return m.AddedTenantID()
+	case label.FieldVersion:
+		return m.AddedVersion()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LabelMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case label.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case label.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case label.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case label.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case label.FieldVersion:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVersion(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Label numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LabelMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(label.FieldCreatedAt) {
+		fields = append(fields, label.FieldCreatedAt)
+	}
+	if m.FieldCleared(label.FieldUpdatedAt) {
+		fields = append(fields, label.FieldUpdatedAt)
+	}
+	if m.FieldCleared(label.FieldDeletedAt) {
+		fields = append(fields, label.FieldDeletedAt)
+	}
+	if m.FieldCleared(label.FieldCreatedBy) {
+		fields = append(fields, label.FieldCreatedBy)
+	}
+	if m.FieldCleared(label.FieldUpdatedBy) {
+		fields = append(fields, label.FieldUpdatedBy)
+	}
+	if m.FieldCleared(label.FieldDeletedBy) {
+		fields = append(fields, label.FieldDeletedBy)
+	}
+	if m.FieldCleared(label.FieldTenantID) {
+		fields = append(fields, label.FieldTenantID)
+	}
+	if m.FieldCleared(label.FieldName) {
+		fields = append(fields, label.FieldName)
+	}
+	if m.FieldCleared(label.FieldColor) {
+		fields = append(fields, label.FieldColor)
+	}
+	if m.FieldCleared(label.FieldBoardID) {
+		fields = append(fields, label.FieldBoardID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LabelMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LabelMutation) ClearField(name string) error {
+	switch name {
+	case label.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case label.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case label.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case label.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case label.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case label.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case label.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case label.FieldName:
+		m.ClearName()
+		return nil
+	case label.FieldColor:
+		m.ClearColor()
+		return nil
+	case label.FieldBoardID:
+		m.ClearBoardID()
+		return nil
+	}
+	return fmt.Errorf("unknown Label nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LabelMutation) ResetField(name string) error {
+	switch name {
+	case label.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case label.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case label.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case label.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case label.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case label.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case label.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case label.FieldName:
+		m.ResetName()
+		return nil
+	case label.FieldColor:
+		m.ResetColor()
+		return nil
+	case label.FieldBoardID:
+		m.ResetBoardID()
+		return nil
+	case label.FieldVersion:
+		m.ResetVersion()
+		return nil
+	}
+	return fmt.Errorf("unknown Label field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LabelMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.board != nil {
+		edges = append(edges, label.EdgeBoard)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LabelMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case label.EdgeBoard:
+		if id := m.board; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LabelMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LabelMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LabelMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedboard {
+		edges = append(edges, label.EdgeBoard)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LabelMutation) EdgeCleared(name string) bool {
+	switch name {
+	case label.EdgeBoard:
+		return m.clearedboard
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LabelMutation) ClearEdge(name string) error {
+	switch name {
+	case label.EdgeBoard:
+		m.ClearBoard()
+		return nil
+	}
+	return fmt.Errorf("unknown Label unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LabelMutation) ResetEdge(name string) error {
+	switch name {
+	case label.EdgeBoard:
+		m.ResetBoard()
+		return nil
+	}
+	return fmt.Errorf("unknown Label edge %s", name)
 }
 
 // LanguageMutation represents an operation that mutates the Language nodes in the graph.

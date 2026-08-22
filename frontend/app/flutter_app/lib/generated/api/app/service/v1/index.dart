@@ -2939,6 +2939,662 @@ class BoardServiceV1MoveColumnRequest {
   }
 }
 
+/// 看板标签服务
+class LabelServiceClient {
+  final ClientTransport _transport;
+
+  LabelServiceClient(this._transport);
+
+  Future<BoardServiceV1ListLabelResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/labels';
+    final queryParams = <String>[];
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    if (request.offset != null) {
+      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
+    }
+    if (request.limit != null) {
+      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
+    }
+    if (request.token != null) {
+      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
+    }
+    if (request.noPaging != null) {
+      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
+    }
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.filter != null) {
+      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
+    }
+    if (request.filterExpr?.type != null) {
+      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
+    }
+    if (request.orderBy != null) {
+      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
+    }
+    if (request.fieldMask != null) {
+      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'LabelService',
+      method: 'List',
+    ), headers: headers);
+    return BoardServiceV1ListLabelResponse.fromJson(result as Map<String, dynamic>);
+  }
+
+  Future<BoardServiceV1Label> get(BoardServiceV1GetLabelRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/labels/${request.id}';
+    final queryParams = <String>[];
+    if (request.viewMask != null) {
+      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'LabelService',
+      method: 'Get',
+    ), headers: headers);
+    return BoardServiceV1Label.fromJson(result as Map<String, dynamic>);
+  }
+
+  Future<BoardServiceV1Label> create(BoardServiceV1CreateLabelRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/labels';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'LabelService',
+      method: 'Create',
+    ), headers: headers);
+    return BoardServiceV1Label.fromJson(result as Map<String, dynamic>);
+  }
+
+  Future<BoardServiceV1Label> update(BoardServiceV1UpdateLabelRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/labels/${request.id}';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'PUT', body, TransportMeta(
+      service: 'LabelService',
+      method: 'Update',
+    ), headers: headers);
+    return BoardServiceV1Label.fromJson(result as Map<String, dynamic>);
+  }
+
+  Future<Map<String, dynamic>> delete(BoardServiceV1DeleteLabelRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/labels/${request.id}';
+    final result = await _transport.unary(path, 'DELETE', null, TransportMeta(
+      service: 'LabelService',
+      method: 'Delete',
+    ), headers: headers);
+    return result as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> setCardLabels(BoardServiceV1SetCardLabelsRequest request, {Map<String, String>? headers}) async {
+    if (request.cardId == null) {
+      throw ArgumentError('missing required field request.card_id');
+    }
+    final path = '/app/v1/cards/${request.cardId}:set-labels';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'LabelService',
+      method: 'SetCardLabels',
+    ), headers: headers);
+    return result as Map<String, dynamic>;
+  }
+
+  Future<BoardServiceV1ListLabelResponse> getCardLabels(BoardServiceV1GetCardLabelsRequest request, {Map<String, String>? headers}) async {
+    if (request.cardId == null) {
+      throw ArgumentError('missing required field request.card_id');
+    }
+    final path = '/app/v1/cards/${request.cardId}/labels';
+    final result = await _transport.unary(path, 'GET', null, TransportMeta(
+      service: 'LabelService',
+      method: 'GetCardLabels',
+    ), headers: headers);
+    return BoardServiceV1ListLabelResponse.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+/// 查询标签列表 - 回应
+class BoardServiceV1ListLabelResponse {
+  List<BoardServiceV1Label>? items;
+  int? total;
+
+  BoardServiceV1ListLabelResponse({
+    this.items,
+    this.total,
+  });
+
+  factory BoardServiceV1ListLabelResponse.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1ListLabelResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => BoardServiceV1Label.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1ListLabelResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1ListLabelResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  BoardServiceV1ListLabelResponse copyWith({
+    List<BoardServiceV1Label>? items,
+    int? total,
+  }) {
+    return BoardServiceV1ListLabelResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 看板标签（Planka 同款：board 级 + 颜色）
+class BoardServiceV1Label {
+  ///
+  /// Behaviors: REQUIRED
+  int? boardId;
+  ///
+  /// Behaviors: REQUIRED
+  String? color;
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  int? id;
+  ///
+  /// Behaviors: REQUIRED
+  String? name;
+  int? tenantId;
+  String? updatedAt;
+  int? updatedBy;
+
+  BoardServiceV1Label({
+    this.boardId,
+    this.color,
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.id,
+    this.name,
+    this.tenantId,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory BoardServiceV1Label.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1Label(
+      boardId: json['boardId'] as int?,
+      color: json['color'] as String?,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      tenantId: json['tenantId'] as int?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (boardId != null) json['boardId'] = boardId;
+    if (color != null) json['color'] = color;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (id != null) json['id'] = id;
+    if (name != null) json['name'] = name;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1Label(boardId: $boardId, color: $color, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, name: $name, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1Label &&
+      runtimeType == other.runtimeType
+      && boardId == other.boardId
+      && color == other.color
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && id == other.id
+      && name == other.name
+      && tenantId == other.tenantId
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    boardId,
+    color,
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    id,
+    name,
+    tenantId,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  BoardServiceV1Label copyWith({
+    int? boardId,
+    String? color,
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? id,
+    String? name,
+    int? tenantId,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return BoardServiceV1Label(
+      boardId: boardId ?? this.boardId,
+      color: color ?? this.color,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      tenantId: tenantId ?? this.tenantId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 查询标签详情 - 请求
+class BoardServiceV1GetLabelRequest {
+  int? id;
+  String? viewMask;
+
+  BoardServiceV1GetLabelRequest({
+    this.id,
+    this.viewMask,
+  });
+
+  factory BoardServiceV1GetLabelRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1GetLabelRequest(
+      id: json['id'] as int?,
+      viewMask: json['viewMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (viewMask != null) json['viewMask'] = viewMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1GetLabelRequest(id: $id, viewMask: $viewMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1GetLabelRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && viewMask == other.viewMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    viewMask,
+  ]);
+
+  BoardServiceV1GetLabelRequest copyWith({
+    int? id,
+    String? viewMask,
+  }) {
+    return BoardServiceV1GetLabelRequest(
+      id: id ?? this.id,
+      viewMask: viewMask ?? this.viewMask,
+    );
+  }
+}
+
+/// 创建标签 - 请求
+class BoardServiceV1CreateLabelRequest {
+  BoardServiceV1Label? data;
+
+  BoardServiceV1CreateLabelRequest({
+    this.data,
+  });
+
+  factory BoardServiceV1CreateLabelRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1CreateLabelRequest(
+      data: json['data'] != null ? BoardServiceV1Label.fromJson(json['data'] as Map<String, dynamic>) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (data != null) json['data'] = data!.toJson();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1CreateLabelRequest(data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1CreateLabelRequest &&
+      runtimeType == other.runtimeType
+      && data == other.data
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    data,
+  ]);
+
+  BoardServiceV1CreateLabelRequest copyWith({
+    BoardServiceV1Label? data,
+  }) {
+    return BoardServiceV1CreateLabelRequest(
+      data: data ?? this.data,
+    );
+  }
+}
+
+/// 更新标签 - 请求
+class BoardServiceV1UpdateLabelRequest {
+  bool? allowMissing;
+  BoardServiceV1Label? data;
+  int? expectedVersion;
+  int? id;
+  String? updateMask;
+
+  BoardServiceV1UpdateLabelRequest({
+    this.allowMissing,
+    this.data,
+    this.expectedVersion,
+    this.id,
+    this.updateMask,
+  });
+
+  factory BoardServiceV1UpdateLabelRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1UpdateLabelRequest(
+      allowMissing: json['allowMissing'] as bool?,
+      data: json['data'] != null ? BoardServiceV1Label.fromJson(json['data'] as Map<String, dynamic>) : null,
+      expectedVersion: json['expectedVersion'] as int?,
+      id: json['id'] as int?,
+      updateMask: json['updateMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (allowMissing != null) json['allowMissing'] = allowMissing;
+    if (data != null) json['data'] = data!.toJson();
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
+    if (id != null) json['id'] = id;
+    if (updateMask != null) json['updateMask'] = updateMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1UpdateLabelRequest(allowMissing: $allowMissing, data: $data, expectedVersion: $expectedVersion, id: $id, updateMask: $updateMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1UpdateLabelRequest &&
+      runtimeType == other.runtimeType
+      && allowMissing == other.allowMissing
+      && data == other.data
+      && expectedVersion == other.expectedVersion
+      && id == other.id
+      && updateMask == other.updateMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    allowMissing,
+    data,
+    expectedVersion,
+    id,
+    updateMask,
+  ]);
+
+  BoardServiceV1UpdateLabelRequest copyWith({
+    bool? allowMissing,
+    BoardServiceV1Label? data,
+    int? expectedVersion,
+    int? id,
+    String? updateMask,
+  }) {
+    return BoardServiceV1UpdateLabelRequest(
+      allowMissing: allowMissing ?? this.allowMissing,
+      data: data ?? this.data,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
+      id: id ?? this.id,
+      updateMask: updateMask ?? this.updateMask,
+    );
+  }
+}
+
+/// 删除标签 - 请求
+class BoardServiceV1DeleteLabelRequest {
+  int? id;
+
+  BoardServiceV1DeleteLabelRequest({
+    this.id,
+  });
+
+  factory BoardServiceV1DeleteLabelRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1DeleteLabelRequest(
+      id: json['id'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1DeleteLabelRequest(id: $id)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1DeleteLabelRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+  ]);
+
+  BoardServiceV1DeleteLabelRequest copyWith({
+    int? id,
+  }) {
+    return BoardServiceV1DeleteLabelRequest(
+      id: id ?? this.id,
+    );
+  }
+}
+
+/// 设置卡片标签 - 请求（全量替换）
+class BoardServiceV1SetCardLabelsRequest {
+  ///
+  /// Behaviors: REQUIRED
+  int? cardId;
+  List<int>? labelIds;
+
+  BoardServiceV1SetCardLabelsRequest({
+    this.cardId,
+    this.labelIds,
+  });
+
+  factory BoardServiceV1SetCardLabelsRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1SetCardLabelsRequest(
+      cardId: json['cardId'] as int?,
+      labelIds: (json['labelIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (cardId != null) json['cardId'] = cardId;
+    if (labelIds != null) json['labelIds'] = labelIds;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1SetCardLabelsRequest(cardId: $cardId, labelIds: $labelIds)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1SetCardLabelsRequest &&
+      runtimeType == other.runtimeType
+      && cardId == other.cardId
+      && labelIds == other.labelIds
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    cardId,
+    labelIds,
+  ]);
+
+  BoardServiceV1SetCardLabelsRequest copyWith({
+    int? cardId,
+    List<int>? labelIds,
+  }) {
+    return BoardServiceV1SetCardLabelsRequest(
+      cardId: cardId ?? this.cardId,
+      labelIds: labelIds ?? this.labelIds,
+    );
+  }
+}
+
+/// 查询卡片标签 - 请求
+class BoardServiceV1GetCardLabelsRequest {
+  ///
+  /// Behaviors: REQUIRED
+  int? cardId;
+
+  BoardServiceV1GetCardLabelsRequest({
+    this.cardId,
+  });
+
+  factory BoardServiceV1GetCardLabelsRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1GetCardLabelsRequest(
+      cardId: json['cardId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (cardId != null) json['cardId'] = cardId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1GetCardLabelsRequest(cardId: $cardId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1GetCardLabelsRequest &&
+      runtimeType == other.runtimeType
+      && cardId == other.cardId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    cardId,
+  ]);
+
+  BoardServiceV1GetCardLabelsRequest copyWith({
+    int? cardId,
+  }) {
+    return BoardServiceV1GetCardLabelsRequest(
+      cardId: cardId ?? this.cardId,
+    );
+  }
+}
+
 /// 用户个人资料服务
 class UserProfileServiceClient {
   final ClientTransport _transport;
@@ -4011,6 +4667,7 @@ class ApiClient {
   BoardServiceClient? _boardService;
   CardServiceClient? _cardService;
   ColumnServiceClient? _columnService;
+  LabelServiceClient? _labelService;
   UserProfileServiceClient? _userProfileService;
 
   ApiClient(this._transport);
@@ -4035,6 +4692,11 @@ class ApiClient {
     return _columnService!;
   }
 
+  LabelServiceClient get labelService {
+    _labelService ??= LabelServiceClient(_transport);
+    return _labelService!;
+  }
+
   UserProfileServiceClient get userProfileService {
     _userProfileService ??= UserProfileServiceClient(_transport);
     return _userProfileService!;
@@ -4046,6 +4708,7 @@ class ApiClient {
     _boardService = null;
     _cardService = null;
     _columnService = null;
+    _labelService = null;
     _userProfileService = null;
   }
 }

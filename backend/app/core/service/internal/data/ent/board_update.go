@@ -9,6 +9,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"time"
 
@@ -263,6 +264,21 @@ func (_u *BoardUpdate) AddCards(v ...*Card) *BoardUpdate {
 	return _u.AddCardIDs(ids...)
 }
 
+// AddLabelIDs adds the "labels" edge to the Label entity by IDs.
+func (_u *BoardUpdate) AddLabelIDs(ids ...uint32) *BoardUpdate {
+	_u.mutation.AddLabelIDs(ids...)
+	return _u
+}
+
+// AddLabels adds the "labels" edges to the Label entity.
+func (_u *BoardUpdate) AddLabels(v ...*Label) *BoardUpdate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLabelIDs(ids...)
+}
+
 // Mutation returns the BoardMutation object of the builder.
 func (_u *BoardUpdate) Mutation() *BoardMutation {
 	return _u.mutation
@@ -308,6 +324,27 @@ func (_u *BoardUpdate) RemoveCards(v ...*Card) *BoardUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveCardIDs(ids...)
+}
+
+// ClearLabels clears all "labels" edges to the Label entity.
+func (_u *BoardUpdate) ClearLabels() *BoardUpdate {
+	_u.mutation.ClearLabels()
+	return _u
+}
+
+// RemoveLabelIDs removes the "labels" edge to Label entities by IDs.
+func (_u *BoardUpdate) RemoveLabelIDs(ids ...uint32) *BoardUpdate {
+	_u.mutation.RemoveLabelIDs(ids...)
+	return _u
+}
+
+// RemoveLabels removes "labels" edges to Label entities.
+func (_u *BoardUpdate) RemoveLabels(v ...*Label) *BoardUpdate {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLabelIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -517,6 +554,51 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LabelsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLabelsIDs(); len(nodes) > 0 && !_u.mutation.LabelsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LabelsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
 			},
 		}
 		for _, k := range nodes {
@@ -778,6 +860,21 @@ func (_u *BoardUpdateOne) AddCards(v ...*Card) *BoardUpdateOne {
 	return _u.AddCardIDs(ids...)
 }
 
+// AddLabelIDs adds the "labels" edge to the Label entity by IDs.
+func (_u *BoardUpdateOne) AddLabelIDs(ids ...uint32) *BoardUpdateOne {
+	_u.mutation.AddLabelIDs(ids...)
+	return _u
+}
+
+// AddLabels adds the "labels" edges to the Label entity.
+func (_u *BoardUpdateOne) AddLabels(v ...*Label) *BoardUpdateOne {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLabelIDs(ids...)
+}
+
 // Mutation returns the BoardMutation object of the builder.
 func (_u *BoardUpdateOne) Mutation() *BoardMutation {
 	return _u.mutation
@@ -823,6 +920,27 @@ func (_u *BoardUpdateOne) RemoveCards(v ...*Card) *BoardUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveCardIDs(ids...)
+}
+
+// ClearLabels clears all "labels" edges to the Label entity.
+func (_u *BoardUpdateOne) ClearLabels() *BoardUpdateOne {
+	_u.mutation.ClearLabels()
+	return _u
+}
+
+// RemoveLabelIDs removes the "labels" edge to Label entities by IDs.
+func (_u *BoardUpdateOne) RemoveLabelIDs(ids ...uint32) *BoardUpdateOne {
+	_u.mutation.RemoveLabelIDs(ids...)
+	return _u
+}
+
+// RemoveLabels removes "labels" edges to Label entities.
+func (_u *BoardUpdateOne) RemoveLabels(v ...*Label) *BoardUpdateOne {
+	ids := make([]uint32, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLabelIDs(ids...)
 }
 
 // Where appends a list predicates to the BoardUpdate builder.
@@ -1062,6 +1180,51 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LabelsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLabelsIDs(); len(nodes) > 0 && !_u.mutation.LabelsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LabelsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   board.LabelsTable,
+			Columns: []string{board.LabelsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
 			},
 		}
 		for _, k := range nodes {

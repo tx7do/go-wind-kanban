@@ -44,6 +44,7 @@ func NewGrpcServer(
 	boardService *service.BoardService,
 	columnService *service.ColumnService,
 	cardService *service.CardService,
+	labelService *service.LabelService,
 
 
 	dictTypeService *service.DictTypeService,
@@ -93,6 +94,7 @@ func NewGrpcServer(
 	boardV1.RegisterBoardServiceServer(srv, boardService)
 	boardV1.RegisterColumnServiceServer(srv, columnService)
 	boardV1.RegisterCardServiceServer(srv, cardService)
+	boardV1.RegisterLabelServiceServer(srv, labelService)
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
 	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)

@@ -66,6 +66,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	columnService := service.NewColumnService(context, columnServiceClient, hub)
 	cardServiceClient := data.NewCardServiceClient(context, discovery)
 	cardService := service.NewCardService(context, cardServiceClient, hub)
+	labelServiceClient := data.NewLabelServiceClient(context, discovery)
+	labelService := service.NewLabelService(context, labelServiceClient)
 	captcha := data.NewCaptcha(client)
 	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient, captcha)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(context, discovery)
@@ -92,7 +94,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	operationAuditLogService := service.NewOperationAuditLogService(context, operationAuditLogServiceClient)
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(context, discovery)
 	permissionAuditLogService := service.NewPermissionAuditLogService(context, permissionAuditLogServiceClient)
-	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, boardService, columnService, cardService, authenticationService, loginPolicyService, dictTypeService, dictEntryService, languageService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService)
+	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, boardService, columnService, cardService, labelService, authenticationService, loginPolicyService, dictTypeService, dictEntryService, languageService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

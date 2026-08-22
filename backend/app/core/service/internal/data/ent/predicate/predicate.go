@@ -18,6 +18,9 @@ type Board func(*sql.Selector)
 // Card is the predicate function for card builders.
 type Card func(*sql.Selector)
 
+// CardLabel is the predicate function for cardlabel builders.
+type CardLabel func(*sql.Selector)
+
 // Column is the predicate function for column builders.
 type Column func(*sql.Selector)
 
@@ -41,6 +44,9 @@ type InternalMessageCategory func(*sql.Selector)
 
 // InternalMessageRecipient is the predicate function for internalmessagerecipient builders.
 type InternalMessageRecipient func(*sql.Selector)
+
+// Label is the predicate function for label builders.
+type Label func(*sql.Selector)
 
 // Language is the predicate function for language builders.
 type Language func(*sql.Selector)

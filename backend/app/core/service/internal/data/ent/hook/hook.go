@@ -56,6 +56,18 @@ func (f CardFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CardMutation", m)
 }
 
+// The CardLabelFunc type is an adapter to allow the use of ordinary
+// function as CardLabel mutator.
+type CardLabelFunc func(context.Context, *ent.CardLabelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CardLabelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CardLabelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CardLabelMutation", m)
+}
+
 // The ColumnFunc type is an adapter to allow the use of ordinary
 // function as Column mutator.
 type ColumnFunc func(context.Context, *ent.ColumnMutation) (ent.Value, error)
@@ -150,6 +162,18 @@ func (f InternalMessageRecipientFunc) Mutate(ctx context.Context, m ent.Mutation
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InternalMessageRecipientMutation", m)
+}
+
+// The LabelFunc type is an adapter to allow the use of ordinary
+// function as Label mutator.
+type LabelFunc func(context.Context, *ent.LabelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LabelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.LabelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LabelMutation", m)
 }
 
 // The LanguageFunc type is an adapter to allow the use of ordinary

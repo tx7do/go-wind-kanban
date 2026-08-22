@@ -20,6 +20,8 @@ type Tx struct {
 	Board *BoardClient
 	// Card is the client for interacting with the Card builders.
 	Card *CardClient
+	// CardLabel is the client for interacting with the CardLabel builders.
+	CardLabel *CardLabelClient
 	// Column is the client for interacting with the Column builders.
 	Column *ColumnClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -36,6 +38,8 @@ type Tx struct {
 	InternalMessageCategory *InternalMessageCategoryClient
 	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
 	InternalMessageRecipient *InternalMessageRecipientClient
+	// Label is the client for interacting with the Label builders.
+	Label *LabelClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -227,6 +231,7 @@ func (tx *Tx) init() {
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.Board = NewBoardClient(tx.config)
 	tx.Card = NewCardClient(tx.config)
+	tx.CardLabel = NewCardLabelClient(tx.config)
 	tx.Column = NewColumnClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
@@ -235,6 +240,7 @@ func (tx *Tx) init() {
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
 	tx.InternalMessageCategory = NewInternalMessageCategoryClient(tx.config)
 	tx.InternalMessageRecipient = NewInternalMessageRecipientClient(tx.config)
+	tx.Label = NewLabelClient(tx.config)
 	tx.Language = NewLanguageClient(tx.config)
 	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
 	tx.LoginPolicy = NewLoginPolicyClient(tx.config)

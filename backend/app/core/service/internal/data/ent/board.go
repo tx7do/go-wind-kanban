@@ -52,9 +52,11 @@ type BoardEdges struct {
 	Columns []*Column `json:"columns,omitempty"`
 	// Cards holds the value of the cards edge.
 	Cards []*Card `json:"cards,omitempty"`
+	// Labels holds the value of the labels edge.
+	Labels []*Label `json:"labels,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // ColumnsOrErr returns the Columns value or an error if the edge
@@ -73,6 +75,15 @@ func (e BoardEdges) CardsOrErr() ([]*Card, error) {
 		return e.Cards, nil
 	}
 	return nil, &NotLoadedError{edge: "cards"}
+}
+
+// LabelsOrErr returns the Labels value or an error if the edge
+// was not loaded in eager-loading.
+func (e BoardEdges) LabelsOrErr() ([]*Label, error) {
+	if e.loadedTypes[2] {
+		return e.Labels, nil
+	}
+	return nil, &NotLoadedError{edge: "labels"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -204,6 +215,11 @@ func (_m *Board) QueryColumns() *ColumnQuery {
 // QueryCards queries the "cards" edge of the Board entity.
 func (_m *Board) QueryCards() *CardQuery {
 	return NewBoardClient(_m.config).QueryCards(_m)
+}
+
+// QueryLabels queries the "labels" edge of the Board entity.
+func (_m *Board) QueryLabels() *LabelQuery {
+	return NewBoardClient(_m.config).QueryLabels(_m)
 }
 
 // Update returns a builder for updating this Board.

@@ -27,6 +27,7 @@ var ProviderSet = wire.NewSet(
 	service.NewBoardService,
 	service.NewColumnService,
 	service.NewCardService,
+	service.NewLabelService,
 	service.NewOrgUnitService,
 	service.NewPositionService,
 	service.NewDictTypeService,

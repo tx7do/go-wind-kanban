@@ -15,6 +15,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
+	"go-wind-cms/app/core/service/internal/data/ent/cardlabel"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
@@ -23,6 +24,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-cms/app/core/service/internal/data/ent/label"
 	"go-wind-cms/app/core/service/internal/data/ent/language"
 	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/loginpolicy"
@@ -71,6 +73,8 @@ type Client struct {
 	Board *BoardClient
 	// Card is the client for interacting with the Card builders.
 	Card *CardClient
+	// CardLabel is the client for interacting with the CardLabel builders.
+	CardLabel *CardLabelClient
 	// Column is the client for interacting with the Column builders.
 	Column *ColumnClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -87,6 +91,8 @@ type Client struct {
 	InternalMessageCategory *InternalMessageCategoryClient
 	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
 	InternalMessageRecipient *InternalMessageRecipientClient
+	// Label is the client for interacting with the Label builders.
+	Label *LabelClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -158,6 +164,7 @@ func (c *Client) init() {
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
 	c.Board = NewBoardClient(c.config)
 	c.Card = NewCardClient(c.config)
+	c.CardLabel = NewCardLabelClient(c.config)
 	c.Column = NewColumnClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
@@ -166,6 +173,7 @@ func (c *Client) init() {
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
 	c.InternalMessageRecipient = NewInternalMessageRecipientClient(c.config)
+	c.Label = NewLabelClient(c.config)
 	c.Language = NewLanguageClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
@@ -290,6 +298,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ApiAuditLog:              NewApiAuditLogClient(cfg),
 		Board:                    NewBoardClient(cfg),
 		Card:                     NewCardClient(cfg),
+		CardLabel:                NewCardLabelClient(cfg),
 		Column:                   NewColumnClient(cfg),
 		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
 		DictEntry:                NewDictEntryClient(cfg),
@@ -298,6 +307,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		InternalMessage:          NewInternalMessageClient(cfg),
 		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
+		Label:                    NewLabelClient(cfg),
 		Language:                 NewLanguageClient(cfg),
 		LoginAuditLog:            NewLoginAuditLogClient(cfg),
 		LoginPolicy:              NewLoginPolicyClient(cfg),
@@ -349,6 +359,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ApiAuditLog:              NewApiAuditLogClient(cfg),
 		Board:                    NewBoardClient(cfg),
 		Card:                     NewCardClient(cfg),
+		CardLabel:                NewCardLabelClient(cfg),
 		Column:                   NewColumnClient(cfg),
 		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
 		DictEntry:                NewDictEntryClient(cfg),
@@ -357,6 +368,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		InternalMessage:          NewInternalMessageClient(cfg),
 		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
+		Label:                    NewLabelClient(cfg),
 		Language:                 NewLanguageClient(cfg),
 		LoginAuditLog:            NewLoginAuditLogClient(cfg),
 		LoginPolicy:              NewLoginPolicyClient(cfg),
@@ -414,15 +426,16 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Api, c.ApiAuditLog, c.Board, c.Card, c.Column, c.DataAccessAuditLog,
-		c.DictEntry, c.DictEntryI18n, c.DictType, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Api, c.ApiAuditLog, c.Board, c.Card, c.CardLabel, c.Column,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
+		c.Label, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -432,15 +445,16 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Api, c.ApiAuditLog, c.Board, c.Card, c.Column, c.DataAccessAuditLog,
-		c.DictEntry, c.DictEntryI18n, c.DictType, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Role, c.RoleMetadata, c.RolePermission, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Api, c.ApiAuditLog, c.Board, c.Card, c.CardLabel, c.Column,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
+		c.Label, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.OperationAuditLog, c.OrgUnit, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -457,6 +471,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Board.mutate(ctx, m)
 	case *CardMutation:
 		return c.Card.mutate(ctx, m)
+	case *CardLabelMutation:
+		return c.CardLabel.mutate(ctx, m)
 	case *ColumnMutation:
 		return c.Column.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
@@ -473,6 +489,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.InternalMessageCategory.mutate(ctx, m)
 	case *InternalMessageRecipientMutation:
 		return c.InternalMessageRecipient.mutate(ctx, m)
+	case *LabelMutation:
+		return c.Label.mutate(ctx, m)
 	case *LanguageMutation:
 		return c.Language.mutate(ctx, m)
 	case *LoginAuditLogMutation:
@@ -942,6 +960,22 @@ func (c *BoardClient) QueryCards(_m *Board) *CardQuery {
 	return query
 }
 
+// QueryLabels queries the labels edge of a Board.
+func (c *BoardClient) QueryLabels(_m *Board) *LabelQuery {
+	query := (&LabelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(board.Table, board.FieldID, id),
+			sqlgraph.To(label.Table, label.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, board.LabelsTable, board.LabelsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *BoardClient) Hooks() []Hook {
 	hooks := c.hooks.Board
@@ -1131,6 +1165,139 @@ func (c *CardClient) mutate(ctx context.Context, m *CardMutation) (Value, error)
 		return (&CardDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Card mutation op: %q", m.Op())
+	}
+}
+
+// CardLabelClient is a client for the CardLabel schema.
+type CardLabelClient struct {
+	config
+}
+
+// NewCardLabelClient returns a client for the CardLabel from the given config.
+func NewCardLabelClient(c config) *CardLabelClient {
+	return &CardLabelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cardlabel.Hooks(f(g(h())))`.
+func (c *CardLabelClient) Use(hooks ...Hook) {
+	c.hooks.CardLabel = append(c.hooks.CardLabel, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cardlabel.Intercept(f(g(h())))`.
+func (c *CardLabelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CardLabel = append(c.inters.CardLabel, interceptors...)
+}
+
+// Create returns a builder for creating a CardLabel entity.
+func (c *CardLabelClient) Create() *CardLabelCreate {
+	mutation := newCardLabelMutation(c.config, OpCreate)
+	return &CardLabelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CardLabel entities.
+func (c *CardLabelClient) CreateBulk(builders ...*CardLabelCreate) *CardLabelCreateBulk {
+	return &CardLabelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CardLabelClient) MapCreateBulk(slice any, setFunc func(*CardLabelCreate, int)) *CardLabelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CardLabelCreateBulk{err: fmt.Errorf("calling to CardLabelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CardLabelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CardLabelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CardLabel.
+func (c *CardLabelClient) Update() *CardLabelUpdate {
+	mutation := newCardLabelMutation(c.config, OpUpdate)
+	return &CardLabelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CardLabelClient) UpdateOne(_m *CardLabel) *CardLabelUpdateOne {
+	mutation := newCardLabelMutation(c.config, OpUpdateOne, withCardLabel(_m))
+	return &CardLabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CardLabelClient) UpdateOneID(id uint32) *CardLabelUpdateOne {
+	mutation := newCardLabelMutation(c.config, OpUpdateOne, withCardLabelID(id))
+	return &CardLabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CardLabel.
+func (c *CardLabelClient) Delete() *CardLabelDelete {
+	mutation := newCardLabelMutation(c.config, OpDelete)
+	return &CardLabelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CardLabelClient) DeleteOne(_m *CardLabel) *CardLabelDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CardLabelClient) DeleteOneID(id uint32) *CardLabelDeleteOne {
+	builder := c.Delete().Where(cardlabel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CardLabelDeleteOne{builder}
+}
+
+// Query returns a query builder for CardLabel.
+func (c *CardLabelClient) Query() *CardLabelQuery {
+	return &CardLabelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCardLabel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CardLabel entity by its id.
+func (c *CardLabelClient) Get(ctx context.Context, id uint32) (*CardLabel, error) {
+	return c.Query().Where(cardlabel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CardLabelClient) GetX(ctx context.Context, id uint32) *CardLabel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CardLabelClient) Hooks() []Hook {
+	return c.hooks.CardLabel
+}
+
+// Interceptors returns the client interceptors.
+func (c *CardLabelClient) Interceptors() []Interceptor {
+	return c.inters.CardLabel
+}
+
+func (c *CardLabelClient) mutate(ctx context.Context, m *CardLabelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CardLabelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CardLabelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CardLabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CardLabelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CardLabel mutation op: %q", m.Op())
 	}
 }
 
@@ -2299,6 +2466,156 @@ func (c *InternalMessageRecipientClient) mutate(ctx context.Context, m *Internal
 		return (&InternalMessageRecipientDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown InternalMessageRecipient mutation op: %q", m.Op())
+	}
+}
+
+// LabelClient is a client for the Label schema.
+type LabelClient struct {
+	config
+}
+
+// NewLabelClient returns a client for the Label from the given config.
+func NewLabelClient(c config) *LabelClient {
+	return &LabelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `label.Hooks(f(g(h())))`.
+func (c *LabelClient) Use(hooks ...Hook) {
+	c.hooks.Label = append(c.hooks.Label, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `label.Intercept(f(g(h())))`.
+func (c *LabelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Label = append(c.inters.Label, interceptors...)
+}
+
+// Create returns a builder for creating a Label entity.
+func (c *LabelClient) Create() *LabelCreate {
+	mutation := newLabelMutation(c.config, OpCreate)
+	return &LabelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Label entities.
+func (c *LabelClient) CreateBulk(builders ...*LabelCreate) *LabelCreateBulk {
+	return &LabelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LabelClient) MapCreateBulk(slice any, setFunc func(*LabelCreate, int)) *LabelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LabelCreateBulk{err: fmt.Errorf("calling to LabelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LabelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LabelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Label.
+func (c *LabelClient) Update() *LabelUpdate {
+	mutation := newLabelMutation(c.config, OpUpdate)
+	return &LabelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LabelClient) UpdateOne(_m *Label) *LabelUpdateOne {
+	mutation := newLabelMutation(c.config, OpUpdateOne, withLabel(_m))
+	return &LabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LabelClient) UpdateOneID(id uint32) *LabelUpdateOne {
+	mutation := newLabelMutation(c.config, OpUpdateOne, withLabelID(id))
+	return &LabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Label.
+func (c *LabelClient) Delete() *LabelDelete {
+	mutation := newLabelMutation(c.config, OpDelete)
+	return &LabelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LabelClient) DeleteOne(_m *Label) *LabelDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LabelClient) DeleteOneID(id uint32) *LabelDeleteOne {
+	builder := c.Delete().Where(label.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LabelDeleteOne{builder}
+}
+
+// Query returns a query builder for Label.
+func (c *LabelClient) Query() *LabelQuery {
+	return &LabelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLabel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Label entity by its id.
+func (c *LabelClient) Get(ctx context.Context, id uint32) (*Label, error) {
+	return c.Query().Where(label.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LabelClient) GetX(ctx context.Context, id uint32) *Label {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryBoard queries the board edge of a Label.
+func (c *LabelClient) QueryBoard(_m *Label) *BoardQuery {
+	query := (&BoardClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(label.Table, label.FieldID, id),
+			sqlgraph.To(board.Table, board.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, label.BoardTable, label.BoardColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LabelClient) Hooks() []Hook {
+	hooks := c.hooks.Label
+	return append(hooks[:len(hooks):len(hooks)], label.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *LabelClient) Interceptors() []Interceptor {
+	return c.inters.Label
+}
+
+func (c *LabelClient) mutate(ctx context.Context, m *LabelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LabelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LabelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LabelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Label mutation op: %q", m.Op())
 	}
 }
 
@@ -6151,23 +6468,23 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiAuditLog, Board, Card, Column, DataAccessAuditLog, DictEntry,
+		Api, ApiAuditLog, Board, Card, CardLabel, Column, DataAccessAuditLog, DictEntry,
 		DictEntryI18n, DictType, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Role,
-		RoleMetadata, RolePermission, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Hook
+		InternalMessageRecipient, Label, Language, LoginAuditLog, LoginPolicy,
+		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Role, RoleMetadata, RolePermission, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
-		Api, ApiAuditLog, Board, Card, Column, DataAccessAuditLog, DictEntry,
+		Api, ApiAuditLog, Board, Card, CardLabel, Column, DataAccessAuditLog, DictEntry,
 		DictEntryI18n, DictType, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		OrgUnit, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Role,
-		RoleMetadata, RolePermission, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole []ent.Interceptor
+		InternalMessageRecipient, Label, Language, LoginAuditLog, LoginPolicy,
+		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
+		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Role, RoleMetadata, RolePermission, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

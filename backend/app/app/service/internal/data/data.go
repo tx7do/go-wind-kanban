@@ -172,3 +172,12 @@ func NewCardServiceClient(ctx *bootstrap.Context, r registry.Discovery) boardV1.
 
 	return boardV1.NewCardServiceClient(cli)
 }
+
+func NewLabelServiceClient(ctx *bootstrap.Context, r registry.Discovery) boardV1.LabelServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return boardV1.NewLabelServiceClient(cli)
+}

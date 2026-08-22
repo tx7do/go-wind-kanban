@@ -207,6 +207,30 @@ func (f CardMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CardMutation", m)
 }
 
+// The CardLabelQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CardLabelQueryRuleFunc func(context.Context, *ent.CardLabelQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CardLabelQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CardLabelQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CardLabelQuery", q)
+}
+
+// The CardLabelMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CardLabelMutationRuleFunc func(context.Context, *ent.CardLabelMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CardLabelMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CardLabelMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CardLabelMutation", m)
+}
+
 // The ColumnQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ColumnQueryRuleFunc func(context.Context, *ent.ColumnQuery) error
@@ -397,6 +421,30 @@ func (f InternalMessageRecipientMutationRuleFunc) EvalMutation(ctx context.Conte
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InternalMessageRecipientMutation", m)
+}
+
+// The LabelQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type LabelQueryRuleFunc func(context.Context, *ent.LabelQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f LabelQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.LabelQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.LabelQuery", q)
+}
+
+// The LabelMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type LabelMutationRuleFunc func(context.Context, *ent.LabelMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f LabelMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.LabelMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.LabelMutation", m)
 }
 
 // The LanguageQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1114,6 +1162,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CardQuery:
 		return q.Filter(), nil
+	case *ent.CardLabelQuery:
+		return q.Filter(), nil
 	case *ent.ColumnQuery:
 		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
@@ -1129,6 +1179,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.InternalMessageCategoryQuery:
 		return q.Filter(), nil
 	case *ent.InternalMessageRecipientQuery:
+		return q.Filter(), nil
+	case *ent.LabelQuery:
 		return q.Filter(), nil
 	case *ent.LanguageQuery:
 		return q.Filter(), nil
@@ -1201,6 +1253,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.CardMutation:
 		return m.Filter(), nil
+	case *ent.CardLabelMutation:
+		return m.Filter(), nil
 	case *ent.ColumnMutation:
 		return m.Filter(), nil
 	case *ent.DataAccessAuditLogMutation:
@@ -1216,6 +1270,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.InternalMessageCategoryMutation:
 		return m.Filter(), nil
 	case *ent.InternalMessageRecipientMutation:
+		return m.Filter(), nil
+	case *ent.LabelMutation:
 		return m.Filter(), nil
 	case *ent.LanguageMutation:
 		return m.Filter(), nil

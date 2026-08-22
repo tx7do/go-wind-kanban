@@ -3451,6 +3451,292 @@ export type internal_messageservicev1_MarkNotificationAsReadRequest = {
   userId: number | undefined;
 };
 
+// 看板标签管理服务
+export interface LabelService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<boardservicev1_ListLabelResponse>;
+  Get(
+    request: boardservicev1_GetLabelRequest,
+  ): Promise<boardservicev1_Label>;
+  Create(
+    request: boardservicev1_CreateLabelRequest,
+  ): Promise<boardservicev1_Label>;
+  Update(
+    request: boardservicev1_UpdateLabelRequest,
+  ): Promise<boardservicev1_Label>;
+  Delete(
+    request: boardservicev1_DeleteLabelRequest,
+  ): Promise<wellKnownEmpty>;
+  SetCardLabels(
+    request: boardservicev1_SetCardLabelsRequest,
+  ): Promise<wellKnownEmpty>;
+  GetCardLabels(
+    request: boardservicev1_GetCardLabelsRequest,
+  ): Promise<boardservicev1_ListLabelResponse>;
+}
+
+export function createLabelServiceClient(
+  transport: ClientTransport,
+): LabelService {
+  return {
+    List(request) {
+      const path = `admin/v1/labels`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'LabelService',
+        method: 'List',
+      }) as Promise<boardservicev1_ListLabelResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/labels/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'LabelService',
+        method: 'Get',
+      }) as Promise<boardservicev1_Label>;
+    },
+    Create(request) {
+      const path = `admin/v1/labels`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'LabelService',
+        method: 'Create',
+      }) as Promise<boardservicev1_Label>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/labels/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'LabelService',
+        method: 'Update',
+      }) as Promise<boardservicev1_Label>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/labels/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'LabelService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    SetCardLabels(request) {
+      if (request.cardId === undefined || request.cardId === null) {
+        throw new Error('missing required field request.card_id');
+      }
+      const path = `admin/v1/cards/${request.cardId}:set-labels`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'LabelService',
+        method: 'SetCardLabels',
+      }) as Promise<wellKnownEmpty>;
+    },
+    GetCardLabels(request) {
+      if (request.cardId === undefined || request.cardId === null) {
+        throw new Error('missing required field request.card_id');
+      }
+      const path = `admin/v1/cards/${request.cardId}/labels`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'LabelService',
+        method: 'GetCardLabels',
+      }) as Promise<boardservicev1_ListLabelResponse>;
+    },
+  };
+}
+// 查询标签列表 - 回应
+export type boardservicev1_ListLabelResponse = {
+  items: boardservicev1_Label[] | undefined;
+  total: number | undefined;
+};
+
+// 看板标签（Planka 同款：board 级 + 颜色）
+export type boardservicev1_Label = {
+  //
+  // Behaviors: REQUIRED
+  boardId?: number;
+  //
+  // Behaviors: REQUIRED
+  color?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 查询标签详情 - 请求
+export type boardservicev1_GetLabelRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建标签 - 请求
+export type boardservicev1_CreateLabelRequest = {
+  data: boardservicev1_Label | undefined;
+};
+
+// 更新标签 - 请求
+export type boardservicev1_UpdateLabelRequest = {
+  allowMissing?: boolean;
+  data: boardservicev1_Label | undefined;
+  expectedVersion?: number;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除标签 - 请求
+export type boardservicev1_DeleteLabelRequest = {
+  id?: number;
+};
+
+// 设置卡片标签 - 请求（全量替换）
+export type boardservicev1_SetCardLabelsRequest = {
+  //
+  // Behaviors: REQUIRED
+  cardId: number | undefined;
+  labelIds: number[] | undefined;
+};
+
+// 查询卡片标签 - 请求
+export type boardservicev1_GetCardLabelsRequest = {
+  //
+  // Behaviors: REQUIRED
+  cardId: number | undefined;
+};
+
 // 语言管理服务
 export interface LanguageService {
   // 分页查询语言列表
@@ -7741,6 +8027,7 @@ export class ApiClient {
   private _internalMessageCategoryService?: InternalMessageCategoryService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _internalMessageService?: InternalMessageService;
+  private _labelService?: LabelService;
   private _languageService?: LanguageService;
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
@@ -7813,6 +8100,10 @@ export class ApiClient {
 
   get internalMessageService(): InternalMessageService {
     return this._internalMessageService ??= createInternalMessageServiceClient(this._transport);
+  }
+
+  get labelService(): LabelService {
+    return this._labelService ??= createLabelServiceClient(this._transport);
   }
 
   get languageService(): LanguageService {

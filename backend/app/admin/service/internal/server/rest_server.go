@@ -107,6 +107,7 @@ func NewRestServer(
 	boardService *service.BoardService,
 	columnService *service.ColumnService,
 	cardService *service.CardService,
+	labelService *service.LabelService,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -155,6 +156,7 @@ func NewRestServer(
 	adminV1.RegisterBoardServiceHTTPServer(srv, boardService)
 	adminV1.RegisterColumnServiceHTTPServer(srv, columnService)
 	adminV1.RegisterCardServiceHTTPServer(srv, cardService)
+	adminV1.RegisterLabelServiceHTTPServer(srv, labelService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

@@ -66,6 +66,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	columnService := service.NewColumnService(context, columnRepo)
 	cardRepo := data.NewCardRepo(context, entClient)
 	cardService := service.NewCardService(context, cardRepo)
+	labelRepo := data.NewLabelRepo(context, entClient)
+	labelService := service.NewLabelService(context, labelRepo)
 	dictEntryI18nRepo := data.NewDictEntryI18nRepo(context, entClient)
 	dictEntryRepo := data.NewDictEntryRepo(context, entClient, dictEntryI18nRepo)
 	dictTypeRepo := data.NewDictTypeRepo(context, entClient, dictEntryRepo)
@@ -105,7 +107,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageService := service.NewInternalMessageService(context, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(context, internalMessageCategoryRepo)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(context, internalMessageRepo, internalMessageRecipientRepo)
-	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, boardService, columnService, cardService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService)
+	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, boardService, columnService, cardService, labelService, dictTypeService, dictEntryService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService)
 	if err != nil {
 		cleanup2()
 		cleanup()

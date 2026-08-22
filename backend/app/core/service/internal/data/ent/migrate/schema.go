@@ -246,6 +246,32 @@ var (
 			},
 		},
 	}
+	// SysKanbanCardLabelsColumns holds the columns for the "sys_kanban_card_labels" table.
+	SysKanbanCardLabelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "card_id", Type: field.TypeUint32, Nullable: true, Comment: "卡片ID"},
+		{Name: "label_id", Type: field.TypeUint32, Nullable: true, Comment: "标签ID"},
+	}
+	// SysKanbanCardLabelsTable holds the schema information for the "sys_kanban_card_labels" table.
+	SysKanbanCardLabelsTable = &schema.Table{
+		Name:       "sys_kanban_card_labels",
+		Comment:    "卡片标签关联表",
+		Columns:    SysKanbanCardLabelsColumns,
+		PrimaryKey: []*schema.Column{SysKanbanCardLabelsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sys_kanban_card_labels_card_label",
+				Unique:  true,
+				Columns: []*schema.Column{SysKanbanCardLabelsColumns[7], SysKanbanCardLabelsColumns[8]},
+			},
+		},
+	}
 	// SysKanbanColumnsColumns holds the columns for the "sys_kanban_columns" table.
 	SysKanbanColumnsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -694,6 +720,43 @@ var (
 				Name:    "idx_internal_msg_recipient_message_recipient",
 				Unique:  false,
 				Columns: []*schema.Column{InternalMessageRecipientsColumns[5], InternalMessageRecipientsColumns[6]},
+			},
+		},
+	}
+	// SysKanbanLabelsColumns holds the columns for the "sys_kanban_labels" table.
+	SysKanbanLabelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "标签名称"},
+		{Name: "color", Type: field.TypeString, Nullable: true, Comment: "标签颜色"},
+		{Name: "version", Type: field.TypeUint32, Comment: "乐观锁版本号，每次更新自增", Default: 1},
+		{Name: "board_id", Type: field.TypeUint32, Nullable: true, Comment: "所属看板ID"},
+	}
+	// SysKanbanLabelsTable holds the schema information for the "sys_kanban_labels" table.
+	SysKanbanLabelsTable = &schema.Table{
+		Name:       "sys_kanban_labels",
+		Comment:    "看板标签表",
+		Columns:    SysKanbanLabelsColumns,
+		PrimaryKey: []*schema.Column{SysKanbanLabelsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_kanban_labels_sys_kanban_boards_labels",
+				Columns:    []*schema.Column{SysKanbanLabelsColumns[11]},
+				RefColumns: []*schema.Column{SysKanbanBoardsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_kanban_labels_board",
+				Unique:  false,
+				Columns: []*schema.Column{SysKanbanLabelsColumns[11]},
 			},
 		},
 	}
@@ -2856,6 +2919,7 @@ var (
 		SysAPIAuditLogsTable,
 		SysKanbanBoardsTable,
 		SysKanbanCardsTable,
+		SysKanbanCardLabelsTable,
 		SysKanbanColumnsTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
@@ -2864,6 +2928,7 @@ var (
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
 		InternalMessageRecipientsTable,
+		SysKanbanLabelsTable,
 		SysLanguagesTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
@@ -2918,6 +2983,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	SysKanbanCardLabelsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_kanban_card_labels",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysKanbanColumnsTable.ForeignKeys[0].RefTable = SysKanbanBoardsTable
 	SysKanbanColumnsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_kanban_columns",
@@ -2958,6 +3028,12 @@ func init() {
 	}
 	InternalMessageRecipientsTable.Annotation = &entsql.Annotation{
 		Table:     "internal_message_recipients",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysKanbanLabelsTable.ForeignKeys[0].RefTable = SysKanbanBoardsTable
+	SysKanbanLabelsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_kanban_labels",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
