@@ -41,10 +41,11 @@ type Column struct {
 	Rank *string `json:"rank,omitempty"`
 	// 乐观锁版本号，每次更新自增
 	Version uint32 `json:"version,omitempty"`
+	// 所属看板ID
+	BoardID uint32 `json:"board_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ColumnQuery when eager-loading is set.
 	Edges        ColumnEdges `json:"edges"`
-	board_id     *uint32
 	selectValues sql.SelectValues
 }
 
@@ -84,14 +85,12 @@ func (*Column) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case column.FieldID, column.FieldCreatedBy, column.FieldUpdatedBy, column.FieldDeletedBy, column.FieldTenantID, column.FieldVersion:
+		case column.FieldID, column.FieldCreatedBy, column.FieldUpdatedBy, column.FieldDeletedBy, column.FieldTenantID, column.FieldVersion, column.FieldBoardID:
 			values[i] = new(sql.NullInt64)
 		case column.FieldName, column.FieldColor, column.FieldRank:
 			values[i] = new(sql.NullString)
 		case column.FieldCreatedAt, column.FieldUpdatedAt, column.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case column.ForeignKeys[0]: // board_id
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -189,12 +188,11 @@ func (_m *Column) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Version = uint32(value.Int64)
 			}
-		case column.ForeignKeys[0]:
+		case column.FieldBoardID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field board_id", value)
+				return fmt.Errorf("unexpected type %T for field board_id", values[i])
 			} else if value.Valid {
-				_m.board_id = new(uint32)
-				*_m.board_id = uint32(value.Int64)
+				_m.BoardID = uint32(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -294,6 +292,9 @@ func (_m *Column) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("version=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Version))
+	builder.WriteString(", ")
+	builder.WriteString("board_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BoardID))
 	builder.WriteByte(')')
 	return builder.String()
 }

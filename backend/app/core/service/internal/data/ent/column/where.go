@@ -110,6 +110,11 @@ func Version(v uint32) predicate.Column {
 	return predicate.Column(sql.FieldEQ(FieldVersion, v))
 }
 
+// BoardID applies equality check predicate on the "board_id" field. It's identical to BoardIDEQ.
+func BoardID(v uint32) predicate.Column {
+	return predicate.Column(sql.FieldEQ(FieldBoardID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Column {
 	return predicate.Column(sql.FieldEQ(FieldCreatedAt, v))
@@ -723,6 +728,36 @@ func VersionLT(v uint32) predicate.Column {
 // VersionLTE applies the LTE predicate on the "version" field.
 func VersionLTE(v uint32) predicate.Column {
 	return predicate.Column(sql.FieldLTE(FieldVersion, v))
+}
+
+// BoardIDEQ applies the EQ predicate on the "board_id" field.
+func BoardIDEQ(v uint32) predicate.Column {
+	return predicate.Column(sql.FieldEQ(FieldBoardID, v))
+}
+
+// BoardIDNEQ applies the NEQ predicate on the "board_id" field.
+func BoardIDNEQ(v uint32) predicate.Column {
+	return predicate.Column(sql.FieldNEQ(FieldBoardID, v))
+}
+
+// BoardIDIn applies the In predicate on the "board_id" field.
+func BoardIDIn(vs ...uint32) predicate.Column {
+	return predicate.Column(sql.FieldIn(FieldBoardID, vs...))
+}
+
+// BoardIDNotIn applies the NotIn predicate on the "board_id" field.
+func BoardIDNotIn(vs ...uint32) predicate.Column {
+	return predicate.Column(sql.FieldNotIn(FieldBoardID, vs...))
+}
+
+// BoardIDIsNil applies the IsNil predicate on the "board_id" field.
+func BoardIDIsNil() predicate.Column {
+	return predicate.Column(sql.FieldIsNull(FieldBoardID))
+}
+
+// BoardIDNotNil applies the NotNil predicate on the "board_id" field.
+func BoardIDNotNil() predicate.Column {
+	return predicate.Column(sql.FieldNotNull(FieldBoardID))
 }
 
 // HasBoard applies the HasEdge predicate on the "board" edge.

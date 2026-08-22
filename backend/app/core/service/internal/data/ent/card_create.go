@@ -178,43 +178,43 @@ func (_c *CardCreate) SetNillableVersion(v *uint32) *CardCreate {
 	return _c
 }
 
+// SetColumnID sets the "column_id" field.
+func (_c *CardCreate) SetColumnID(v uint32) *CardCreate {
+	_c.mutation.SetColumnID(v)
+	return _c
+}
+
+// SetNillableColumnID sets the "column_id" field if the given value is not nil.
+func (_c *CardCreate) SetNillableColumnID(v *uint32) *CardCreate {
+	if v != nil {
+		_c.SetColumnID(*v)
+	}
+	return _c
+}
+
+// SetBoardID sets the "board_id" field.
+func (_c *CardCreate) SetBoardID(v uint32) *CardCreate {
+	_c.mutation.SetBoardID(v)
+	return _c
+}
+
+// SetNillableBoardID sets the "board_id" field if the given value is not nil.
+func (_c *CardCreate) SetNillableBoardID(v *uint32) *CardCreate {
+	if v != nil {
+		_c.SetBoardID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CardCreate) SetID(v uint32) *CardCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
 
-// SetColumnID sets the "column" edge to the Column entity by ID.
-func (_c *CardCreate) SetColumnID(id uint32) *CardCreate {
-	_c.mutation.SetColumnID(id)
-	return _c
-}
-
-// SetNillableColumnID sets the "column" edge to the Column entity by ID if the given value is not nil.
-func (_c *CardCreate) SetNillableColumnID(id *uint32) *CardCreate {
-	if id != nil {
-		_c = _c.SetColumnID(*id)
-	}
-	return _c
-}
-
 // SetColumn sets the "column" edge to the Column entity.
 func (_c *CardCreate) SetColumn(v *Column) *CardCreate {
 	return _c.SetColumnID(v.ID)
-}
-
-// SetBoardID sets the "board" edge to the Board entity by ID.
-func (_c *CardCreate) SetBoardID(id uint32) *CardCreate {
-	_c.mutation.SetBoardID(id)
-	return _c
-}
-
-// SetNillableBoardID sets the "board" edge to the Board entity by ID if the given value is not nil.
-func (_c *CardCreate) SetNillableBoardID(id *uint32) *CardCreate {
-	if id != nil {
-		_c = _c.SetBoardID(*id)
-	}
-	return _c
 }
 
 // SetBoard sets the "board" edge to the Board entity.
@@ -376,7 +376,7 @@ func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.column_id = &nodes[0]
+		_node.ColumnID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.BoardIDs(); len(nodes) > 0 {
@@ -393,7 +393,7 @@ func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.board_id = &nodes[0]
+		_node.BoardID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -625,6 +625,42 @@ func (u *CardUpsert) UpdateVersion() *CardUpsert {
 // AddVersion adds v to the "version" field.
 func (u *CardUpsert) AddVersion(v uint32) *CardUpsert {
 	u.Add(card.FieldVersion, v)
+	return u
+}
+
+// SetColumnID sets the "column_id" field.
+func (u *CardUpsert) SetColumnID(v uint32) *CardUpsert {
+	u.Set(card.FieldColumnID, v)
+	return u
+}
+
+// UpdateColumnID sets the "column_id" field to the value that was provided on create.
+func (u *CardUpsert) UpdateColumnID() *CardUpsert {
+	u.SetExcluded(card.FieldColumnID)
+	return u
+}
+
+// ClearColumnID clears the value of the "column_id" field.
+func (u *CardUpsert) ClearColumnID() *CardUpsert {
+	u.SetNull(card.FieldColumnID)
+	return u
+}
+
+// SetBoardID sets the "board_id" field.
+func (u *CardUpsert) SetBoardID(v uint32) *CardUpsert {
+	u.Set(card.FieldBoardID, v)
+	return u
+}
+
+// UpdateBoardID sets the "board_id" field to the value that was provided on create.
+func (u *CardUpsert) UpdateBoardID() *CardUpsert {
+	u.SetExcluded(card.FieldBoardID)
+	return u
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (u *CardUpsert) ClearBoardID() *CardUpsert {
+	u.SetNull(card.FieldBoardID)
 	return u
 }
 
@@ -889,6 +925,48 @@ func (u *CardUpsertOne) AddVersion(v uint32) *CardUpsertOne {
 func (u *CardUpsertOne) UpdateVersion() *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetColumnID sets the "column_id" field.
+func (u *CardUpsertOne) SetColumnID(v uint32) *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.SetColumnID(v)
+	})
+}
+
+// UpdateColumnID sets the "column_id" field to the value that was provided on create.
+func (u *CardUpsertOne) UpdateColumnID() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateColumnID()
+	})
+}
+
+// ClearColumnID clears the value of the "column_id" field.
+func (u *CardUpsertOne) ClearColumnID() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearColumnID()
+	})
+}
+
+// SetBoardID sets the "board_id" field.
+func (u *CardUpsertOne) SetBoardID(v uint32) *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.SetBoardID(v)
+	})
+}
+
+// UpdateBoardID sets the "board_id" field to the value that was provided on create.
+func (u *CardUpsertOne) UpdateBoardID() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateBoardID()
+	})
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (u *CardUpsertOne) ClearBoardID() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearBoardID()
 	})
 }
 
@@ -1319,6 +1397,48 @@ func (u *CardUpsertBulk) AddVersion(v uint32) *CardUpsertBulk {
 func (u *CardUpsertBulk) UpdateVersion() *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetColumnID sets the "column_id" field.
+func (u *CardUpsertBulk) SetColumnID(v uint32) *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.SetColumnID(v)
+	})
+}
+
+// UpdateColumnID sets the "column_id" field to the value that was provided on create.
+func (u *CardUpsertBulk) UpdateColumnID() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateColumnID()
+	})
+}
+
+// ClearColumnID clears the value of the "column_id" field.
+func (u *CardUpsertBulk) ClearColumnID() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearColumnID()
+	})
+}
+
+// SetBoardID sets the "board_id" field.
+func (u *CardUpsertBulk) SetBoardID(v uint32) *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.SetBoardID(v)
+	})
+}
+
+// UpdateBoardID sets the "board_id" field to the value that was provided on create.
+func (u *CardUpsertBulk) UpdateBoardID() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateBoardID()
+	})
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (u *CardUpsertBulk) ClearBoardID() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearBoardID()
 	})
 }
 

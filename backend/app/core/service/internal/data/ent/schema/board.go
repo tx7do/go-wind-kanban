@@ -67,18 +67,14 @@ func (Board) Mixin() []ent.Mixin {
 func (Board) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("columns", Column.Type).
-			Required().
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
-			}).
-			StorageKey(edge.Column("board_id")),
+			}),
 
 		edge.To("cards", Card.Type).
-			Required().
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
-			}).
-			StorageKey(edge.Column("board_id")),
+			}),
 	}
 }
 // Indexes of the Board.

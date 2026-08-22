@@ -178,23 +178,23 @@ func (_c *ColumnCreate) SetNillableVersion(v *uint32) *ColumnCreate {
 	return _c
 }
 
+// SetBoardID sets the "board_id" field.
+func (_c *ColumnCreate) SetBoardID(v uint32) *ColumnCreate {
+	_c.mutation.SetBoardID(v)
+	return _c
+}
+
+// SetNillableBoardID sets the "board_id" field if the given value is not nil.
+func (_c *ColumnCreate) SetNillableBoardID(v *uint32) *ColumnCreate {
+	if v != nil {
+		_c.SetBoardID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ColumnCreate) SetID(v uint32) *ColumnCreate {
 	_c.mutation.SetID(v)
-	return _c
-}
-
-// SetBoardID sets the "board" edge to the Board entity by ID.
-func (_c *ColumnCreate) SetBoardID(id uint32) *ColumnCreate {
-	_c.mutation.SetBoardID(id)
-	return _c
-}
-
-// SetNillableBoardID sets the "board" edge to the Board entity by ID if the given value is not nil.
-func (_c *ColumnCreate) SetNillableBoardID(id *uint32) *ColumnCreate {
-	if id != nil {
-		_c = _c.SetBoardID(*id)
-	}
 	return _c
 }
 
@@ -280,9 +280,6 @@ func (_c *ColumnCreate) check() error {
 		if err := column.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Column.id": %w`, err)}
 		}
-	}
-	if len(_c.mutation.CardsIDs()) == 0 {
-		return &ValidationError{Name: "cards", err: errors.New(`ent: missing required edge "Column.cards"`)}
 	}
 	return nil
 }
@@ -375,7 +372,7 @@ func (_c *ColumnCreate) createSpec() (*Column, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.board_id = &nodes[0]
+		_node.BoardID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.CardsIDs(); len(nodes) > 0 {
@@ -623,6 +620,24 @@ func (u *ColumnUpsert) UpdateVersion() *ColumnUpsert {
 // AddVersion adds v to the "version" field.
 func (u *ColumnUpsert) AddVersion(v uint32) *ColumnUpsert {
 	u.Add(column.FieldVersion, v)
+	return u
+}
+
+// SetBoardID sets the "board_id" field.
+func (u *ColumnUpsert) SetBoardID(v uint32) *ColumnUpsert {
+	u.Set(column.FieldBoardID, v)
+	return u
+}
+
+// UpdateBoardID sets the "board_id" field to the value that was provided on create.
+func (u *ColumnUpsert) UpdateBoardID() *ColumnUpsert {
+	u.SetExcluded(column.FieldBoardID)
+	return u
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (u *ColumnUpsert) ClearBoardID() *ColumnUpsert {
+	u.SetNull(column.FieldBoardID)
 	return u
 }
 
@@ -887,6 +902,27 @@ func (u *ColumnUpsertOne) AddVersion(v uint32) *ColumnUpsertOne {
 func (u *ColumnUpsertOne) UpdateVersion() *ColumnUpsertOne {
 	return u.Update(func(s *ColumnUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetBoardID sets the "board_id" field.
+func (u *ColumnUpsertOne) SetBoardID(v uint32) *ColumnUpsertOne {
+	return u.Update(func(s *ColumnUpsert) {
+		s.SetBoardID(v)
+	})
+}
+
+// UpdateBoardID sets the "board_id" field to the value that was provided on create.
+func (u *ColumnUpsertOne) UpdateBoardID() *ColumnUpsertOne {
+	return u.Update(func(s *ColumnUpsert) {
+		s.UpdateBoardID()
+	})
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (u *ColumnUpsertOne) ClearBoardID() *ColumnUpsertOne {
+	return u.Update(func(s *ColumnUpsert) {
+		s.ClearBoardID()
 	})
 }
 
@@ -1317,6 +1353,27 @@ func (u *ColumnUpsertBulk) AddVersion(v uint32) *ColumnUpsertBulk {
 func (u *ColumnUpsertBulk) UpdateVersion() *ColumnUpsertBulk {
 	return u.Update(func(s *ColumnUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetBoardID sets the "board_id" field.
+func (u *ColumnUpsertBulk) SetBoardID(v uint32) *ColumnUpsertBulk {
+	return u.Update(func(s *ColumnUpsert) {
+		s.SetBoardID(v)
+	})
+}
+
+// UpdateBoardID sets the "board_id" field to the value that was provided on create.
+func (u *ColumnUpsertBulk) UpdateBoardID() *ColumnUpsertBulk {
+	return u.Update(func(s *ColumnUpsert) {
+		s.UpdateBoardID()
+	})
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (u *ColumnUpsertBulk) ClearBoardID() *ColumnUpsertBulk {
+	return u.Update(func(s *ColumnUpsert) {
+		s.ClearBoardID()
 	})
 }
 

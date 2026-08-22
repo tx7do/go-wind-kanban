@@ -50,6 +50,14 @@ func (Card) Fields() []ent.Field {
 		field.Uint32("version").
 			Comment("乐观锁版本号，每次更新自增").
 			Default(1),
+
+		field.Uint32("column_id").
+			Comment("所属列ID").
+			Optional(),
+
+		field.Uint32("board_id").
+			Comment("所属看板ID，冗余自列，供看板级查询，服务端维护").
+			Optional(),
 	}
 }
 
@@ -68,10 +76,12 @@ func (Card) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("column", Column.Type).
 			Ref("cards").
+			Field("column_id").
 			Unique(),
 
 		edge.From("board", Board.Type).
 			Ref("cards").
+			Field("board_id").
 			Unique(),
 	}
 }
@@ -79,8 +89,12 @@ func (Card) Edges() []ent.Edge {
 // Indexes of the Card.
 func (Card) Indexes() []ent.Index {
 	return []ent.Index{
-		// 卡片按 rank 排序；列过滤走 ent edge 查询（column 边的 FK 索引由 ent 自动建）
-		index.Fields("rank").
-			StorageKey("idx_sys_kanban_cards_rank"),
+		// 单列卡片按 rank 排序 + Move 邻居查找
+		index.Fields("column_id", "rank").
+			StorageKey("idx_sys_kanban_cards_column_rank"),
+
+		// 看板快照单次查询、按列分组内存聚合
+		index.Fields("board_id", "column_id", "rank").
+			StorageKey("idx_sys_kanban_cards_board_column_rank"),
 	}
 }

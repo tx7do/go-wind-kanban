@@ -50,6 +50,10 @@ func (Column) Fields() []ent.Field {
 		field.Uint32("version").
 			Comment("乐观锁版本号，每次更新自增").
 			Default(1),
+
+		field.Uint32("board_id").
+			Comment("所属看板ID").
+			Optional(),
 	}
 }
 
@@ -68,22 +72,21 @@ func (Column) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("board", Board.Type).
 			Ref("columns").
+			Field("board_id").
 			Unique(),
 
 		edge.To("cards", Card.Type).
-			Required().
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
-			}).
-			StorageKey(edge.Column("column_id")),
+			}),
 	}
 }
 
 // Indexes of the Column.
 func (Column) Indexes() []ent.Index {
 	return []ent.Index{
-		// 列按 rank 排序；看板过滤走 ent edge 查询（board 边的 FK 索引由 ent 自动建）
-		index.Fields("rank").
-			StorageKey("idx_sys_kanban_columns_rank"),
+		// 看板内列列表按 rank 排序
+		index.Fields("board_id", "rank").
+			StorageKey("idx_sys_kanban_columns_board_rank"),
 	}
 }

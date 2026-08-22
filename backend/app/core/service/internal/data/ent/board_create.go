@@ -277,12 +277,6 @@ func (_c *BoardCreate) check() error {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Board.id": %w`, err)}
 		}
 	}
-	if len(_c.mutation.ColumnsIDs()) == 0 {
-		return &ValidationError{Name: "columns", err: errors.New(`ent: missing required edge "Board.columns"`)}
-	}
-	if len(_c.mutation.CardsIDs()) == 0 {
-		return &ValidationError{Name: "cards", err: errors.New(`ent: missing required edge "Board.cards"`)}
-	}
 	return nil
 }
 

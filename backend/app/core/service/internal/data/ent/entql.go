@@ -168,6 +168,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			card.FieldDescription: {Type: field.TypeString, Column: card.FieldDescription},
 			card.FieldRank:        {Type: field.TypeString, Column: card.FieldRank},
 			card.FieldVersion:     {Type: field.TypeUint32, Column: card.FieldVersion},
+			card.FieldColumnID:    {Type: field.TypeUint32, Column: card.FieldColumnID},
+			card.FieldBoardID:     {Type: field.TypeUint32, Column: card.FieldBoardID},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -192,6 +194,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			column.FieldColor:     {Type: field.TypeString, Column: column.FieldColor},
 			column.FieldRank:      {Type: field.TypeString, Column: column.FieldRank},
 			column.FieldVersion:   {Type: field.TypeUint32, Column: column.FieldVersion},
+			column.FieldBoardID:   {Type: field.TypeUint32, Column: column.FieldBoardID},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -1912,6 +1915,16 @@ func (f *CardFilter) WhereVersion(p entql.Uint32P) {
 	f.Where(p.Field(card.FieldVersion))
 }
 
+// WhereColumnID applies the entql uint32 predicate on the column_id field.
+func (f *CardFilter) WhereColumnID(p entql.Uint32P) {
+	f.Where(p.Field(card.FieldColumnID))
+}
+
+// WhereBoardID applies the entql uint32 predicate on the board_id field.
+func (f *CardFilter) WhereBoardID(p entql.Uint32P) {
+	f.Where(p.Field(card.FieldBoardID))
+}
+
 // WhereHasColumn applies a predicate to check if query has an edge column.
 func (f *CardFilter) WhereHasColumn() {
 	f.Where(entql.HasEdge("column"))
@@ -2033,6 +2046,11 @@ func (f *ColumnFilter) WhereRank(p entql.StringP) {
 // WhereVersion applies the entql uint32 predicate on the version field.
 func (f *ColumnFilter) WhereVersion(p entql.Uint32P) {
 	f.Where(p.Field(column.FieldVersion))
+}
+
+// WhereBoardID applies the entql uint32 predicate on the board_id field.
+func (f *ColumnFilter) WhereBoardID(p entql.Uint32P) {
+	f.Where(p.Field(column.FieldBoardID))
 }
 
 // WhereHasBoard applies a predicate to check if query has an edge board.

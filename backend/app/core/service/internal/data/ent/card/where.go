@@ -110,6 +110,16 @@ func Version(v uint32) predicate.Card {
 	return predicate.Card(sql.FieldEQ(FieldVersion, v))
 }
 
+// ColumnID applies equality check predicate on the "column_id" field. It's identical to ColumnIDEQ.
+func ColumnID(v uint32) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldColumnID, v))
+}
+
+// BoardID applies equality check predicate on the "board_id" field. It's identical to BoardIDEQ.
+func BoardID(v uint32) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldBoardID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Card {
 	return predicate.Card(sql.FieldEQ(FieldCreatedAt, v))
@@ -723,6 +733,66 @@ func VersionLT(v uint32) predicate.Card {
 // VersionLTE applies the LTE predicate on the "version" field.
 func VersionLTE(v uint32) predicate.Card {
 	return predicate.Card(sql.FieldLTE(FieldVersion, v))
+}
+
+// ColumnIDEQ applies the EQ predicate on the "column_id" field.
+func ColumnIDEQ(v uint32) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldColumnID, v))
+}
+
+// ColumnIDNEQ applies the NEQ predicate on the "column_id" field.
+func ColumnIDNEQ(v uint32) predicate.Card {
+	return predicate.Card(sql.FieldNEQ(FieldColumnID, v))
+}
+
+// ColumnIDIn applies the In predicate on the "column_id" field.
+func ColumnIDIn(vs ...uint32) predicate.Card {
+	return predicate.Card(sql.FieldIn(FieldColumnID, vs...))
+}
+
+// ColumnIDNotIn applies the NotIn predicate on the "column_id" field.
+func ColumnIDNotIn(vs ...uint32) predicate.Card {
+	return predicate.Card(sql.FieldNotIn(FieldColumnID, vs...))
+}
+
+// ColumnIDIsNil applies the IsNil predicate on the "column_id" field.
+func ColumnIDIsNil() predicate.Card {
+	return predicate.Card(sql.FieldIsNull(FieldColumnID))
+}
+
+// ColumnIDNotNil applies the NotNil predicate on the "column_id" field.
+func ColumnIDNotNil() predicate.Card {
+	return predicate.Card(sql.FieldNotNull(FieldColumnID))
+}
+
+// BoardIDEQ applies the EQ predicate on the "board_id" field.
+func BoardIDEQ(v uint32) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldBoardID, v))
+}
+
+// BoardIDNEQ applies the NEQ predicate on the "board_id" field.
+func BoardIDNEQ(v uint32) predicate.Card {
+	return predicate.Card(sql.FieldNEQ(FieldBoardID, v))
+}
+
+// BoardIDIn applies the In predicate on the "board_id" field.
+func BoardIDIn(vs ...uint32) predicate.Card {
+	return predicate.Card(sql.FieldIn(FieldBoardID, vs...))
+}
+
+// BoardIDNotIn applies the NotIn predicate on the "board_id" field.
+func BoardIDNotIn(vs ...uint32) predicate.Card {
+	return predicate.Card(sql.FieldNotIn(FieldBoardID, vs...))
+}
+
+// BoardIDIsNil applies the IsNil predicate on the "board_id" field.
+func BoardIDIsNil() predicate.Card {
+	return predicate.Card(sql.FieldIsNull(FieldBoardID))
+}
+
+// BoardIDNotNil applies the NotNil predicate on the "board_id" field.
+func BoardIDNotNil() predicate.Card {
+	return predicate.Card(sql.FieldNotNull(FieldBoardID))
 }
 
 // HasColumn applies the HasEdge predicate on the "column" edge.

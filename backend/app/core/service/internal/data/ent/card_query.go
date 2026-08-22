@@ -28,7 +28,6 @@ type CardQuery struct {
 	predicates []predicate.Card
 	withColumn *ColumnQuery
 	withBoard  *BoardQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -416,19 +415,12 @@ func (_q *CardQuery) prepareQuery(ctx context.Context) error {
 func (_q *CardQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Card, error) {
 	var (
 		nodes       = []*Card{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
 			_q.withColumn != nil,
 			_q.withBoard != nil,
 		}
 	)
-	if _q.withColumn != nil || _q.withBoard != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, card.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Card).scanValues(nil, columns)
 	}
@@ -469,10 +461,7 @@ func (_q *CardQuery) loadColumn(ctx context.Context, query *ColumnQuery, nodes [
 	ids := make([]uint32, 0, len(nodes))
 	nodeids := make(map[uint32][]*Card)
 	for i := range nodes {
-		if nodes[i].column_id == nil {
-			continue
-		}
-		fk := *nodes[i].column_id
+		fk := nodes[i].ColumnID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -501,10 +490,7 @@ func (_q *CardQuery) loadBoard(ctx context.Context, query *BoardQuery, nodes []*
 	ids := make([]uint32, 0, len(nodes))
 	nodeids := make(map[uint32][]*Card)
 	for i := range nodes {
-		if nodes[i].board_id == nil {
-			continue
-		}
-		fk := *nodes[i].board_id
+		fk := nodes[i].BoardID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -557,6 +543,12 @@ func (_q *CardQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != card.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withColumn != nil {
+			_spec.Node.AddColumnOnce(card.FieldColumnID)
+		}
+		if _q.withBoard != nil {
+			_spec.Node.AddColumnOnce(card.FieldBoardID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

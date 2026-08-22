@@ -210,8 +210,8 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "卡片描述"},
 		{Name: "rank", Type: field.TypeString, Nullable: true, Comment: "列内排序权重，Lexorank 字典序字符串，服务端维护"},
 		{Name: "version", Type: field.TypeUint32, Comment: "乐观锁版本号，每次更新自增", Default: 1},
-		{Name: "board_id", Type: field.TypeUint32, Nullable: true},
-		{Name: "column_id", Type: field.TypeUint32, Nullable: true},
+		{Name: "board_id", Type: field.TypeUint32, Nullable: true, Comment: "所属看板ID，冗余自列，供看板级查询，服务端维护"},
+		{Name: "column_id", Type: field.TypeUint32, Nullable: true, Comment: "所属列ID"},
 	}
 	// SysKanbanCardsTable holds the schema information for the "sys_kanban_cards" table.
 	SysKanbanCardsTable = &schema.Table{
@@ -235,9 +235,14 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "idx_sys_kanban_cards_rank",
+				Name:    "idx_sys_kanban_cards_column_rank",
 				Unique:  false,
-				Columns: []*schema.Column{SysKanbanCardsColumns[10]},
+				Columns: []*schema.Column{SysKanbanCardsColumns[13], SysKanbanCardsColumns[10]},
+			},
+			{
+				Name:    "idx_sys_kanban_cards_board_column_rank",
+				Unique:  false,
+				Columns: []*schema.Column{SysKanbanCardsColumns[12], SysKanbanCardsColumns[13], SysKanbanCardsColumns[10]},
 			},
 		},
 	}
@@ -255,7 +260,7 @@ var (
 		{Name: "color", Type: field.TypeString, Nullable: true, Comment: "列颜色标识"},
 		{Name: "rank", Type: field.TypeString, Nullable: true, Comment: "看板内排序权重，Lexorank 字典序字符串，服务端维护"},
 		{Name: "version", Type: field.TypeUint32, Comment: "乐观锁版本号，每次更新自增", Default: 1},
-		{Name: "board_id", Type: field.TypeUint32, Nullable: true},
+		{Name: "board_id", Type: field.TypeUint32, Nullable: true, Comment: "所属看板ID"},
 	}
 	// SysKanbanColumnsTable holds the schema information for the "sys_kanban_columns" table.
 	SysKanbanColumnsTable = &schema.Table{
@@ -273,9 +278,9 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "idx_sys_kanban_columns_rank",
+				Name:    "idx_sys_kanban_columns_board_rank",
 				Unique:  false,
-				Columns: []*schema.Column{SysKanbanColumnsColumns[10]},
+				Columns: []*schema.Column{SysKanbanColumnsColumns[12], SysKanbanColumnsColumns[10]},
 			},
 		},
 	}

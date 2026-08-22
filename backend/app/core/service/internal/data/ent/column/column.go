@@ -35,6 +35,8 @@ const (
 	FieldRank = "rank"
 	// FieldVersion holds the string denoting the version field in the database.
 	FieldVersion = "version"
+	// FieldBoardID holds the string denoting the board_id field in the database.
+	FieldBoardID = "board_id"
 	// EdgeBoard holds the string denoting the board edge name in mutations.
 	EdgeBoard = "board"
 	// EdgeCards holds the string denoting the cards edge name in mutations.
@@ -71,23 +73,13 @@ var Columns = []string{
 	FieldColor,
 	FieldRank,
 	FieldVersion,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sys_kanban_columns"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"board_id",
+	FieldBoardID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -173,6 +165,11 @@ func ByRank(opts ...sql.OrderTermOption) OrderOption {
 // ByVersion orders the results by the version field.
 func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByBoardID orders the results by the board_id field.
+func ByBoardID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBoardID, opts...).ToFunc()
 }
 
 // ByBoardField orders the results by board field.

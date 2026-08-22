@@ -233,37 +233,49 @@ func (_u *CardUpdate) AddVersion(v int32) *CardUpdate {
 	return _u
 }
 
-// SetColumnID sets the "column" edge to the Column entity by ID.
-func (_u *CardUpdate) SetColumnID(id uint32) *CardUpdate {
-	_u.mutation.SetColumnID(id)
+// SetColumnID sets the "column_id" field.
+func (_u *CardUpdate) SetColumnID(v uint32) *CardUpdate {
+	_u.mutation.SetColumnID(v)
 	return _u
 }
 
-// SetNillableColumnID sets the "column" edge to the Column entity by ID if the given value is not nil.
-func (_u *CardUpdate) SetNillableColumnID(id *uint32) *CardUpdate {
-	if id != nil {
-		_u = _u.SetColumnID(*id)
+// SetNillableColumnID sets the "column_id" field if the given value is not nil.
+func (_u *CardUpdate) SetNillableColumnID(v *uint32) *CardUpdate {
+	if v != nil {
+		_u.SetColumnID(*v)
 	}
+	return _u
+}
+
+// ClearColumnID clears the value of the "column_id" field.
+func (_u *CardUpdate) ClearColumnID() *CardUpdate {
+	_u.mutation.ClearColumnID()
+	return _u
+}
+
+// SetBoardID sets the "board_id" field.
+func (_u *CardUpdate) SetBoardID(v uint32) *CardUpdate {
+	_u.mutation.SetBoardID(v)
+	return _u
+}
+
+// SetNillableBoardID sets the "board_id" field if the given value is not nil.
+func (_u *CardUpdate) SetNillableBoardID(v *uint32) *CardUpdate {
+	if v != nil {
+		_u.SetBoardID(*v)
+	}
+	return _u
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (_u *CardUpdate) ClearBoardID() *CardUpdate {
+	_u.mutation.ClearBoardID()
 	return _u
 }
 
 // SetColumn sets the "column" edge to the Column entity.
 func (_u *CardUpdate) SetColumn(v *Column) *CardUpdate {
 	return _u.SetColumnID(v.ID)
-}
-
-// SetBoardID sets the "board" edge to the Board entity by ID.
-func (_u *CardUpdate) SetBoardID(id uint32) *CardUpdate {
-	_u.mutation.SetBoardID(id)
-	return _u
-}
-
-// SetNillableBoardID sets the "board" edge to the Board entity by ID if the given value is not nil.
-func (_u *CardUpdate) SetNillableBoardID(id *uint32) *CardUpdate {
-	if id != nil {
-		_u = _u.SetBoardID(*id)
-	}
-	return _u
 }
 
 // SetBoard sets the "board" edge to the Board entity.
@@ -694,37 +706,49 @@ func (_u *CardUpdateOne) AddVersion(v int32) *CardUpdateOne {
 	return _u
 }
 
-// SetColumnID sets the "column" edge to the Column entity by ID.
-func (_u *CardUpdateOne) SetColumnID(id uint32) *CardUpdateOne {
-	_u.mutation.SetColumnID(id)
+// SetColumnID sets the "column_id" field.
+func (_u *CardUpdateOne) SetColumnID(v uint32) *CardUpdateOne {
+	_u.mutation.SetColumnID(v)
 	return _u
 }
 
-// SetNillableColumnID sets the "column" edge to the Column entity by ID if the given value is not nil.
-func (_u *CardUpdateOne) SetNillableColumnID(id *uint32) *CardUpdateOne {
-	if id != nil {
-		_u = _u.SetColumnID(*id)
+// SetNillableColumnID sets the "column_id" field if the given value is not nil.
+func (_u *CardUpdateOne) SetNillableColumnID(v *uint32) *CardUpdateOne {
+	if v != nil {
+		_u.SetColumnID(*v)
 	}
+	return _u
+}
+
+// ClearColumnID clears the value of the "column_id" field.
+func (_u *CardUpdateOne) ClearColumnID() *CardUpdateOne {
+	_u.mutation.ClearColumnID()
+	return _u
+}
+
+// SetBoardID sets the "board_id" field.
+func (_u *CardUpdateOne) SetBoardID(v uint32) *CardUpdateOne {
+	_u.mutation.SetBoardID(v)
+	return _u
+}
+
+// SetNillableBoardID sets the "board_id" field if the given value is not nil.
+func (_u *CardUpdateOne) SetNillableBoardID(v *uint32) *CardUpdateOne {
+	if v != nil {
+		_u.SetBoardID(*v)
+	}
+	return _u
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (_u *CardUpdateOne) ClearBoardID() *CardUpdateOne {
+	_u.mutation.ClearBoardID()
 	return _u
 }
 
 // SetColumn sets the "column" edge to the Column entity.
 func (_u *CardUpdateOne) SetColumn(v *Column) *CardUpdateOne {
 	return _u.SetColumnID(v.ID)
-}
-
-// SetBoardID sets the "board" edge to the Board entity by ID.
-func (_u *CardUpdateOne) SetBoardID(id uint32) *CardUpdateOne {
-	_u.mutation.SetBoardID(id)
-	return _u
-}
-
-// SetNillableBoardID sets the "board" edge to the Board entity by ID if the given value is not nil.
-func (_u *CardUpdateOne) SetNillableBoardID(id *uint32) *CardUpdateOne {
-	if id != nil {
-		_u = _u.SetBoardID(*id)
-	}
-	return _u
 }
 
 // SetBoard sets the "board" edge to the Board entity.

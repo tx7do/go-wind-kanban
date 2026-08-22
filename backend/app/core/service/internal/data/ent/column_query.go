@@ -29,7 +29,6 @@ type ColumnQuery struct {
 	predicates []predicate.Column
 	withBoard  *BoardQuery
 	withCards  *CardQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -417,19 +416,12 @@ func (_q *ColumnQuery) prepareQuery(ctx context.Context) error {
 func (_q *ColumnQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Column, error) {
 	var (
 		nodes       = []*Column{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
 			_q.withBoard != nil,
 			_q.withCards != nil,
 		}
 	)
-	if _q.withBoard != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, column.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Column).scanValues(nil, columns)
 	}
@@ -471,10 +463,7 @@ func (_q *ColumnQuery) loadBoard(ctx context.Context, query *BoardQuery, nodes [
 	ids := make([]uint32, 0, len(nodes))
 	nodeids := make(map[uint32][]*Column)
 	for i := range nodes {
-		if nodes[i].board_id == nil {
-			continue
-		}
-		fk := *nodes[i].board_id
+		fk := nodes[i].BoardID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -509,7 +498,9 @@ func (_q *ColumnQuery) loadCards(ctx context.Context, query *CardQuery, nodes []
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(card.FieldColumnID)
+	}
 	query.Where(predicate.Card(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(column.CardsColumn), fks...))
 	}))
@@ -518,13 +509,10 @@ func (_q *ColumnQuery) loadCards(ctx context.Context, query *CardQuery, nodes []
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.column_id
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "column_id" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.ColumnID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "column_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "column_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -558,6 +546,9 @@ func (_q *ColumnQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != column.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withBoard != nil {
+			_spec.Node.AddColumnOnce(column.FieldBoardID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

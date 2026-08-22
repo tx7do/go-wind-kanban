@@ -233,17 +233,23 @@ func (_u *ColumnUpdate) AddVersion(v int32) *ColumnUpdate {
 	return _u
 }
 
-// SetBoardID sets the "board" edge to the Board entity by ID.
-func (_u *ColumnUpdate) SetBoardID(id uint32) *ColumnUpdate {
-	_u.mutation.SetBoardID(id)
+// SetBoardID sets the "board_id" field.
+func (_u *ColumnUpdate) SetBoardID(v uint32) *ColumnUpdate {
+	_u.mutation.SetBoardID(v)
 	return _u
 }
 
-// SetNillableBoardID sets the "board" edge to the Board entity by ID if the given value is not nil.
-func (_u *ColumnUpdate) SetNillableBoardID(id *uint32) *ColumnUpdate {
-	if id != nil {
-		_u = _u.SetBoardID(*id)
+// SetNillableBoardID sets the "board_id" field if the given value is not nil.
+func (_u *ColumnUpdate) SetNillableBoardID(v *uint32) *ColumnUpdate {
+	if v != nil {
+		_u.SetBoardID(*v)
 	}
+	return _u
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (_u *ColumnUpdate) ClearBoardID() *ColumnUpdate {
+	_u.mutation.ClearBoardID()
 	return _u
 }
 
@@ -721,17 +727,23 @@ func (_u *ColumnUpdateOne) AddVersion(v int32) *ColumnUpdateOne {
 	return _u
 }
 
-// SetBoardID sets the "board" edge to the Board entity by ID.
-func (_u *ColumnUpdateOne) SetBoardID(id uint32) *ColumnUpdateOne {
-	_u.mutation.SetBoardID(id)
+// SetBoardID sets the "board_id" field.
+func (_u *ColumnUpdateOne) SetBoardID(v uint32) *ColumnUpdateOne {
+	_u.mutation.SetBoardID(v)
 	return _u
 }
 
-// SetNillableBoardID sets the "board" edge to the Board entity by ID if the given value is not nil.
-func (_u *ColumnUpdateOne) SetNillableBoardID(id *uint32) *ColumnUpdateOne {
-	if id != nil {
-		_u = _u.SetBoardID(*id)
+// SetNillableBoardID sets the "board_id" field if the given value is not nil.
+func (_u *ColumnUpdateOne) SetNillableBoardID(v *uint32) *ColumnUpdateOne {
+	if v != nil {
+		_u.SetBoardID(*v)
 	}
+	return _u
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (_u *ColumnUpdateOne) ClearBoardID() *ColumnUpdateOne {
+	_u.mutation.ClearBoardID()
 	return _u
 }
 

@@ -42,11 +42,13 @@ type Card struct {
 	Rank *string `json:"rank,omitempty"`
 	// 乐观锁版本号，每次更新自增
 	Version uint32 `json:"version,omitempty"`
+	// 所属列ID
+	ColumnID uint32 `json:"column_id,omitempty"`
+	// 所属看板ID，冗余自列，供看板级查询，服务端维护
+	BoardID uint32 `json:"board_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CardQuery when eager-loading is set.
 	Edges        CardEdges `json:"edges"`
-	board_id     *uint32
-	column_id    *uint32
 	selectValues sql.SelectValues
 }
 
@@ -88,16 +90,12 @@ func (*Card) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case card.FieldID, card.FieldCreatedBy, card.FieldUpdatedBy, card.FieldDeletedBy, card.FieldTenantID, card.FieldVersion:
+		case card.FieldID, card.FieldCreatedBy, card.FieldUpdatedBy, card.FieldDeletedBy, card.FieldTenantID, card.FieldVersion, card.FieldColumnID, card.FieldBoardID:
 			values[i] = new(sql.NullInt64)
 		case card.FieldName, card.FieldDescription, card.FieldRank:
 			values[i] = new(sql.NullString)
 		case card.FieldCreatedAt, card.FieldUpdatedAt, card.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case card.ForeignKeys[0]: // board_id
-			values[i] = new(sql.NullInt64)
-		case card.ForeignKeys[1]: // column_id
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -195,19 +193,17 @@ func (_m *Card) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Version = uint32(value.Int64)
 			}
-		case card.ForeignKeys[0]:
+		case card.FieldColumnID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field board_id", value)
+				return fmt.Errorf("unexpected type %T for field column_id", values[i])
 			} else if value.Valid {
-				_m.board_id = new(uint32)
-				*_m.board_id = uint32(value.Int64)
+				_m.ColumnID = uint32(value.Int64)
 			}
-		case card.ForeignKeys[1]:
+		case card.FieldBoardID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field column_id", value)
+				return fmt.Errorf("unexpected type %T for field board_id", values[i])
 			} else if value.Valid {
-				_m.column_id = new(uint32)
-				*_m.column_id = uint32(value.Int64)
+				_m.BoardID = uint32(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -307,6 +303,12 @@ func (_m *Card) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("version=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Version))
+	builder.WriteString(", ")
+	builder.WriteString("column_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ColumnID))
+	builder.WriteString(", ")
+	builder.WriteString("board_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BoardID))
 	builder.WriteByte(')')
 	return builder.String()
 }

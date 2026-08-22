@@ -6174,27 +6174,113 @@ func (m *CardMutation) ResetVersion() {
 	m.addversion = nil
 }
 
-// SetColumnID sets the "column" edge to the Column entity by id.
-func (m *CardMutation) SetColumnID(id uint32) {
-	m.column = &id
+// SetColumnID sets the "column_id" field.
+func (m *CardMutation) SetColumnID(u uint32) {
+	m.column = &u
+}
+
+// ColumnID returns the value of the "column_id" field in the mutation.
+func (m *CardMutation) ColumnID() (r uint32, exists bool) {
+	v := m.column
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldColumnID returns the old "column_id" field's value of the Card entity.
+// If the Card object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardMutation) OldColumnID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldColumnID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldColumnID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldColumnID: %w", err)
+	}
+	return oldValue.ColumnID, nil
+}
+
+// ClearColumnID clears the value of the "column_id" field.
+func (m *CardMutation) ClearColumnID() {
+	m.column = nil
+	m.clearedFields[card.FieldColumnID] = struct{}{}
+}
+
+// ColumnIDCleared returns if the "column_id" field was cleared in this mutation.
+func (m *CardMutation) ColumnIDCleared() bool {
+	_, ok := m.clearedFields[card.FieldColumnID]
+	return ok
+}
+
+// ResetColumnID resets all changes to the "column_id" field.
+func (m *CardMutation) ResetColumnID() {
+	m.column = nil
+	delete(m.clearedFields, card.FieldColumnID)
+}
+
+// SetBoardID sets the "board_id" field.
+func (m *CardMutation) SetBoardID(u uint32) {
+	m.board = &u
+}
+
+// BoardID returns the value of the "board_id" field in the mutation.
+func (m *CardMutation) BoardID() (r uint32, exists bool) {
+	v := m.board
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBoardID returns the old "board_id" field's value of the Card entity.
+// If the Card object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardMutation) OldBoardID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBoardID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBoardID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBoardID: %w", err)
+	}
+	return oldValue.BoardID, nil
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (m *CardMutation) ClearBoardID() {
+	m.board = nil
+	m.clearedFields[card.FieldBoardID] = struct{}{}
+}
+
+// BoardIDCleared returns if the "board_id" field was cleared in this mutation.
+func (m *CardMutation) BoardIDCleared() bool {
+	_, ok := m.clearedFields[card.FieldBoardID]
+	return ok
+}
+
+// ResetBoardID resets all changes to the "board_id" field.
+func (m *CardMutation) ResetBoardID() {
+	m.board = nil
+	delete(m.clearedFields, card.FieldBoardID)
 }
 
 // ClearColumn clears the "column" edge to the Column entity.
 func (m *CardMutation) ClearColumn() {
 	m.clearedcolumn = true
+	m.clearedFields[card.FieldColumnID] = struct{}{}
 }
 
 // ColumnCleared reports if the "column" edge to the Column entity was cleared.
 func (m *CardMutation) ColumnCleared() bool {
-	return m.clearedcolumn
-}
-
-// ColumnID returns the "column" edge ID in the mutation.
-func (m *CardMutation) ColumnID() (id uint32, exists bool) {
-	if m.column != nil {
-		return *m.column, true
-	}
-	return
+	return m.ColumnIDCleared() || m.clearedcolumn
 }
 
 // ColumnIDs returns the "column" edge IDs in the mutation.
@@ -6213,27 +6299,15 @@ func (m *CardMutation) ResetColumn() {
 	m.clearedcolumn = false
 }
 
-// SetBoardID sets the "board" edge to the Board entity by id.
-func (m *CardMutation) SetBoardID(id uint32) {
-	m.board = &id
-}
-
 // ClearBoard clears the "board" edge to the Board entity.
 func (m *CardMutation) ClearBoard() {
 	m.clearedboard = true
+	m.clearedFields[card.FieldBoardID] = struct{}{}
 }
 
 // BoardCleared reports if the "board" edge to the Board entity was cleared.
 func (m *CardMutation) BoardCleared() bool {
-	return m.clearedboard
-}
-
-// BoardID returns the "board" edge ID in the mutation.
-func (m *CardMutation) BoardID() (id uint32, exists bool) {
-	if m.board != nil {
-		return *m.board, true
-	}
-	return
+	return m.BoardIDCleared() || m.clearedboard
 }
 
 // BoardIDs returns the "board" edge IDs in the mutation.
@@ -6286,7 +6360,7 @@ func (m *CardMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CardMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, card.FieldCreatedAt)
 	}
@@ -6320,6 +6394,12 @@ func (m *CardMutation) Fields() []string {
 	if m.version != nil {
 		fields = append(fields, card.FieldVersion)
 	}
+	if m.column != nil {
+		fields = append(fields, card.FieldColumnID)
+	}
+	if m.board != nil {
+		fields = append(fields, card.FieldBoardID)
+	}
 	return fields
 }
 
@@ -6350,6 +6430,10 @@ func (m *CardMutation) Field(name string) (ent.Value, bool) {
 		return m.Rank()
 	case card.FieldVersion:
 		return m.Version()
+	case card.FieldColumnID:
+		return m.ColumnID()
+	case card.FieldBoardID:
+		return m.BoardID()
 	}
 	return nil, false
 }
@@ -6381,6 +6465,10 @@ func (m *CardMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldRank(ctx)
 	case card.FieldVersion:
 		return m.OldVersion(ctx)
+	case card.FieldColumnID:
+		return m.OldColumnID(ctx)
+	case card.FieldBoardID:
+		return m.OldBoardID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Card field %s", name)
 }
@@ -6466,6 +6554,20 @@ func (m *CardMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVersion(v)
+		return nil
+	case card.FieldColumnID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetColumnID(v)
+		return nil
+	case card.FieldBoardID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBoardID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Card field %s", name)
@@ -6590,6 +6692,12 @@ func (m *CardMutation) ClearedFields() []string {
 	if m.FieldCleared(card.FieldRank) {
 		fields = append(fields, card.FieldRank)
 	}
+	if m.FieldCleared(card.FieldColumnID) {
+		fields = append(fields, card.FieldColumnID)
+	}
+	if m.FieldCleared(card.FieldBoardID) {
+		fields = append(fields, card.FieldBoardID)
+	}
 	return fields
 }
 
@@ -6634,6 +6742,12 @@ func (m *CardMutation) ClearField(name string) error {
 	case card.FieldRank:
 		m.ClearRank()
 		return nil
+	case card.FieldColumnID:
+		m.ClearColumnID()
+		return nil
+	case card.FieldBoardID:
+		m.ClearBoardID()
+		return nil
 	}
 	return fmt.Errorf("unknown Card nullable field %s", name)
 }
@@ -6674,6 +6788,12 @@ func (m *CardMutation) ResetField(name string) error {
 		return nil
 	case card.FieldVersion:
 		m.ResetVersion()
+		return nil
+	case card.FieldColumnID:
+		m.ResetColumnID()
+		return nil
+	case card.FieldBoardID:
+		m.ResetBoardID()
 		return nil
 	}
 	return fmt.Errorf("unknown Card field %s", name)
@@ -7538,27 +7658,64 @@ func (m *ColumnMutation) ResetVersion() {
 	m.addversion = nil
 }
 
-// SetBoardID sets the "board" edge to the Board entity by id.
-func (m *ColumnMutation) SetBoardID(id uint32) {
-	m.board = &id
+// SetBoardID sets the "board_id" field.
+func (m *ColumnMutation) SetBoardID(u uint32) {
+	m.board = &u
+}
+
+// BoardID returns the value of the "board_id" field in the mutation.
+func (m *ColumnMutation) BoardID() (r uint32, exists bool) {
+	v := m.board
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBoardID returns the old "board_id" field's value of the Column entity.
+// If the Column object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ColumnMutation) OldBoardID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBoardID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBoardID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBoardID: %w", err)
+	}
+	return oldValue.BoardID, nil
+}
+
+// ClearBoardID clears the value of the "board_id" field.
+func (m *ColumnMutation) ClearBoardID() {
+	m.board = nil
+	m.clearedFields[column.FieldBoardID] = struct{}{}
+}
+
+// BoardIDCleared returns if the "board_id" field was cleared in this mutation.
+func (m *ColumnMutation) BoardIDCleared() bool {
+	_, ok := m.clearedFields[column.FieldBoardID]
+	return ok
+}
+
+// ResetBoardID resets all changes to the "board_id" field.
+func (m *ColumnMutation) ResetBoardID() {
+	m.board = nil
+	delete(m.clearedFields, column.FieldBoardID)
 }
 
 // ClearBoard clears the "board" edge to the Board entity.
 func (m *ColumnMutation) ClearBoard() {
 	m.clearedboard = true
+	m.clearedFields[column.FieldBoardID] = struct{}{}
 }
 
 // BoardCleared reports if the "board" edge to the Board entity was cleared.
 func (m *ColumnMutation) BoardCleared() bool {
-	return m.clearedboard
-}
-
-// BoardID returns the "board" edge ID in the mutation.
-func (m *ColumnMutation) BoardID() (id uint32, exists bool) {
-	if m.board != nil {
-		return *m.board, true
-	}
-	return
+	return m.BoardIDCleared() || m.clearedboard
 }
 
 // BoardIDs returns the "board" edge IDs in the mutation.
@@ -7665,7 +7822,7 @@ func (m *ColumnMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ColumnMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, column.FieldCreatedAt)
 	}
@@ -7699,6 +7856,9 @@ func (m *ColumnMutation) Fields() []string {
 	if m.version != nil {
 		fields = append(fields, column.FieldVersion)
 	}
+	if m.board != nil {
+		fields = append(fields, column.FieldBoardID)
+	}
 	return fields
 }
 
@@ -7729,6 +7889,8 @@ func (m *ColumnMutation) Field(name string) (ent.Value, bool) {
 		return m.Rank()
 	case column.FieldVersion:
 		return m.Version()
+	case column.FieldBoardID:
+		return m.BoardID()
 	}
 	return nil, false
 }
@@ -7760,6 +7922,8 @@ func (m *ColumnMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldRank(ctx)
 	case column.FieldVersion:
 		return m.OldVersion(ctx)
+	case column.FieldBoardID:
+		return m.OldBoardID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Column field %s", name)
 }
@@ -7845,6 +8009,13 @@ func (m *ColumnMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVersion(v)
+		return nil
+	case column.FieldBoardID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBoardID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Column field %s", name)
@@ -7969,6 +8140,9 @@ func (m *ColumnMutation) ClearedFields() []string {
 	if m.FieldCleared(column.FieldRank) {
 		fields = append(fields, column.FieldRank)
 	}
+	if m.FieldCleared(column.FieldBoardID) {
+		fields = append(fields, column.FieldBoardID)
+	}
 	return fields
 }
 
@@ -8013,6 +8187,9 @@ func (m *ColumnMutation) ClearField(name string) error {
 	case column.FieldRank:
 		m.ClearRank()
 		return nil
+	case column.FieldBoardID:
+		m.ClearBoardID()
+		return nil
 	}
 	return fmt.Errorf("unknown Column nullable field %s", name)
 }
@@ -8053,6 +8230,9 @@ func (m *ColumnMutation) ResetField(name string) error {
 		return nil
 	case column.FieldVersion:
 		m.ResetVersion()
+		return nil
+	case column.FieldBoardID:
+		m.ResetBoardID()
 		return nil
 	}
 	return fmt.Errorf("unknown Column field %s", name)

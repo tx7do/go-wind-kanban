@@ -470,7 +470,9 @@ func (_q *BoardQuery) loadColumns(ctx context.Context, query *ColumnQuery, nodes
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(column.FieldBoardID)
+	}
 	query.Where(predicate.Column(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(board.ColumnsColumn), fks...))
 	}))
@@ -479,13 +481,10 @@ func (_q *BoardQuery) loadColumns(ctx context.Context, query *ColumnQuery, nodes
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.board_id
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "board_id" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.BoardID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "board_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "board_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -501,7 +500,9 @@ func (_q *BoardQuery) loadCards(ctx context.Context, query *CardQuery, nodes []*
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(card.FieldBoardID)
+	}
 	query.Where(predicate.Card(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(board.CardsColumn), fks...))
 	}))
@@ -510,13 +511,10 @@ func (_q *BoardQuery) loadCards(ctx context.Context, query *CardQuery, nodes []*
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.board_id
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "board_id" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.BoardID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "board_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "board_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
