@@ -56,15 +56,16 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	taskServiceClient := data.NewTaskServiceClient(context, discovery)
 	taskService := service.NewTaskService(context, taskServiceClient)
 	boardServiceClient := data.NewBoardServiceClient(context, discovery)
-	boardService := service.NewBoardService(context, boardServiceClient)
-	columnServiceClient := data.NewColumnServiceClient(context, discovery)
-	columnService := service.NewColumnService(context, columnServiceClient)
-	cardServiceClient := data.NewCardServiceClient(context, discovery)
-	cardService := service.NewCardService(context, cardServiceClient)
 	client, cleanup, err := data.NewRedisClient(context)
 	if err != nil {
 		return nil, nil, err
 	}
+	hub := server.NewBoardEventHub(context, client)
+	boardService := service.NewBoardService(context, boardServiceClient, hub)
+	columnServiceClient := data.NewColumnServiceClient(context, discovery)
+	columnService := service.NewColumnService(context, columnServiceClient, hub)
+	cardServiceClient := data.NewCardServiceClient(context, discovery)
+	cardService := service.NewCardService(context, cardServiceClient, hub)
 	captcha := data.NewCaptcha(client)
 	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient, captcha)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(context, discovery)

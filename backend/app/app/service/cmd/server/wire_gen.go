@@ -32,6 +32,13 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	tenantServiceClient := data.NewTenantServiceClient(context, discovery)
 	tenantResolver := data.NewTenantResolver(tenantServiceClient)
 	v := server.NewRestMiddleware(context, accessTokenChecker, engine, tenantResolver)
+	client, cleanup, err := data.NewRedisClient(context)
+	if err != nil {
+		return nil, nil, err
+	}
+	hub := server.NewBoardEventHub(context, client)
+	boardServiceClient := data.NewBoardServiceClient(context, discovery)
+	wsServer := server.NewWsServer(context, hub, authenticationServiceClient, boardServiceClient)
 	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient)
 	userServiceClient := data.NewUserServiceClient(context, discovery)
 	orgUnitServiceClient := data.NewOrgUnitServiceClient(context, discovery)
@@ -39,20 +46,21 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	roleServiceClient := data.NewRoleServiceClient(context, discovery)
 	userCredentialServiceClient := data.NewUserCredentialServiceClient(context, discovery)
 	userProfileService := service.NewUserProfileService(context, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
-	boardServiceClient := data.NewBoardServiceClient(context, discovery)
-	boardService := service.NewBoardService(context, boardServiceClient)
+	boardService := service.NewBoardService(context, boardServiceClient, hub)
 	columnServiceClient := data.NewColumnServiceClient(context, discovery)
-	columnService := service.NewColumnService(context, columnServiceClient)
+	columnService := service.NewColumnService(context, columnServiceClient, hub)
 	cardServiceClient := data.NewCardServiceClient(context, discovery)
-	cardService := service.NewCardService(context, cardServiceClient)
-	httpServer := server.NewRestServer(context, v, authenticationService, userProfileService, boardService, columnService, cardService)
+	cardService := service.NewCardService(context, cardServiceClient, hub)
+	httpServer := server.NewRestServer(context, v, wsServer, authenticationService, userProfileService, boardService, columnService, cardService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	sseServer := server.NewSseServer(context, authenticationServiceClient)
-	app := newApp(context, httpServer, grpcServer, sseServer)
+	app := newApp(context, httpServer, grpcServer, sseServer, wsServer)
 	return app, func() {
+		cleanup()
 	}, nil
 }

@@ -14,6 +14,7 @@ import (
 	_ "github.com/tx7do/kratos-bootstrap/registry/etcd"
 	_ "github.com/tx7do/kratos-bootstrap/tracer"
 
+	"go-wind-cms/app/app/service/internal/server"
 	"go-wind-cms/pkg/serviceid"
 )
 
@@ -26,11 +27,13 @@ func newApp(
 	hs *http.Server,
 	gs *grpc.Server,
 	ss *sse.Server,
+	ws *server.WsServer,
 ) *kratos.App {
 	return bootstrap.NewApp(ctx,
 		hs,
 		gs,
 		ss,
+		ws,
 	)
 }
 

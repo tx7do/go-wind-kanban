@@ -87,6 +87,8 @@ func NewRestServer(
 
 	middlewares []middleware.Middleware,
 
+	wsServer *WsServer,
+
 	authenticationService *service.AuthenticationService,
 	userProfileService *service.UserProfileService,
 
@@ -112,10 +114,13 @@ func NewRestServer(
 	appV1.RegisterColumnServiceHTTPServer(srv, columnService)
 	appV1.RegisterCardServiceHTTPServer(srv, cardService)
 
+	// 看板实时 WebSocket（原生 handler，不经中间件链；握手内自鉴权）
+	srv.HandleFunc("/app/v1/ws", wsServer.Handler())
+
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(
 			srv,
-			swaggerUI.WithTitle("GoWind Content Hub App API"),
+			swaggerUI.WithTitle("GoWind Kanban App API"),
 			swaggerUI.WithMemoryData(assets.OpenApiData, "yaml"),
 		)
 	}

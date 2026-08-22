@@ -13,6 +13,7 @@ import (
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
 
+	"go-wind-cms/pkg/broadcast"
 	"go-wind-cms/pkg/middleware/auth"
 )
 
@@ -22,16 +23,19 @@ type ColumnService struct {
 	log *log.Helper
 
 	columnServiceClient boardV1.ColumnServiceClient
+	hub             *broadcast.Hub
 }
 
 func NewColumnService(
 	ctx *bootstrap.Context,
 	columnServiceClient boardV1.ColumnServiceClient,
+	hub *broadcast.Hub,
 ) *ColumnService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "column/service/admin-service"))
 	return &ColumnService{
 		log:                 l,
 		columnServiceClient: columnServiceClient,
+		hub:             hub,
 	}
 }
 
@@ -56,7 +60,11 @@ func (s *ColumnService) Create(ctx context.Context, req *boardV1.CreateColumnReq
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.columnServiceClient.Create(ctx, req)
+	resp, err := s.columnServiceClient.Create(ctx, req)
+	if err == nil && resp != nil {
+		publishColumnEntity(ctx, s.hub, boardV1.BoardChangeEvent_COLUMN_CREATED, resp)
+	}
+	return resp, err
 }
 
 func (s *ColumnService) Update(ctx context.Context, req *boardV1.UpdateColumnRequest) (*boardV1.Column, error) {
@@ -77,14 +85,29 @@ func (s *ColumnService) Update(ctx context.Context, req *boardV1.UpdateColumnReq
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.columnServiceClient.Update(ctx, req)
+	resp, err := s.columnServiceClient.Update(ctx, req)
+	if err == nil && resp != nil {
+		publishColumnEntity(ctx, s.hub, boardV1.BoardChangeEvent_COLUMN_UPDATED, resp)
+	}
+	return resp, err
 }
 
 func (s *ColumnService) Delete(ctx context.Context, req *boardV1.DeleteColumnRequest) (*emptypb.Empty, error) {
-	return s.columnServiceClient.Delete(ctx, req)
+	col, _ := s.columnServiceClient.Get(ctx, &boardV1.GetColumnRequest{
+		QueryBy: &boardV1.GetColumnRequest_Id{Id: req.GetId()},
+	})
+	resp, err := s.columnServiceClient.Delete(ctx, req)
+	if err == nil {
+		publishColumnDeleted(ctx, s.hub, col.GetBoardId(), req.GetId())
+	}
+	return resp, err
 }
 
 // Move 移动列（看板内重排序）
 func (s *ColumnService) Move(ctx context.Context, req *boardV1.MoveColumnRequest) (*boardV1.Column, error) {
-	return s.columnServiceClient.Move(ctx, req)
+	resp, err := s.columnServiceClient.Move(ctx, req)
+	if err == nil && resp != nil {
+		publishColumnEntity(ctx, s.hub, boardV1.BoardChangeEvent_COLUMN_MOVED, resp)
+	}
+	return resp, err
 }

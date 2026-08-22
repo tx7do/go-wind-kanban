@@ -25,4 +25,5 @@ var ProviderSet = wire.NewSet(
 	server.NewGrpcServer,
 
 	server.NewSseServer,
+	server.NewBoardEventHub,
 )

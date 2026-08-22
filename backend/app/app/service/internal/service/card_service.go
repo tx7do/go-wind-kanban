@@ -13,6 +13,7 @@ import (
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
 
+	"go-wind-cms/pkg/broadcast"
 	"go-wind-cms/pkg/middleware/auth"
 )
 
@@ -22,16 +23,19 @@ type CardService struct {
 	log *log.Helper
 
 	cardServiceClient boardV1.CardServiceClient
+	hub             *broadcast.Hub
 }
 
 func NewCardService(
 	ctx *bootstrap.Context,
 	cardServiceClient boardV1.CardServiceClient,
+	hub *broadcast.Hub,
 ) *CardService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "card/service/app-service"))
 	return &CardService{
 		log:               l,
 		cardServiceClient: cardServiceClient,
+		hub:             hub,
 	}
 }
 
@@ -56,7 +60,11 @@ func (s *CardService) Create(ctx context.Context, req *boardV1.CreateCardRequest
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.cardServiceClient.Create(ctx, req)
+	resp, err := s.cardServiceClient.Create(ctx, req)
+	if err == nil && resp != nil {
+		publishCardEntity(ctx, s.hub, boardV1.BoardChangeEvent_CARD_CREATED, resp)
+	}
+	return resp, err
 }
 
 func (s *CardService) Update(ctx context.Context, req *boardV1.UpdateCardRequest) (*boardV1.Card, error) {
@@ -77,14 +85,30 @@ func (s *CardService) Update(ctx context.Context, req *boardV1.UpdateCardRequest
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.cardServiceClient.Update(ctx, req)
+	resp, err := s.cardServiceClient.Update(ctx, req)
+	if err == nil && resp != nil {
+		publishCardEntity(ctx, s.hub, boardV1.BoardChangeEvent_CARD_UPDATED, resp)
+	}
+	return resp, err
 }
 
 func (s *CardService) Delete(ctx context.Context, req *boardV1.DeleteCardRequest) (*emptypb.Empty, error) {
-	return s.cardServiceClient.Delete(ctx, req)
+	// 删除前先取实体补 board_id（事件路由键）
+	c, _ := s.cardServiceClient.Get(ctx, &boardV1.GetCardRequest{
+		QueryBy: &boardV1.GetCardRequest_Id{Id: req.GetId()},
+	})
+	resp, err := s.cardServiceClient.Delete(ctx, req)
+	if err == nil {
+		publishCardDeleted(ctx, s.hub, c.GetBoardId(), req.GetId())
+	}
+	return resp, err
 }
 
 // Move 移动卡片（同列重排/跨列移动，Flutter 拖拽事件的服务端入口）
 func (s *CardService) Move(ctx context.Context, req *boardV1.MoveCardRequest) (*boardV1.Card, error) {
-	return s.cardServiceClient.Move(ctx, req)
+	resp, err := s.cardServiceClient.Move(ctx, req)
+	if err == nil && resp != nil {
+		publishCardEntity(ctx, s.hub, boardV1.BoardChangeEvent_CARD_MOVED, resp)
+	}
+	return resp, err
 }

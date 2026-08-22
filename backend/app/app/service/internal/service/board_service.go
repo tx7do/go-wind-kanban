@@ -13,6 +13,7 @@ import (
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
 
+	"go-wind-cms/pkg/broadcast"
 	"go-wind-cms/pkg/middleware/auth"
 )
 
@@ -22,16 +23,19 @@ type BoardService struct {
 	log *log.Helper
 
 	boardServiceClient boardV1.BoardServiceClient
+	hub             *broadcast.Hub
 }
 
 func NewBoardService(
 	ctx *bootstrap.Context,
 	boardServiceClient boardV1.BoardServiceClient,
+	hub *broadcast.Hub,
 ) *BoardService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "board/service/app-service"))
 	return &BoardService{
 		log:                l,
 		boardServiceClient: boardServiceClient,
+		hub:             hub,
 	}
 }
 
@@ -56,7 +60,11 @@ func (s *BoardService) Create(ctx context.Context, req *boardV1.CreateBoardReque
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
-	return s.boardServiceClient.Create(ctx, req)
+	resp, err := s.boardServiceClient.Create(ctx, req)
+	if err == nil && resp != nil {
+		publishBoardEntity(ctx, s.hub, boardV1.BoardChangeEvent_BOARD_CREATED, resp)
+	}
+	return resp, err
 }
 
 func (s *BoardService) Update(ctx context.Context, req *boardV1.UpdateBoardRequest) (*boardV1.Board, error) {
@@ -77,16 +85,28 @@ func (s *BoardService) Update(ctx context.Context, req *boardV1.UpdateBoardReque
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
-	return s.boardServiceClient.Update(ctx, req)
+	resp, err := s.boardServiceClient.Update(ctx, req)
+	if err == nil && resp != nil {
+		publishBoardEntity(ctx, s.hub, boardV1.BoardChangeEvent_BOARD_UPDATED, resp)
+	}
+	return resp, err
 }
 
 func (s *BoardService) Delete(ctx context.Context, req *boardV1.DeleteBoardRequest) (*emptypb.Empty, error) {
-	return s.boardServiceClient.Delete(ctx, req)
+	resp, err := s.boardServiceClient.Delete(ctx, req)
+	if err == nil {
+		publishBoardDeleted(ctx, s.hub, req.GetId())
+	}
+	return resp, err
 }
 
 // Move 移动看板（租户内重排序）
 func (s *BoardService) Move(ctx context.Context, req *boardV1.MoveBoardRequest) (*boardV1.Board, error) {
-	return s.boardServiceClient.Move(ctx, req)
+	resp, err := s.boardServiceClient.Move(ctx, req)
+	if err == nil && resp != nil {
+		publishBoardEntity(ctx, s.hub, boardV1.BoardChangeEvent_BOARD_MOVED, resp)
+	}
+	return resp, err
 }
 
 // GetBoardSnapshot 获取看板完整快照（Flutter 客户端首屏加载与离线缓存入口）

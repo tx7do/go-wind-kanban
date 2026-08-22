@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package board.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/timestamp.proto";
+
+import "board/service/v1/board.proto";
+import "board/service/v1/column.proto";
+import "board/service/v1/card.proto";
+
+// 看板实时变更事件。
+//
+// 由 BFF（admin/app）在看板写操作成功后发布，经 Redis 总线广播到
+// 各实例的 WebSocket 连接池，推送给订阅了对应 board_id 的在线客户端。
+// 离线客户端经由后续的差量同步补齐，不依赖本事件。
+message BoardChangeEvent {
+  // 变更类型
+  enum Type {
+    TYPE_UNSPECIFIED = 0; // 未指定（不应出现）
+
+    BOARD_CREATED = 10; // 看板创建
+    BOARD_UPDATED = 11; // 看板更新
+    BOARD_DELETED = 12; // 看板删除
+    BOARD_MOVED = 13;   // 看板重排
+
+    COLUMN_CREATED = 20; // 列创建
+    COLUMN_UPDATED = 21; // 列更新
+    COLUMN_DELETED = 22; // 列删除
+    COLUMN_MOVED = 23;   // 列重排
+
+    CARD_CREATED = 30; // 卡片创建
+    CARD_UPDATED = 31; // 卡片更新
+    CARD_DELETED = 32; // 卡片删除
+    CARD_MOVED = 33;   // 卡片移动（同列重排/跨列）
+  }
+
+  optional Type type = 1 [
+    json_name = "type",
+    (gnostic.openapi.v3.property) = {description: "变更类型"}
+  ]; // 变更类型
+
+  optional uint32 board_id = 2 [
+    json_name = "boardId",
+    (gnostic.openapi.v3.property) = {description: "变更所属看板ID（订阅路由键）"}
+  ]; // 变更所属看板ID（订阅路由键）
+
+  optional uint32 actor_id = 3 [
+    json_name = "actorId",
+    (gnostic.openapi.v3.property) = {description: "触发变更的用户ID（客户端用于忽略自己的回声）"}
+  ]; // 触发变更的用户ID（客户端用于忽略自己的回声）
+
+  optional google.protobuf.Timestamp occurred_at = 4 [
+    json_name = "occurredAt",
+    (gnostic.openapi.v3.property) = {description: "事件发生时间"}
+  ]; // 事件发生时间
+
+  // 变更后的实体快照；DELETED 事件仅保证 id 字段有效。
+  oneof payload {
+    Board board = 10 [
+      json_name = "board",
+      (gnostic.openapi.v3.property) = {description: "看板实体"}
+    ]; // 看板实体
+
+    Column column = 11 [
+      json_name = "column",
+      (gnostic.openapi.v3.property) = {description: "列实体"}
+    ]; // 列实体
+
+    Card card = 12 [
+      json_name = "card",
+      (gnostic.openapi.v3.property) = {description: "卡片实体"}
+    ]; // 卡片实体
+  }
+}
