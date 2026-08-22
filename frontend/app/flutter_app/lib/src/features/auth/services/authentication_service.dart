@@ -3,7 +3,7 @@ import 'package:cached_query/cached_query.dart' show Mutation;
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show ApiClient, AuthenticationServiceClient;
+    show ApiClient, AuthenticationServiceClient, AuthenticationServiceV1ClientType;
 import 'package:flutter_app/src/app_router/app_router.dart' show AppRouter;
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -105,6 +105,8 @@ class AuthenticationService extends AuthService {
           grant_type: AuthenticationServiceV1GrantType.password,
           username: params.username,
           password: encryptedPassword,
+          tenant_code: params.tenantCode,
+          client_type: params.clientType,
         );
         final response = await _api.login(request);
         // 确保 token 被保存到缓存
@@ -175,6 +177,13 @@ class AuthenticationService extends AuthService {
 class LoginParams {
   final String username;
   final String password;
+  final String tenantCode;
+  final AuthenticationServiceV1ClientType clientType;
 
-  const LoginParams({required this.username, required this.password});
+  const LoginParams({
+    required this.username,
+    required this.password,
+    required this.tenantCode,
+    required this.clientType,
+  });
 }

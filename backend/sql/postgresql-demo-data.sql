@@ -250,4 +250,24 @@ VALUES
 ;
 SELECT setval('internal_message_categories_id_seq', (SELECT MAX(id) FROM internal_message_categories));
 
+-- ----------------------------
+-- 看板域 RBAC 种子：为租户管理员角色绑定看板相关权限
+-- 没有这段，新部署环境首次启动全员 403（角色无任何权限绑定）。
+-- ----------------------------
+
+-- 角色 2 (template:tenant:manager) ← 权限 3 (sys:tenant_manager)
+-- 权限 3 已通过 sys_permission_apis 覆盖 board/column/card/label 域的 13 个 API。
+INSERT INTO public.sys_role_permissions (tenant_id, role_id, permission_id, created_at)
+SELECT 1, r.id, p.id, now()
+FROM public.sys_roles r, public.sys_permissions p
+WHERE r.code = 'template:tenant:manager' AND p.code = 'sys:tenant_manager'
+ON CONFLICT DO NOTHING;
+
+-- 系统用户 2 (tenant_admin, 属租户 1) ← 角色 2 (template:tenant:manager)
+INSERT INTO public.sys_user_roles (tenant_id, user_id, role_id, created_at)
+SELECT 1, u.id, r.id, now()
+FROM public.sys_users u, public.sys_roles r
+WHERE u.username = 'tenant_admin' AND r.code = 'template:tenant:manager'
+ON CONFLICT DO NOTHING;
+
 COMMIT;

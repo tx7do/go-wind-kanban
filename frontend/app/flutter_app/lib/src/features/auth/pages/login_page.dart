@@ -7,7 +7,7 @@ import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/features/auth/services/authentication_service.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
-    show AuthenticationServiceV1LoginResponse;
+    show AuthenticationServiceV1ClientType, AuthenticationServiceV1LoginResponse;
 
 /// 登录页面
 class LoginPage extends StatefulWidget {
@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _tenantCodeController = TextEditingController();
   final _authService = AuthenticationService();
   bool _obscurePassword = true;
 
@@ -28,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _tenantCodeController.dispose();
     super.dispose();
   }
 
@@ -40,6 +42,8 @@ class _LoginPageState extends State<LoginPage> {
         LoginParams(
           username: _usernameController.text.trim(),
           password: _passwordController.text,
+          tenantCode: _tenantCodeController.text.trim(),
+          clientType: AuthenticationServiceV1ClientType.app,
         ),
       );
 
@@ -180,6 +184,28 @@ class _LoginPageState extends State<LoginPage> {
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return loc.usernameHint;
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: isMobile ? 16.h : 18),
+
+                          // Tenant Code
+                          TextFormField(
+                            controller: _tenantCodeController,
+                            decoration: InputDecoration(
+                              labelText: '租户编码',
+                              hintText: '请输入租户编码',
+                              prefixIcon: const Icon(Icons.business_outlined),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  isMobile ? 12.r : 14,
+                                ),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return '请输入租户编码';
                               }
                               return null;
                             },
