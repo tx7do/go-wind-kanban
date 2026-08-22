@@ -44,7 +44,7 @@ IFS=$'\n\t'
 
 # 可通过环境变量覆盖，默认 /root/app
 APP_ROOT=${APP_ROOT:-/root/app}
-deps=(postgres redis etcd minio jaeger)
+deps=(postgres redis etcd jaeger)
 
 # 切换到脚本所在目录的上一级（项目根）
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

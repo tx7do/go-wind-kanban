@@ -7,6 +7,7 @@ import type {
   dictservicev1_ListDictEntryResponse,
   dictservicev1_ListDictTypeResponse,
 } from '#/api/generated/admin/service/v1';
+import type { pagination_PagingRequest as PaginationPagingRequest } from '#/api/generated/admin/service/v1';
 
 import { ref } from 'vue';
 
@@ -223,8 +224,8 @@ export function getDictEntriesOptionsByTypeCode(typeCode: string) {
 export async function fetchAllDictEntries() {
   if (Object.keys(dictEntryCache.value).length > 0) return;
 
-  const types = await apiClient.dictTypeService.List({});
-  const result = await apiClient.dictEntryService.List({});
+  const types = await apiClient.dictTypeService.List({} as PaginationPagingRequest);
+  const result = await apiClient.dictEntryService.List({} as PaginationPagingRequest);
   const items = result?.items || [];
   for (const item of items) {
     const typeCode = types?.items?.find(

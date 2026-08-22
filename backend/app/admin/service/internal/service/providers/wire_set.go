@@ -41,9 +41,6 @@ var ProviderSet = wire.NewSet(
 	service.NewColumnService,
 	service.NewCardService,
 
-	service.NewFileTransferService,
-	service.NewFileService,
-
 	service.NewDictTypeService,
 	service.NewDictEntryService,
 	service.NewLanguageService,
@@ -59,21 +56,4 @@ var ProviderSet = wire.NewSet(
 	service.NewInternalMessageCategoryService,
 	service.NewInternalMessageRecipientService,
 
-	service.NewCategoryService,
-	service.NewTagService,
-	service.NewPageService,
-	service.NewSectionService,
-	service.NewPostService,
-
-	service.NewCommentService,
-	service.NewInteractionAdminService,
-
-	service.NewMediaAssetService,
-
-	service.NewNavigationService,
-	service.NewNavigationItemService,
-	service.NewSiteSettingService,
-	service.NewSiteService,
-
-	service.NewTranslatorService,
 )

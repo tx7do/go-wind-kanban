@@ -29,17 +29,6 @@ const system: RouteRecordRaw[] = [
         component: () => import('#/views/app/system/dict/index.vue'),
       },
 
-      {
-        path: 'files',
-        name: 'FileManagement',
-        meta: {
-          order: 4,
-          icon: 'lucide:file-search',
-          title: $t('menu.system.file'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
-        },
-        component: () => import('#/views/app/system/file/index.vue'),
-      },
 
       {
         path: 'tasks',

@@ -34,7 +34,6 @@ var ProviderSet = wire.NewSet(
 	service.NewLanguageService,
 	service.NewLoginAuditLogService,
 	service.NewApiAuditLogService,
-	service.NewFileService,
 	service.NewTenantService,
 	service.NewInternalMessageService,
 	service.NewInternalMessageCategoryService,
@@ -48,27 +47,6 @@ var ProviderSet = wire.NewSet(
 	service.NewPermissionAuditLogService,
 	service.NewDataAccessAuditLogService,
 	service.NewOperationAuditLogService,
-	service.NewFileTransferService,
 
-	service.NewCategoryService,
-	service.NewPostService,
-	service.NewTagService,
-	service.NewPageService,
-	service.NewSectionService,
 
-	// OpenSearch 搜索与重索引服务。
-	// 消费 data.SearchRepo + data.PostRepo，使 wire 真正连通 ES 注入链。
-	service.NewSearchService,
-
-	service.NewCommentService,
-
-	service.NewInteractionService,
-	service.NewInteractionAdminService,
-
-	service.NewMediaAssetService,
-
-	service.NewNavigationService,
-	service.NewNavigationItemService,
-	service.NewSiteSettingService,
-	service.NewSiteService,
 )

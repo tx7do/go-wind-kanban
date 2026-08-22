@@ -65,47 +65,8 @@ services:
 #    volumes:
 #      - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
 
-  opensearch:
-    build:
-      context: ./scripts/docker/opensearch
-      dockerfile: Dockerfile
-    image: go-wind-cms/opensearch-smartcn:2.19.6
-    container_name: opensearch
-    hostname: opensearch
-    restart: always
-    ports:
-      - "9200:9200"
-      - "9600:9600"
-    networks:
-      - app-tier
-    environment:
-      - cluster.name=opensearch-cluster
-      - discovery.type=single-node
-      - plugins.security.disabled=false
-      - plugins.security.ssl.http.enabled=false
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=@Abcd#123456
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
   #    volumes:
-  #      - /data/opensearch/data:/usr/share/opensearch/data
-  #      - /data/opensearch/logs:/usr/share/opensearch/logs
 
-  minio:
-    image: docker.io/minio/minio:latest
-    restart: always
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    networks:
-      - app-tier
-    environment:
-      - MINIO_ROOT_USER=root
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-dev_only_change_me}
-      - MINIO_DEFAULT_BUCKETS=images
-      - MINIO_FORCE_NEW_KEYS=yes
-      - BITNAMI_DEBUG=true
 #    volumes:
 #      - ${APP_ROOT:-/root/app}/minio/data:/data
     command: server /data --console-address ':9001'
@@ -181,7 +142,6 @@ services:
     depends_on:
       - postgres
       - redis
-      - minio
       - etcd
       - jaeger
     environment:
@@ -205,7 +165,6 @@ services:
     depends_on:
       - postgres
       - redis
-      - minio
       - etcd
       - jaeger
     environment:
@@ -226,7 +185,6 @@ services:
     depends_on:
       - postgres
       - redis
-      - minio
       - etcd
       - jaeger
     environment:

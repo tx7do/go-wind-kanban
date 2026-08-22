@@ -46,15 +46,15 @@ type ColumnServiceHTTPServer interface {
 
 func RegisterColumnServiceHTTPServer(s *http.Server, srv ColumnServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/columns", _ColumnService_List3_HTTP_Handler(srv))
-	r.GET("/app/v1/columns/{id}", _ColumnService_Get3_HTTP_Handler(srv))
-	r.POST("/app/v1/columns", _ColumnService_Create3_HTTP_Handler(srv))
-	r.PUT("/app/v1/columns/{id}", _ColumnService_Update3_HTTP_Handler(srv))
-	r.DELETE("/app/v1/columns/{id}", _ColumnService_Delete3_HTTP_Handler(srv))
+	r.GET("/app/v1/columns", _ColumnService_List2_HTTP_Handler(srv))
+	r.GET("/app/v1/columns/{id}", _ColumnService_Get2_HTTP_Handler(srv))
+	r.POST("/app/v1/columns", _ColumnService_Create2_HTTP_Handler(srv))
+	r.PUT("/app/v1/columns/{id}", _ColumnService_Update2_HTTP_Handler(srv))
+	r.DELETE("/app/v1/columns/{id}", _ColumnService_Delete2_HTTP_Handler(srv))
 	r.POST("/app/v1/columns/{id}:move", _ColumnService_Move2_HTTP_Handler(srv))
 }
 
-func _ColumnService_List3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
+func _ColumnService_List2_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _ColumnService_List3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _ColumnService_Get3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
+func _ColumnService_Get2_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetColumnRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _ColumnService_Get3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http
 	}
 }
 
-func _ColumnService_Create3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
+func _ColumnService_Create2_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateColumnRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _ColumnService_Create3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ColumnService_Update3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
+func _ColumnService_Update2_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateColumnRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -142,7 +142,7 @@ func _ColumnService_Update3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ColumnService_Delete3_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
+func _ColumnService_Delete2_HTTP_Handler(srv ColumnServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteColumnRequest
 		if err := ctx.BindQuery(&in); err != nil {

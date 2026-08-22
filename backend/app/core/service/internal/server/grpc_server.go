@@ -12,16 +12,10 @@ import (
 
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	interactionV1 "go-wind-cms/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
-	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
-	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
-	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 
 	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
@@ -51,7 +45,6 @@ func NewGrpcServer(
 	columnService *service.ColumnService,
 	cardService *service.CardService,
 
-	fileService *service.FileService,
 
 	dictTypeService *service.DictTypeService,
 	dictEntryService *service.DictEntryService,
@@ -79,23 +72,10 @@ func NewGrpcServer(
 	internalMessageCategoryService *service.InternalMessageCategoryService,
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 
-	commentService *service.CommentService,
 
-	interactionService *service.InteractionService,
-	interactionAdminService *service.InteractionAdminService,
 
-	postService *service.PostService,
-	categoryService *service.CategoryService,
-	tagService *service.TagService,
-	pageService *service.PageService,
-	sectionService *service.SectionService,
 
-	siteService *service.SiteService,
-	siteSettingService *service.SiteSettingService,
-	navigationService *service.NavigationService,
-	navigationItemService *service.NavigationItemService,
 
-	mediaAssetService *service.MediaAssetService,
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -141,29 +121,15 @@ func NewGrpcServer(
 	auditV1.RegisterDataAccessAuditLogServiceServer(srv, dataAccessAuditLogService)
 	auditV1.RegisterPermissionAuditLogServiceServer(srv, permissionAuditLogService)
 
-	storageV1.RegisterFileServiceServer(srv, fileService)
 
 	internalMessageV1.RegisterInternalMessageServiceServer(srv, internalMessageService)
 	internalMessageV1.RegisterInternalMessageCategoryServiceServer(srv, internalMessageCategoryService)
 	internalMessageV1.RegisterInternalMessageRecipientServiceServer(srv, internalMessageRecipientService)
 
-	commentV1.RegisterCommentServiceServer(srv, commentService)
 
-	interactionV1.RegisterInteractionServiceServer(srv, interactionService)
-	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
 
-	contentV1.RegisterPostServiceServer(srv, postService)
-	contentV1.RegisterCategoryServiceServer(srv, categoryService)
-	contentV1.RegisterTagServiceServer(srv, tagService)
-	contentV1.RegisterPageServiceServer(srv, pageService)
-	contentV1.RegisterSectionServiceServer(srv, sectionService)
 
-	siteV1.RegisterSiteSettingServiceServer(srv, siteSettingService)
-	siteV1.RegisterSiteServiceServer(srv, siteService)
-	siteV1.RegisterNavigationServiceServer(srv, navigationService)
-	siteV1.RegisterNavigationItemServiceServer(srv, navigationItemService)
 
-	mediaV1.RegisterMediaAssetServiceServer(srv, mediaAssetService)
 
 	return srv, nil
 }

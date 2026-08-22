@@ -41,32 +41,14 @@ func NewRestMiddleware(
 	rpc.AddWhiteList(
 		appV1.OperationAuthenticationServiceLogin,
 
-		appV1.OperationNavigationServiceList,
-		appV1.OperationPageServiceList,
-		appV1.OperationPostServiceList,
-		appV1.OperationCategoryServiceList,
-		appV1.OperationCommentServiceList,
-		appV1.OperationTagServiceList,
-
-		appV1.OperationPageServiceGet,
-		appV1.OperationSectionServiceList,
-		appV1.OperationSectionServiceGet,
-		appV1.OperationSectionServiceGetTranslation,
-		appV1.OperationPostServiceGet,
-		appV1.OperationCategoryServiceGet,
-		appV1.OperationCommentServiceGet,
-		appV1.OperationTagServiceGet,
-
 		// PostService.SearchPosts：公开全文搜索，与文章列表/详情的匿名可见性一致。
 		// tenant_id 由 core 端从 viewer（匿名经路线2 注入的 AnonymousTenantViewer，
 		// 登录为 UserViewer）提取，按 tenant 隔离，仅返回 PUBLISHED。调用方无法
 		// 指定或绕过 tenant。
-		appV1.OperationPostServiceSearchPosts,
 
 		// InteractionService.GetCounts：公开计数（如点赞数）随文章列表展示，
 		// 仅按 tenant 隔离、不依赖 viewer 身份。Like/Unlike/Watch 等写操作
 		// 及 GetInteractionStatus（含 viewer 个人状态）仍需登录，故不在此登记。
-		appV1.OperationInteractionServiceGetCounts,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -106,21 +88,11 @@ func NewRestServer(
 	middlewares []middleware.Middleware,
 
 	authenticationService *service.AuthenticationService,
-	fileTransferService *service.FileTransferService,
 	userProfileService *service.UserProfileService,
-
-	postService *service.PostService,
-	categoryService *service.CategoryService,
-	commentService *service.CommentService,
-	interactionService *service.InteractionService,
-	tagService *service.TagService,
-	pageService *service.PageService,
-	sectionService *service.SectionService,
 
 	boardService *service.BoardService,
 	columnService *service.ColumnService,
 	cardService *service.CardService,
-	navigationService *service.NavigationService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -134,24 +106,11 @@ func NewRestServer(
 	}
 
 	appV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
-	appV1.RegisterFileTransferServiceHTTPServer(srv, fileTransferService)
 	appV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)
-
-	appV1.RegisterNavigationServiceHTTPServer(srv, navigationService)
-
-	appV1.RegisterPostServiceHTTPServer(srv, postService)
-	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
-	appV1.RegisterTagServiceHTTPServer(srv, tagService)
-	appV1.RegisterPageServiceHTTPServer(srv, pageService)
-	appV1.RegisterSectionServiceHTTPServer(srv, sectionService)
 
 	appV1.RegisterBoardServiceHTTPServer(srv, boardService)
 	appV1.RegisterColumnServiceHTTPServer(srv, columnService)
 	appV1.RegisterCardServiceHTTPServer(srv, cardService)
-
-	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
-
-	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

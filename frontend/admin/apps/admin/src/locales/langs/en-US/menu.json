@@ -37,7 +37,6 @@
     "moduleName": "System",
     "dict": "Data Dictionary",
     "task": "Task Scheduler",
-    "file": "File Management",
     "loginPolicy": "Login Policy"
   },
   "log": {
@@ -52,36 +51,5 @@
     "moduleName": "Internal Messages",
     "internalMessage": "Messages",
     "internalMessageCategory": "Message Categories"
-  },
-  "content": {
-    "moduleName": "Content",
-    "post": "Posts",
-    "createPost": "Create Post",
-    "editPost": "Edit Post",
-    "page": "Pages",
-    "category": "Categories",
-    "tag": "Tags",
-    "section": "Sections",
-    "createSection": "Create Section",
-    "editSection": "Edit Section"
-  },
-  "media": {
-    "moduleName": "Media",
-    "mediaAsset": "Media Assets",
-    "mediaCategory": "Media Categories"
-  },
-  "engagement": {
-    "moduleName": "Engagement",
-    "comment": "Comments",
-    "feedback": "Feedback"
-  },
-  "siteSetting": {
-    "moduleName": "Site Settings",
-    "site": "Sites",
-    "siteSetting": "Site Settings",
-    "navigation": "Navigation",
-    "seoSetting": "SEO Settings",
-    "socialSetting": "Social Settings",
-    "analyticsSetting": "Analytics Settings"
   }
 }

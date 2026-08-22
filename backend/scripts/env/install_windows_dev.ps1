@@ -47,7 +47,7 @@ if (-not $IsAdmin) {
 
 # ========== Hosts 配置（需要管理员权限）
 if ($IsAdmin) {
-    $services = @('postgres', 'mysql', 'redis', 'minio')
+    $services = @('postgres', 'mysql', 'redis')
     Initialize-Hosts -Services $services -IP "127.0.0.1" -DomainSuffix ".local"
 } else {
     Warn "Skipping hosts configuration (requires administrator privileges)"

@@ -22,13 +22,11 @@ import (
 var ProviderSet = wire.NewSet(
 	data.NewRedisClient,
 	data.NewCaptcha,
-	data.NewMinIoClient,
 	data.NewDiscovery,
 
 	data.NewClientType,
 	data.NewAuthorizer,
 
-	data.NewTranslator,
 
 	auth.NewTokenChecker,
 
@@ -45,8 +43,6 @@ var ProviderSet = wire.NewSet(
 	data.NewInternalMessageCategoryServiceClient,
 	data.NewInternalMessageServiceClient,
 	data.NewInternalMessageRecipientServiceClient,
-
-	data.NewFileServiceClient,
 
 	data.NewPermissionGroupServiceClient,
 	data.NewPermissionServiceClient,
@@ -70,19 +66,4 @@ var ProviderSet = wire.NewSet(
 	data.NewLoginAuditLogServiceClient,
 	data.NewOperationAuditLogServiceClient,
 
-	data.NewPageServiceClient,
-	data.NewSectionServiceClient,
-	data.NewCategoryServiceClient,
-	data.NewPostServiceClient,
-	data.NewTagServiceClient,
-
-	data.NewCommentServiceClient,
-	data.NewInteractionAdminServiceClient,
-
-	data.NewNavigationServiceClient,
-	data.NewNavigationItemServiceClient,
-	data.NewSiteSettingServiceClient,
-	data.NewSiteServiceClient,
-
-	data.NewMediaAssetServiceClient,
 )

@@ -15,7 +15,6 @@ import {
   getMe,
   makeUpdateMask,
   updateMyUserInfo,
-  uploadMediaAsset,
   type identityservicev1_User as User,
 } from '#/api';
 
@@ -37,27 +36,10 @@ async function refreshProfile() {
   }
 }
 
-async function handleUploadAvatar(option: any) {
-  const { file, onSuccess, onError } = option;
-  try {
-    const resp = await uploadMediaAsset({}, file as File);
-    const url = (resp as any).objectName || '';
-    if (!url) {
-      throw new Error('avatar upload returned empty url');
-    }
-    await updateMyUserInfo({
-      id: data.value?.id,
-      data: { avatar: url } as any,
-      updateMask: makeUpdateMask(['avatar']),
-    } as any);
-    notification.success({ message: $t('ui.notification.update_success') });
-    await refreshProfile();
-    onSuccess?.({}, file);
-  } catch (error) {
-    console.error('avatar upload failed:', error);
-    notification.error({ message: $t('ui.notification.update_failed') });
-    onError?.(error as any);
-  }
+// 媒体上传域已随 CMS 域移除；头像上传暂不可用，待看板附件功能一并设计后恢复。
+function handleUploadAvatar(option: any) {
+  const { onError } = option;
+  onError?.(new Error('avatar upload is unavailable'));
   return false;
 }
 

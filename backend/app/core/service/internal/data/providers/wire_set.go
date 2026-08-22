@@ -23,8 +23,6 @@ var ProviderSet = wire.NewSet(
 	client.NewRedisClient,
 	client.NewEntClient,
 	client.NewDiscovery,
-	client.NewMinIoClient,
-	client.NewElasticSearchClient,
 
 	authorizer.NewAuthorizer,
 
@@ -33,8 +31,6 @@ var ProviderSet = wire.NewSet(
 	data.NewUserTokenCache,
 
 	data.NewPasswordCrypto,
-
-	data.NewSearchRepo,
 
 	data.NewDictTypeRepo,
 	data.NewDictEntryRepo,
@@ -82,39 +78,8 @@ var ProviderSet = wire.NewSet(
 	data.NewOperationAuditLogRepo,
 	data.NewDataAccessAuditLogRepo,
 
-	data.NewFileRepo,
-
 	data.NewInternalMessageRepo,
 	data.NewInternalMessageCategoryRepo,
 	data.NewInternalMessageRecipientRepo,
 
-	data.NewCategoryRepo,
-	data.NewCategoryTranslationRepo,
-
-	data.NewCommentRepo,
-
-	data.NewInteractionRepo,
-
-	data.NewMediaAssetRepo,
-	data.NewMediaVariantRepo,
-
-	data.NewNavigationRepo,
-	data.NewNavigationItemRepo,
-
-	data.NewPageRepo,
-	data.NewPageTranslationRepo,
-
-	data.NewSectionRepo,
-	data.NewSectionTranslationRepo,
-
-	data.NewPostRepo,
-	data.NewPostTranslationRepo,
-	data.NewPostCategoryRepo,
-	data.NewPostTagRepo,
-
-	data.NewSiteSettingRepo,
-	data.NewSiteRepo,
-
-	data.NewTagRepo,
-	data.NewTagTranslationRepo,
 )

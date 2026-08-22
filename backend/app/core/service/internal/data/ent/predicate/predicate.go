@@ -18,20 +18,8 @@ type Board func(*sql.Selector)
 // Card is the predicate function for card builders.
 type Card func(*sql.Selector)
 
-// Category is the predicate function for category builders.
-type Category func(*sql.Selector)
-
-// CategoryTranslation is the predicate function for categorytranslation builders.
-type CategoryTranslation func(*sql.Selector)
-
 // Column is the predicate function for column builders.
 type Column func(*sql.Selector)
-
-// Comment is the predicate function for comment builders.
-type Comment func(*sql.Selector)
-
-// CommentLike is the predicate function for commentlike builders.
-type CommentLike func(*sql.Selector)
 
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
@@ -44,12 +32,6 @@ type DictEntryI18n func(*sql.Selector)
 
 // DictType is the predicate function for dicttype builders.
 type DictType func(*sql.Selector)
-
-// File is the predicate function for file builders.
-type File func(*sql.Selector)
-
-// InteractionCounter is the predicate function for interactioncounter builders.
-type InteractionCounter func(*sql.Selector)
 
 // InternalMessage is the predicate function for internalmessage builders.
 type InternalMessage func(*sql.Selector)
@@ -69,12 +51,6 @@ type LoginAuditLog func(*sql.Selector)
 // LoginPolicy is the predicate function for loginpolicy builders.
 type LoginPolicy func(*sql.Selector)
 
-// MediaAsset is the predicate function for mediaasset builders.
-type MediaAsset func(*sql.Selector)
-
-// MediaVariant is the predicate function for mediavariant builders.
-type MediaVariant func(*sql.Selector)
-
 // Membership is the predicate function for membership builders.
 type Membership func(*sql.Selector)
 
@@ -90,23 +66,11 @@ type MembershipRole func(*sql.Selector)
 // Menu is the predicate function for menu builders.
 type Menu func(*sql.Selector)
 
-// Navigation is the predicate function for navigation builders.
-type Navigation func(*sql.Selector)
-
-// NavigationItem is the predicate function for navigationitem builders.
-type NavigationItem func(*sql.Selector)
-
 // OperationAuditLog is the predicate function for operationauditlog builders.
 type OperationAuditLog func(*sql.Selector)
 
 // OrgUnit is the predicate function for orgunit builders.
 type OrgUnit func(*sql.Selector)
-
-// Page is the predicate function for page builders.
-type Page func(*sql.Selector)
-
-// PageTranslation is the predicate function for pagetranslation builders.
-type PageTranslation func(*sql.Selector)
 
 // Permission is the predicate function for permission builders.
 type Permission func(*sql.Selector)
@@ -132,24 +96,6 @@ type PolicyEvaluationLog func(*sql.Selector)
 // Position is the predicate function for position builders.
 type Position func(*sql.Selector)
 
-// Post is the predicate function for post builders.
-type Post func(*sql.Selector)
-
-// PostCategory is the predicate function for postcategory builders.
-type PostCategory func(*sql.Selector)
-
-// PostLike is the predicate function for postlike builders.
-type PostLike func(*sql.Selector)
-
-// PostTag is the predicate function for posttag builders.
-type PostTag func(*sql.Selector)
-
-// PostTranslation is the predicate function for posttranslation builders.
-type PostTranslation func(*sql.Selector)
-
-// PostWatch is the predicate function for postwatch builders.
-type PostWatch func(*sql.Selector)
-
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
@@ -158,24 +104,6 @@ type RoleMetadata func(*sql.Selector)
 
 // RolePermission is the predicate function for rolepermission builders.
 type RolePermission func(*sql.Selector)
-
-// Section is the predicate function for section builders.
-type Section func(*sql.Selector)
-
-// SectionTranslation is the predicate function for sectiontranslation builders.
-type SectionTranslation func(*sql.Selector)
-
-// Site is the predicate function for site builders.
-type Site func(*sql.Selector)
-
-// SiteSetting is the predicate function for sitesetting builders.
-type SiteSetting func(*sql.Selector)
-
-// Tag is the predicate function for tag builders.
-type Tag func(*sql.Selector)
-
-// TagTranslation is the predicate function for tagtranslation builders.
-type TagTranslation func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)

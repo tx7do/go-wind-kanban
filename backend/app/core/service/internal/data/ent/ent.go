@@ -10,36 +10,24 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/board"
 	"go-wind-cms/app/core/service/internal/data/ent/card"
-	"go-wind-cms/app/core/service/internal/data/ent/category"
-	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/column"
-	"go-wind-cms/app/core/service/internal/data/ent/comment"
-	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
-	"go-wind-cms/app/core/service/internal/data/ent/file"
-	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
 	"go-wind-cms/app/core/service/internal/data/ent/language"
 	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/loginpolicy"
-	"go-wind-cms/app/core/service/internal/data/ent/mediaasset"
-	"go-wind-cms/app/core/service/internal/data/ent/mediavariant"
 	"go-wind-cms/app/core/service/internal/data/ent/membership"
 	"go-wind-cms/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-cms/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
-	"go-wind-cms/app/core/service/internal/data/ent/navigation"
-	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
 	"go-wind-cms/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
-	"go-wind-cms/app/core/service/internal/data/ent/page"
-	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/permission"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionauditlog"
@@ -48,21 +36,9 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-cms/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-cms/app/core/service/internal/data/ent/position"
-	"go-wind-cms/app/core/service/internal/data/ent/post"
-	"go-wind-cms/app/core/service/internal/data/ent/postcategory"
-	"go-wind-cms/app/core/service/internal/data/ent/postlike"
-	"go-wind-cms/app/core/service/internal/data/ent/posttag"
-	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
-	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
-	"go-wind-cms/app/core/service/internal/data/ent/section"
-	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
-	"go-wind-cms/app/core/service/internal/data/ent/site"
-	"go-wind-cms/app/core/service/internal/data/ent/sitesetting"
-	"go-wind-cms/app/core/service/internal/data/ent/tag"
-	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
 	"go-wind-cms/app/core/service/internal/data/ent/tenant"
 	"go-wind-cms/app/core/service/internal/data/ent/user"
@@ -140,36 +116,24 @@ func checkColumn(t, c string) error {
 			apiauditlog.Table:              apiauditlog.ValidColumn,
 			board.Table:                    board.ValidColumn,
 			card.Table:                     card.ValidColumn,
-			category.Table:                 category.ValidColumn,
-			categorytranslation.Table:      categorytranslation.ValidColumn,
 			column.Table:                   column.ValidColumn,
-			comment.Table:                  comment.ValidColumn,
-			commentlike.Table:              commentlike.ValidColumn,
 			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,
 			dictentry.Table:                dictentry.ValidColumn,
 			dictentryi18n.Table:            dictentryi18n.ValidColumn,
 			dicttype.Table:                 dicttype.ValidColumn,
-			file.Table:                     file.ValidColumn,
-			interactioncounter.Table:       interactioncounter.ValidColumn,
 			internalmessage.Table:          internalmessage.ValidColumn,
 			internalmessagecategory.Table:  internalmessagecategory.ValidColumn,
 			internalmessagerecipient.Table: internalmessagerecipient.ValidColumn,
 			language.Table:                 language.ValidColumn,
 			loginauditlog.Table:            loginauditlog.ValidColumn,
 			loginpolicy.Table:              loginpolicy.ValidColumn,
-			mediaasset.Table:               mediaasset.ValidColumn,
-			mediavariant.Table:             mediavariant.ValidColumn,
 			membership.Table:               membership.ValidColumn,
 			membershiporgunit.Table:        membershiporgunit.ValidColumn,
 			membershipposition.Table:       membershipposition.ValidColumn,
 			membershiprole.Table:           membershiprole.ValidColumn,
 			menu.Table:                     menu.ValidColumn,
-			navigation.Table:               navigation.ValidColumn,
-			navigationitem.Table:           navigationitem.ValidColumn,
 			operationauditlog.Table:        operationauditlog.ValidColumn,
 			orgunit.Table:                  orgunit.ValidColumn,
-			page.Table:                     page.ValidColumn,
-			pagetranslation.Table:          pagetranslation.ValidColumn,
 			permission.Table:               permission.ValidColumn,
 			permissionapi.Table:            permissionapi.ValidColumn,
 			permissionauditlog.Table:       permissionauditlog.ValidColumn,
@@ -178,21 +142,9 @@ func checkColumn(t, c string) error {
 			permissionpolicy.Table:         permissionpolicy.ValidColumn,
 			policyevaluationlog.Table:      policyevaluationlog.ValidColumn,
 			position.Table:                 position.ValidColumn,
-			post.Table:                     post.ValidColumn,
-			postcategory.Table:             postcategory.ValidColumn,
-			postlike.Table:                 postlike.ValidColumn,
-			posttag.Table:                  posttag.ValidColumn,
-			posttranslation.Table:          posttranslation.ValidColumn,
-			postwatch.Table:                postwatch.ValidColumn,
 			role.Table:                     role.ValidColumn,
 			rolemetadata.Table:             rolemetadata.ValidColumn,
 			rolepermission.Table:           rolepermission.ValidColumn,
-			section.Table:                  section.ValidColumn,
-			sectiontranslation.Table:       sectiontranslation.ValidColumn,
-			site.Table:                     site.ValidColumn,
-			sitesetting.Table:              sitesetting.ValidColumn,
-			tag.Table:                      tag.ValidColumn,
-			tagtranslation.Table:           tagtranslation.ValidColumn,
 			task.Table:                     task.ValidColumn,
 			tenant.Table:                   tenant.ValidColumn,
 			user.Table:                     user.ValidColumn,

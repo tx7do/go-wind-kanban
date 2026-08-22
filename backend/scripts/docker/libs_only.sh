@@ -62,7 +62,7 @@ IFS=$'\n\t'
 # 可通过环境变量覆盖目标目录和 compose 文件
 APP_ROOT=${APP_ROOT:-/root/app}
 COMPOSE_FILE=${COMPOSE_FILE:-docker-compose.libs.yaml}
-deps=(postgres redis etcd minio jaeger)
+deps=(postgres redis etcd jaeger)
 
 # 切换到脚本所在目录的上一级（项目根）
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

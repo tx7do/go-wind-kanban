@@ -203,7 +203,7 @@ Log ""
 
 # 创建数据卷目录
 Log "Creating data directories..."
-$dependencies = @('postgres', 'redis', 'etcd', 'minio', 'jaeger')
+$dependencies = @('postgres', 'redis', 'etcd', 'jaeger')
 
 foreach ($dep in $dependencies) {
     $targetPath = Join-Path $AppRoot $dep

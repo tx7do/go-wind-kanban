@@ -8,7 +8,6 @@ import type {
   permissionservicev1_ListMenuResponse,
   permissionservicev1_Menu,
   permissionservicev1_MenuMeta,
-  permissionservicev1_SyncMenusRequest,
 } from '#/api/generated/admin/service/v1';
 
 import { computed } from 'vue';
@@ -105,22 +104,6 @@ export function useDeleteMenu(
   });
 }
 
-// ==============================
-// 同步菜单（将前端静态路由推送到后端）
-// ==============================
-
-export function useSyncMenus(
-  options?: UseMutationOptions<
-    object,
-    Error,
-    permissionservicev1_SyncMenusRequest
-  >,
-) {
-  return useMutation({
-    mutationFn: (data) => apiClient.menuService.SyncMenus(data),
-    ...options,
-  });
-}
 
 /**
  * 将前端静态路由定义转换为后端菜单同步请求格式
@@ -180,17 +163,6 @@ function routeToMenu(
   return menu;
 }
 
-/**
- * 将前端静态路由定义列表转换为后端菜单同步请求
- */
-export function buildSyncMenusRequest(
-  routes: RouteRecordRaw[],
-): permissionservicev1_SyncMenusRequest {
-  const items = routes
-    .map((route) => routeToMenu(route))
-    .filter((item): item is permissionservicev1_Menu => item !== null);
-  return { items };
-}
 
 // ==============================
 // 菜单枚举与工具函数

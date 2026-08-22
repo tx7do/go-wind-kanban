@@ -18,7 +18,6 @@ import {
   makeUpdateMask,
   PaginationQuery,
   type internal_messageservicev1_SendMessageRequest as SendMessageRequest,
-  uploadMediaAsset,
 } from '#/api';
 
 const storageManager = new StorageManager({
@@ -210,14 +209,9 @@ function setLoading(loading: boolean) {
   drawerApi.setState({ confirmLoading: loading });
 }
 
-async function handleUploadImage(file: File): Promise<string> {
-  try {
-    const resp = await uploadMediaAsset({}, file);
-    return (resp as any).objectName || '';
-  } catch (error) {
-    console.error('Image upload failed:', error);
-    return '';
-  }
+// 媒体上传域已随 CMS 域移除；站内信暂不支持插图，附件能力待看板附件功能一并设计。
+function handleUploadImage(_file: File): Promise<string> {
+  return Promise.resolve('');
 }
 </script>
 

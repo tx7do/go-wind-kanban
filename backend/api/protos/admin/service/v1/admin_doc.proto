@@ -6,9 +6,9 @@ import "gnostic/openapi/v3/annotations.proto";
 
 option (gnostic.openapi.v3.document) = {
   info: {
-    title: "GoWind Content Hub Admin API";
+    title: "GoWind Kanban Admin API";
     version: "1.0";
-    description: "GoWind Content Hub Admin API";
+    description: "GoWind Kanban Admin API";
     contact: {
       name: "tx7do";
       url: "https://github.com/tx7do/go-wind-cms";

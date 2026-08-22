@@ -1,4 +1,4 @@
-# CMS Flutter App
+# go-wind-kanban Flutter App
 
 A CMS Flutter project.
 

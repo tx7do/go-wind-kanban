@@ -20,16 +20,6 @@ import (
 var ProviderSet = wire.NewSet(
 	service.NewAuthenticationService,
 	service.NewUserProfileService,
-	service.NewFileTransferService,
-
-	service.NewCategoryService,
-	service.NewTagService,
-	service.NewCommentService,
-	service.NewInteractionService,
-	service.NewPageService,
-	service.NewSectionService,
-	service.NewPostService,
-	service.NewNavigationService,
 
 	service.NewBoardService,
 	service.NewColumnService,
