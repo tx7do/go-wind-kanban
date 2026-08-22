@@ -181,6 +181,47 @@ func (m *BoardChangeEvent) validate(all bool) error {
 			}
 		}
 
+	case *BoardChangeEvent_Label:
+		if v == nil {
+			err := BoardChangeEventValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetLabel()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BoardChangeEventValidationError{
+						field:  "Label",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BoardChangeEventValidationError{
+						field:  "Label",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLabel()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BoardChangeEventValidationError{
+					field:  "Label",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}

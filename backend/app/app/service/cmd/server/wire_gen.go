@@ -52,7 +52,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	cardServiceClient := data.NewCardServiceClient(context, discovery)
 	cardService := service.NewCardService(context, cardServiceClient, hub)
 	labelServiceClient := data.NewLabelServiceClient(context, discovery)
-	labelService := service.NewLabelService(context, labelServiceClient)
+	labelService := service.NewLabelService(context, labelServiceClient, hub)
 	httpServer := server.NewRestServer(context, v, wsServer, authenticationService, userProfileService, boardService, columnService, cardService, labelService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)

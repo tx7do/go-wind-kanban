@@ -9,6 +9,7 @@ import "google/protobuf/timestamp.proto";
 import "board/service/v1/board.proto";
 import "board/service/v1/column.proto";
 import "board/service/v1/card.proto";
+import "board/service/v1/label.proto";
 
 // 看板实时变更事件。
 //
@@ -34,6 +35,12 @@ message BoardChangeEvent {
     CARD_UPDATED = 31; // 卡片更新
     CARD_DELETED = 32; // 卡片删除
     CARD_MOVED = 33;   // 卡片移动（同列重排/跨列）
+
+    LABEL_CREATED = 40; // 标签创建
+    LABEL_UPDATED = 41; // 标签更新
+    LABEL_DELETED = 42; // 标签删除
+
+    CARD_LABELS_CHANGED = 50; // 卡片标签集合变更（SetCardLabels）
   }
 
   optional Type type = 1 [
@@ -72,5 +79,10 @@ message BoardChangeEvent {
       json_name = "card",
       (gnostic.openapi.v3.property) = {description: "卡片实体"}
     ]; // 卡片实体
+
+    Label label = 13 [
+      json_name = "label",
+      (gnostic.openapi.v3.property) = {description: "标签实体"}
+    ]; // 标签实体
   }
 }

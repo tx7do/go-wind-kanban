@@ -270,6 +270,10 @@ class BoardEvent {
   static const cardUpdated = 31;
   static const cardDeleted = 32;
   static const cardMoved = 33;
+  static const labelCreated = 40;
+  static const labelUpdated = 41;
+  static const labelDeleted = 42;
+  static const cardLabelsChanged = 50;
 
   factory BoardEvent.fromJson(Map<String, dynamic> j) {
     Map<String, dynamic>? payload;

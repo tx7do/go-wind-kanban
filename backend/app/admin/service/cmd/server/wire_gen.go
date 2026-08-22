@@ -67,7 +67,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	cardServiceClient := data.NewCardServiceClient(context, discovery)
 	cardService := service.NewCardService(context, cardServiceClient, hub)
 	labelServiceClient := data.NewLabelServiceClient(context, discovery)
-	labelService := service.NewLabelService(context, labelServiceClient)
+	labelService := service.NewLabelService(context, labelServiceClient, hub)
 	captcha := data.NewCaptcha(client)
 	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient, captcha)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(context, discovery)

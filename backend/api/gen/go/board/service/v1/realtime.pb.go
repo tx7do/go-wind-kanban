@@ -27,19 +27,23 @@ const (
 type BoardChangeEvent_Type int32
 
 const (
-	BoardChangeEvent_TYPE_UNSPECIFIED BoardChangeEvent_Type = 0  // 未指定（不应出现）
-	BoardChangeEvent_BOARD_CREATED    BoardChangeEvent_Type = 10 // 看板创建
-	BoardChangeEvent_BOARD_UPDATED    BoardChangeEvent_Type = 11 // 看板更新
-	BoardChangeEvent_BOARD_DELETED    BoardChangeEvent_Type = 12 // 看板删除
-	BoardChangeEvent_BOARD_MOVED      BoardChangeEvent_Type = 13 // 看板重排
-	BoardChangeEvent_COLUMN_CREATED   BoardChangeEvent_Type = 20 // 列创建
-	BoardChangeEvent_COLUMN_UPDATED   BoardChangeEvent_Type = 21 // 列更新
-	BoardChangeEvent_COLUMN_DELETED   BoardChangeEvent_Type = 22 // 列删除
-	BoardChangeEvent_COLUMN_MOVED     BoardChangeEvent_Type = 23 // 列重排
-	BoardChangeEvent_CARD_CREATED     BoardChangeEvent_Type = 30 // 卡片创建
-	BoardChangeEvent_CARD_UPDATED     BoardChangeEvent_Type = 31 // 卡片更新
-	BoardChangeEvent_CARD_DELETED     BoardChangeEvent_Type = 32 // 卡片删除
-	BoardChangeEvent_CARD_MOVED       BoardChangeEvent_Type = 33 // 卡片移动（同列重排/跨列）
+	BoardChangeEvent_TYPE_UNSPECIFIED    BoardChangeEvent_Type = 0  // 未指定（不应出现）
+	BoardChangeEvent_BOARD_CREATED       BoardChangeEvent_Type = 10 // 看板创建
+	BoardChangeEvent_BOARD_UPDATED       BoardChangeEvent_Type = 11 // 看板更新
+	BoardChangeEvent_BOARD_DELETED       BoardChangeEvent_Type = 12 // 看板删除
+	BoardChangeEvent_BOARD_MOVED         BoardChangeEvent_Type = 13 // 看板重排
+	BoardChangeEvent_COLUMN_CREATED      BoardChangeEvent_Type = 20 // 列创建
+	BoardChangeEvent_COLUMN_UPDATED      BoardChangeEvent_Type = 21 // 列更新
+	BoardChangeEvent_COLUMN_DELETED      BoardChangeEvent_Type = 22 // 列删除
+	BoardChangeEvent_COLUMN_MOVED        BoardChangeEvent_Type = 23 // 列重排
+	BoardChangeEvent_CARD_CREATED        BoardChangeEvent_Type = 30 // 卡片创建
+	BoardChangeEvent_CARD_UPDATED        BoardChangeEvent_Type = 31 // 卡片更新
+	BoardChangeEvent_CARD_DELETED        BoardChangeEvent_Type = 32 // 卡片删除
+	BoardChangeEvent_CARD_MOVED          BoardChangeEvent_Type = 33 // 卡片移动（同列重排/跨列）
+	BoardChangeEvent_LABEL_CREATED       BoardChangeEvent_Type = 40 // 标签创建
+	BoardChangeEvent_LABEL_UPDATED       BoardChangeEvent_Type = 41 // 标签更新
+	BoardChangeEvent_LABEL_DELETED       BoardChangeEvent_Type = 42 // 标签删除
+	BoardChangeEvent_CARD_LABELS_CHANGED BoardChangeEvent_Type = 50 // 卡片标签集合变更（SetCardLabels）
 )
 
 // Enum value maps for BoardChangeEvent_Type.
@@ -58,21 +62,29 @@ var (
 		31: "CARD_UPDATED",
 		32: "CARD_DELETED",
 		33: "CARD_MOVED",
+		40: "LABEL_CREATED",
+		41: "LABEL_UPDATED",
+		42: "LABEL_DELETED",
+		50: "CARD_LABELS_CHANGED",
 	}
 	BoardChangeEvent_Type_value = map[string]int32{
-		"TYPE_UNSPECIFIED": 0,
-		"BOARD_CREATED":    10,
-		"BOARD_UPDATED":    11,
-		"BOARD_DELETED":    12,
-		"BOARD_MOVED":      13,
-		"COLUMN_CREATED":   20,
-		"COLUMN_UPDATED":   21,
-		"COLUMN_DELETED":   22,
-		"COLUMN_MOVED":     23,
-		"CARD_CREATED":     30,
-		"CARD_UPDATED":     31,
-		"CARD_DELETED":     32,
-		"CARD_MOVED":       33,
+		"TYPE_UNSPECIFIED":    0,
+		"BOARD_CREATED":       10,
+		"BOARD_UPDATED":       11,
+		"BOARD_DELETED":       12,
+		"BOARD_MOVED":         13,
+		"COLUMN_CREATED":      20,
+		"COLUMN_UPDATED":      21,
+		"COLUMN_DELETED":      22,
+		"COLUMN_MOVED":        23,
+		"CARD_CREATED":        30,
+		"CARD_UPDATED":        31,
+		"CARD_DELETED":        32,
+		"CARD_MOVED":          33,
+		"LABEL_CREATED":       40,
+		"LABEL_UPDATED":       41,
+		"LABEL_DELETED":       42,
+		"CARD_LABELS_CHANGED": 50,
 	}
 )
 
@@ -121,6 +133,7 @@ type BoardChangeEvent struct {
 	//	*BoardChangeEvent_Board
 	//	*BoardChangeEvent_Column
 	//	*BoardChangeEvent_Card
+	//	*BoardChangeEvent_Label
 	Payload       isBoardChangeEvent_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -218,6 +231,15 @@ func (x *BoardChangeEvent) GetCard() *Card {
 	return nil
 }
 
+func (x *BoardChangeEvent) GetLabel() *Label {
+	if x != nil {
+		if x, ok := x.Payload.(*BoardChangeEvent_Label); ok {
+			return x.Label
+		}
+	}
+	return nil
+}
+
 type isBoardChangeEvent_Payload interface {
 	isBoardChangeEvent_Payload()
 }
@@ -234,17 +256,23 @@ type BoardChangeEvent_Card struct {
 	Card *Card `protobuf:"bytes,12,opt,name=card,proto3,oneof"` // 卡片实体
 }
 
+type BoardChangeEvent_Label struct {
+	Label *Label `protobuf:"bytes,13,opt,name=label,proto3,oneof"` // 标签实体
+}
+
 func (*BoardChangeEvent_Board) isBoardChangeEvent_Payload() {}
 
 func (*BoardChangeEvent_Column) isBoardChangeEvent_Payload() {}
 
 func (*BoardChangeEvent_Card) isBoardChangeEvent_Payload() {}
 
+func (*BoardChangeEvent_Label) isBoardChangeEvent_Payload() {}
+
 var File_board_service_v1_realtime_proto protoreflect.FileDescriptor
 
 const file_board_service_v1_realtime_proto_rawDesc = "" +
 	"\n" +
-	"\x1fboard/service/v1/realtime.proto\x12\x10board.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cboard/service/v1/board.proto\x1a\x1dboard/service/v1/column.proto\x1a\x1bboard/service/v1/card.proto\"\x85\a\n" +
+	"\x1fboard/service/v1/realtime.proto\x12\x10board.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cboard/service/v1/board.proto\x1a\x1dboard/service/v1/column.proto\x1a\x1bboard/service/v1/card.proto\x1a\x1cboard/service/v1/label.proto\"\x9c\b\n" +
 	"\x10BoardChangeEvent\x12T\n" +
 	"\x04type\x18\x01 \x01(\x0e2'.board.service.v1.BoardChangeEvent.TypeB\x12\xbaG\x0f\x92\x02\f变更类型H\x01R\x04type\x88\x01\x01\x12O\n" +
 	"\bboard_id\x18\x02 \x01(\rB/\xbaG,\x92\x02)变更所属看板ID（订阅路由键）H\x02R\aboardId\x88\x01\x01\x12g\n" +
@@ -254,7 +282,8 @@ const file_board_service_v1_realtime_proto_rawDesc = "" +
 	"\x05board\x18\n" +
 	" \x01(\v2\x17.board.service.v1.BoardB\x12\xbaG\x0f\x92\x02\f看板实体H\x00R\x05board\x12C\n" +
 	"\x06column\x18\v \x01(\v2\x18.board.service.v1.ColumnB\x0f\xbaG\f\x92\x02\t列实体H\x00R\x06column\x12@\n" +
-	"\x04card\x18\f \x01(\v2\x16.board.service.v1.CardB\x12\xbaG\x0f\x92\x02\f卡片实体H\x00R\x04card\"\xfa\x01\n" +
+	"\x04card\x18\f \x01(\v2\x16.board.service.v1.CardB\x12\xbaG\x0f\x92\x02\f卡片实体H\x00R\x04card\x12C\n" +
+	"\x05label\x18\r \x01(\v2\x17.board.service.v1.LabelB\x12\xbaG\x0f\x92\x02\f标签实体H\x00R\x05label\"\xcc\x02\n" +
 	"\x04Type\x12\x14\n" +
 	"\x10TYPE_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rBOARD_CREATED\x10\n" +
@@ -270,7 +299,11 @@ const file_board_service_v1_realtime_proto_rawDesc = "" +
 	"\fCARD_UPDATED\x10\x1f\x12\x10\n" +
 	"\fCARD_DELETED\x10 \x12\x0e\n" +
 	"\n" +
-	"CARD_MOVED\x10!B\t\n" +
+	"CARD_MOVED\x10!\x12\x11\n" +
+	"\rLABEL_CREATED\x10(\x12\x11\n" +
+	"\rLABEL_UPDATED\x10)\x12\x11\n" +
+	"\rLABEL_DELETED\x10*\x12\x17\n" +
+	"\x13CARD_LABELS_CHANGED\x102B\t\n" +
 	"\apayloadB\a\n" +
 	"\x05_typeB\v\n" +
 	"\t_board_idB\v\n" +
@@ -299,6 +332,7 @@ var file_board_service_v1_realtime_proto_goTypes = []any{
 	(*Board)(nil),                 // 3: board.service.v1.Board
 	(*Column)(nil),                // 4: board.service.v1.Column
 	(*Card)(nil),                  // 5: board.service.v1.Card
+	(*Label)(nil),                 // 6: board.service.v1.Label
 }
 var file_board_service_v1_realtime_proto_depIdxs = []int32{
 	0, // 0: board.service.v1.BoardChangeEvent.type:type_name -> board.service.v1.BoardChangeEvent.Type
@@ -306,11 +340,12 @@ var file_board_service_v1_realtime_proto_depIdxs = []int32{
 	3, // 2: board.service.v1.BoardChangeEvent.board:type_name -> board.service.v1.Board
 	4, // 3: board.service.v1.BoardChangeEvent.column:type_name -> board.service.v1.Column
 	5, // 4: board.service.v1.BoardChangeEvent.card:type_name -> board.service.v1.Card
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	6, // 5: board.service.v1.BoardChangeEvent.label:type_name -> board.service.v1.Label
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_board_service_v1_realtime_proto_init() }
@@ -321,10 +356,12 @@ func file_board_service_v1_realtime_proto_init() {
 	file_board_service_v1_board_proto_init()
 	file_board_service_v1_column_proto_init()
 	file_board_service_v1_card_proto_init()
+	file_board_service_v1_label_proto_init()
 	file_board_service_v1_realtime_proto_msgTypes[0].OneofWrappers = []any{
 		(*BoardChangeEvent_Board)(nil),
 		(*BoardChangeEvent_Column)(nil),
 		(*BoardChangeEvent_Card)(nil),
+		(*BoardChangeEvent_Label)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

@@ -31,7 +31,9 @@ class _BoardDesktopPageState extends State<BoardDesktopPage> {
   AppFlowyBoardController _buildController(BuildContext context, KanbanBoardState state) {
     final ctrl = AppFlowyBoardController(
       onMoveGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
-        // 列重排（ColumnService.Move 随后接入：暂按展示序接受）
+        // toGroupId == fromGroupId（列不跨板移动）。
+        // toIndex 是列拖拽后在列表中的新位置 → 传给 controller 作 anchor 解析。
+        context.read<BoardController>().moveColumn(int.parse(fromGroupId), toIndex);
       },
       onMoveGroupItem: (groupId, fromIndex, toIndex) {
         final card = _cardAt(context, groupId, fromIndex);

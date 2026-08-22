@@ -101,3 +101,47 @@ func publishEvent(ctx context.Context, hub *broadcast.Hub, ev *boardV1.BoardChan
 	}
 	hub.Publish(ctx, ev)
 }
+
+// publishLabelEntity 发布标签实体变更事件（LABEL_CREATED/UPDATED）。
+func publishLabelEntity(ctx context.Context, hub *broadcast.Hub, typ boardV1.BoardChangeEvent_Type, l *boardV1.Label) {
+	if hub == nil || l == nil {
+		return
+	}
+	publishEvent(ctx, hub, &boardV1.BoardChangeEvent{
+		Type:       typ.Enum(),
+		BoardId:    trans.Ptr(l.GetBoardId()),
+		OccurredAt: timestamppb.Now(),
+		Payload:    &boardV1.BoardChangeEvent_Label{Label: l},
+	})
+}
+
+// publishLabelDeleted 发布标签删除事件。
+func publishLabelDeleted(ctx context.Context, hub *broadcast.Hub, boardID, labelID uint32) {
+	if hub == nil {
+		return
+	}
+	publishEvent(ctx, hub, &boardV1.BoardChangeEvent{
+		Type:       boardV1.BoardChangeEvent_LABEL_DELETED.Enum(),
+		BoardId:    trans.Ptr(boardID),
+		OccurredAt: timestamppb.Now(),
+		Payload: &boardV1.BoardChangeEvent_Label{Label: &boardV1.Label{
+			Id:      trans.Ptr(labelID),
+			BoardId: trans.Ptr(boardID),
+		}},
+	})
+}
+
+// publishCardLabelsChanged 发布卡片标签集合变更事件。
+// 卡片标签变更影响的是卡片本身（其标签集合），载荷为受影响卡片，
+// 客户端据此重新拉取该卡片的标签集合。
+func publishCardLabelsChanged(ctx context.Context, hub *broadcast.Hub, card *boardV1.Card) {
+	if hub == nil || card == nil {
+		return
+	}
+	publishEvent(ctx, hub, &boardV1.BoardChangeEvent{
+		Type:       boardV1.BoardChangeEvent_CARD_LABELS_CHANGED.Enum(),
+		BoardId:    trans.Ptr(card.GetBoardId()),
+		OccurredAt: timestamppb.Now(),
+		Payload:    &boardV1.BoardChangeEvent_Card{Card: card},
+	})
+}

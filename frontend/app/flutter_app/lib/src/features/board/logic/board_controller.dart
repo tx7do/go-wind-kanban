@@ -110,6 +110,39 @@ class BoardController extends Cubit<KanbanBoardState?> {
   /// 乐观更新本地；在线提交 MoveCard（以目标位置邻卡为 anchor），
   /// 成功回填服务端 rank/version；离线入 Pending Queue。
   /// 返回 false 表示在线提交被服务端拒绝（UI 可提示并保持现状）。
+  /// 移动列（列重排）。与 moveCard 同构的 anchor 语义。
+  /// 离线时不支持列重排（列移动低频，且离线冲突语义复杂）。
+  Future<bool> moveColumn(int columnId, int toIndex) async {
+    final prev = state;
+    if (prev == null || _offline) return false;
+
+    final cols = List<KanbanColumn>.from(prev.columns)
+      ..sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
+    final col = cols.where((c) => c.id == columnId).firstOrNull;
+    if (col == null) return false;
+
+    // 计算目标位置的邻列 anchor（基于移动前状态）。
+    final others = cols.where((c) => c.id != columnId).toList();
+    final clamped = toIndex.clamp(0, others.length).toInt();
+    final afterId = clamped < others.length ? others[clamped].id : null;
+    final beforeId = clamped > 0 ? others[clamped - 1].id : null;
+
+    try {
+      await _api.columnService.move(api.BoardServiceV1MoveColumnRequest(
+        id: columnId,
+        beforeId: beforeId,
+        afterId: afterId,
+      ));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+        return false;
+      }
+      return false;
+    }
+  }
+
   Future<bool> moveCard(int cardId, int toColumnId, int toIndex) async {
     final prev = state;
     if (prev == null) return false;
@@ -331,6 +364,14 @@ class BoardController extends Cubit<KanbanBoardState?> {
             cards: cards.where((c) => c.id != ev.card!.id).toList(),
           ));
         }
+      // 标签相关事件（labelCreated/Updated/Deleted/cardLabelsChanged）：
+      // 当前看板 UI 未实现标签展示，这些事件暂不驱动状态变更。
+      // 标签 UI 落地后在此补全（拉取标签集合、刷新卡片标签关联）。
+      case BoardEvent.labelCreated:
+      case BoardEvent.labelUpdated:
+      case BoardEvent.labelDeleted:
+      case BoardEvent.cardLabelsChanged:
+        break;
       case BoardEvent.columnCreated:
       case BoardEvent.columnUpdated:
       case BoardEvent.columnMoved:
