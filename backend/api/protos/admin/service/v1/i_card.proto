@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "board/service/v1/card.proto";
+
+// 看板卡片管理服务
+service CardService {
+  // 查询卡片列表
+  rpc List (pagination.PagingRequest) returns (board.service.v1.ListCardResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/cards"
+    };
+  }
+
+  // 查询卡片详情
+  rpc Get (board.service.v1.GetCardRequest) returns (board.service.v1.Card) {
+    option (google.api.http) = {
+      get: "/admin/v1/cards/{id}"
+    };
+  }
+
+  // 创建卡片
+  rpc Create (board.service.v1.CreateCardRequest) returns (board.service.v1.Card) {
+    option (google.api.http) = {
+      post: "/admin/v1/cards"
+      body: "*"
+    };
+  }
+
+  // 更新卡片
+  rpc Update (board.service.v1.UpdateCardRequest) returns (board.service.v1.Card) {
+    option (google.api.http) = {
+      put: "/admin/v1/cards/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除卡片
+  rpc Delete (board.service.v1.DeleteCardRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/cards/{id}"
+    };
+  }
+
+  // 移动卡片（同列重排/跨列移动）
+  rpc Move (board.service.v1.MoveCardRequest) returns (board.service.v1.Card) {
+    option (google.api.http) = {
+      post: "/admin/v1/cards/{id}:move"
+      body: "*"
+    };
+  }
+}

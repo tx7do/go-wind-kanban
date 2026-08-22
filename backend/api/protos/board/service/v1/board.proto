@@ -1,0 +1,192 @@
+syntax = "proto3";
+
+package board.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "board/service/v1/column.proto";
+import "board/service/v1/card.proto";
+
+// 看板管理服务
+service BoardService {
+  // 查询看板列表
+  rpc List (pagination.PagingRequest) returns (ListBoardResponse) {}
+
+  // 查询看板详情
+  rpc Get (GetBoardRequest) returns (Board) {}
+
+  // 创建看板
+  rpc Create (CreateBoardRequest) returns (Board) {}
+
+  // 更新看板
+  rpc Update (UpdateBoardRequest) returns (Board) {}
+
+  // 删除看板
+  rpc Delete (DeleteBoardRequest) returns (google.protobuf.Empty) {}
+
+  // 移动看板（租户内重排序，Lexorank 排序）
+  rpc Move (MoveBoardRequest) returns (Board) {}
+
+  // 获取看板完整快照（看板 + 全部列 + 全部卡片，供客户端一次性加载/离线缓存）
+  rpc GetBoardSnapshot (GetBoardSnapshotRequest) returns (BoardSnapshot) {}
+}
+
+// 看板
+message Board {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "看板ID"}
+  ]; // 看板ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {description: "看板名称"}
+  ]; // 看板名称
+
+  optional string description = 3 [
+    json_name = "description",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "看板描述"}
+  ]; // 看板描述
+
+  optional string rank = 4 [
+    json_name = "rank",
+    (gnostic.openapi.v3.property) = {description: "租户内排序权重（Lexorank 字典序字符串，服务端维护）"}
+  ]; // 租户内排序权重（Lexorank 字典序字符串，服务端维护）
+
+  optional uint32 version = 5 [
+    json_name = "version",
+    (gnostic.openapi.v3.property) = {description: "乐观锁版本号，每次更新自增（离线同步冲突检测用）"}
+  ]; // 乐观锁版本号，每次更新自增（离线同步冲突检测用）
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ]; // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}]; // 删除时间
+}
+
+// 看板完整快照（列与卡片为扁平列表，客户端按 column_id 分组组装看板视图）
+message BoardSnapshot {
+  Board board = 1 [
+    json_name = "board",
+    (gnostic.openapi.v3.property) = {description: "看板本体"}
+  ]; // 看板本体
+
+  repeated Column columns = 2 [
+    json_name = "columns",
+    (gnostic.openapi.v3.property) = {description: "看板全部列，按 rank 升序"}
+  ]; // 看板全部列，按 rank 升序
+
+  repeated Card cards = 3 [
+    json_name = "cards",
+    (gnostic.openapi.v3.property) = {description: "看板全部卡片（扁平），按 column_id 分组、组内按 rank 升序"}
+  ]; // 看板全部卡片（扁平），按 column_id 分组、组内按 rank 升序
+}
+
+// 查询看板列表 - 回应
+message ListBoardResponse {
+  repeated Board items = 1;
+  uint64 total = 2;
+}
+
+// 查询看板详情 - 请求
+message GetBoardRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建看板 - 请求
+message CreateBoardRequest {
+  Board data = 1;
+}
+
+// 更新看板 - 请求
+message UpdateBoardRequest {
+  uint32 id = 1;
+
+  Board data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,name,description"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除看板 - 请求
+message DeleteBoardRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+// 移动看板 - 请求
+message MoveBoardRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {description: "要移动的看板ID"}
+  ]; // 要移动的看板ID
+
+  oneof anchor {
+    uint32 before_id = 2 [
+      json_name = "beforeId",
+      (gnostic.openapi.v3.property) = {description: "移动到该看板之前（同级邻居看板ID）"}
+    ]; // 移动到该看板之前（同级邻居看板ID）
+
+    uint32 after_id = 3 [
+      json_name = "afterId",
+      (gnostic.openapi.v3.property) = {description: "移动到该看板之后（同级邻居看板ID）"}
+    ]; // 移动到该看板之后（同级邻居看板ID）
+  }
+
+  // anchor 为空时追加到租户看板列表末尾
+}
+
+// 获取看板快照 - 请求
+message GetBoardSnapshotRequest {
+  uint32 board_id = 1 [
+    json_name = "boardId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {description: "看板ID"}
+  ]; // 看板ID
+}

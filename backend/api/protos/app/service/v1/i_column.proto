@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "board/service/v1/column.proto";
+
+// 看板列服务
+service ColumnService {
+  // 查询列列表
+  rpc List (pagination.PagingRequest) returns (board.service.v1.ListColumnResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/columns"
+    };
+  }
+
+  // 查询列详情
+  rpc Get (board.service.v1.GetColumnRequest) returns (board.service.v1.Column) {
+    option (google.api.http) = {
+      get: "/app/v1/columns/{id}"
+    };
+  }
+
+  // 创建列
+  rpc Create (board.service.v1.CreateColumnRequest) returns (board.service.v1.Column) {
+    option (google.api.http) = {
+      post: "/app/v1/columns"
+      body: "*"
+    };
+  }
+
+  // 更新列
+  rpc Update (board.service.v1.UpdateColumnRequest) returns (board.service.v1.Column) {
+    option (google.api.http) = {
+      put: "/app/v1/columns/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除列
+  rpc Delete (board.service.v1.DeleteColumnRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/columns/{id}"
+    };
+  }
+
+  // 移动列（看板内重排序）
+  rpc Move (board.service.v1.MoveColumnRequest) returns (board.service.v1.Column) {
+    option (google.api.http) = {
+      post: "/app/v1/columns/{id}:move"
+      body: "*"
+    };
+  }
+}

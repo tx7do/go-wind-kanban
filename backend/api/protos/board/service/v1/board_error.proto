@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package board.service.v1;
+
+import "errors/errors.proto";
+
+// 看板服务错误定义
+enum BoardErrorReason {
+  option (errors.default_code) = 500;
+
+  // 400
+  BAD_REQUEST = 0 [(errors.code) = 400]; // 错误请求
+  INVALID_RANK = 1 [(errors.code) = 400]; // 非法排序值
+  ANCHOR_NOT_SIBLING = 2 [(errors.code) = 400]; // 锚点与移动目标不在同一同级范围
+
+  // 401
+  UNAUTHORIZED = 100 [(errors.code) = 401]; // 未授权
+
+  // 403
+  FORBIDDEN = 300 [(errors.code) = 403]; // 禁止访问
+  CROSS_TENANT = 301 [(errors.code) = 403]; // 跨租户操作
+
+  // 404
+  NOT_FOUND = 400 [(errors.code) = 404]; // 找不到资源
+  BOARD_NOT_FOUND = 401 [(errors.code) = 404]; // 看板不存在
+  COLUMN_NOT_FOUND = 402 [(errors.code) = 404]; // 列不存在
+  CARD_NOT_FOUND = 403 [(errors.code) = 404]; // 卡片不存在
+
+  // 409
+  CONFLICT = 900 [(errors.code) = 409]; // 冲突（预留：离线同步版本冲突）
+
+  // 500
+  INTERNAL_SERVER_ERROR = 2000 [(errors.code) = 500]; // 内部服务器错误
+  REBALANCE_FAILED = 2001 [(errors.code) = 500]; // 排序重整失败
+
+  // 503
+  SERVICE_UNAVAILABLE = 2300 [(errors.code) = 503]; // 服务不可用
+}
