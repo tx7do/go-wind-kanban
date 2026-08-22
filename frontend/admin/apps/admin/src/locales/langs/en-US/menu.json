@@ -51,5 +51,8 @@
     "moduleName": "Internal Messages",
     "internalMessage": "Messages",
     "internalMessageCategory": "Message Categories"
+  },
+  "board": {
+    "management": "Boards"
   }
 }

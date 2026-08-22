@@ -52,5 +52,8 @@
     "moduleName": "站内消息",
     "internalMessage": "消息管理",
     "internalMessageCategory": "消息分类"
+  },
+  "board": {
+    "management": "看板管理"
   }
 }
