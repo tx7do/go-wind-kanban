@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_app/src/features/board/data/label_api.dart';
 import 'package:flutter_app/src/features/board/logic/board_controller.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
+import 'package:flutter_app/src/features/board/pages/card_edit_dialog.dart';
 
 /// 桌面/宽屏看板：AppFlowyBoard 横向多列 + 鼠标流畅拖拽 + 吸附动画。
 ///
@@ -132,6 +134,55 @@ class _ColumnHeader extends StatelessWidget {
             ),
             child: Text('${column.items.length}'),
           ),
+          IconButton(
+            icon: const Icon(Icons.more_horiz, size: 16),
+            onPressed: () => _showColumnOptions(context, data.column),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showColumnOptions(BuildContext context, KanbanColumn col) {
+    showModalBottomSheet(
+      context: context,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('重命名列'),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _renameColumn(context, col);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _renameColumn(BuildContext context, KanbanColumn col) {
+    final ctrl = TextEditingController(text: col.name);
+    showDialog<void>(
+      context: context,
+      builder: (dlgCtx) => AlertDialog(
+        title: const Text('重命名列'),
+        content: TextField(controller: ctrl, autofocus: true, decoration: const InputDecoration(labelText: '列名称')),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dlgCtx), child: const Text('取消')),
+          FilledButton(
+            onPressed: () {
+              final name = ctrl.text.trim();
+              Navigator.pop(dlgCtx);
+              if (name.isNotEmpty && name != col.name) {
+                context.read<BoardController>().renameColumn(col.id, name);
+              }
+            },
+            child: const Text('保存'),
+          ),
         ],
       ),
     );
@@ -145,37 +196,67 @@ class _CardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              item.card.name,
-              style: Theme.of(context).textTheme.bodyMedium,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (item.card.description?.isNotEmpty == true) ...[
-              const SizedBox(height: 4),
+    final boardState = context.read<BoardController>().state;
+    return GestureDetector(
+      onTap: () => _openEdit(context, item.card, boardState),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
-                item.card.description!,
-                style: Theme.of(context).textTheme.bodySmall,
+                item.card.name,
+                style: Theme.of(context).textTheme.bodyMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              if (item.card.description?.isNotEmpty == true) ...[
+                const SizedBox(height: 4),
+                Text(
+                  item.card.description!,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  void _openEdit(BuildContext context, KanbanCard card, KanbanBoardState? boardState) {
+    if (boardState == null) return;
+    showDialog<CardEditResult>(
+      context: context,
+      builder: (ctx) => CardEditDialog(card: card, boardLabels: boardState.labels),
+    ).then((result) async {
+      if (result == null) return;
+      final bc = context.read<BoardController>();
+      if (result.delete) {
+        await bc.deleteCard(card.id);
+        return;
+      }
+      if (result.name != null && result.name != card.name) {
+        await bc.renameCard(card.id, result.name!);
+      }
+      if (result.description != null && result.description != card.description) {
+        await bc.updateCardDescription(card.id, result.description!);
+      }
+      if (result.labelIds != null) {
+        try {
+          await LabelApi().setCardLabels(card.id, result.labelIds!);
+        } catch (_) {}
+      }
+    });
   }
 }
 

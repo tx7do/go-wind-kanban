@@ -48,6 +48,43 @@ class _BoardListPageState extends State<BoardListPage> {
     }
   }
 
+  Future<void> _createBoard() async {
+    final nameCtrl = TextEditingController();
+    final descCtrl = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('新建看板'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: nameCtrl, autofocus: true, decoration: const InputDecoration(labelText: '看板名称')),
+            const SizedBox(height: 12),
+            TextField(controller: descCtrl, decoration: const InputDecoration(labelText: '描述（可选）')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('创建')),
+        ],
+      ),
+    );
+    if (confirmed != true || nameCtrl.text.trim().isEmpty) return;
+    try {
+      await GetIt.instance<api.ApiClient>().boardService.create(
+        api.BoardServiceV1CreateBoardRequest(
+          data: api.BoardServiceV1Board(
+            name: nameCtrl.text.trim(),
+            description: descCtrl.text.trim(),
+          ),
+        ),
+      );
+      _load();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('创建失败: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +111,13 @@ class _BoardListPageState extends State<BoardListPage> {
                   onTap: () => context.go('/board/${b.id}'),
                 );
               },
+            ),
+      floatingActionButton: _offline
+          ? null
+          : FloatingActionButton.extended(
+              icon: const Icon(Icons.add),
+              label: const Text('新建看板'),
+              onPressed: _createBoard,
             ),
     );
   }

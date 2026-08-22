@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_app/src/features/board/data/label_api.dart';
 import 'package:flutter_app/src/features/board/logic/board_controller.dart';
+import 'package:flutter_app/src/features/board/pages/card_edit_dialog.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
 
 /// 手机/窄屏看板：TabBarView 单列分页 + 长按激活拖拽（ReorderableListView）。
@@ -133,31 +135,36 @@ class _ColumnList extends StatelessWidget {
   }
 
   Future<void> _editCard(BuildContext context, KanbanCard card) async {
-    final controller = TextEditingController(text: card.name);
-    final renamed = await showDialog<String>(
+    final bc = context.read<BoardController>();
+    final boardState = bc.state;
+    if (boardState == null) return;
+
+    final result = await showDialog<CardEditResult>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('编辑卡片'),
-        content: TextField(controller: controller, autofocus: true),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, '__delete__'),
-            child: const Text('删除'),
-          ),
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('保存'),
-          ),
-        ],
+      builder: (ctx) => CardEditDialog(
+        card: card,
+        boardLabels: boardState.labels,
       ),
     );
-    if (renamed == null || renamed.isEmpty) return;
-    final bc = context.read<BoardController>();
-    if (renamed == '__delete__') {
+
+    if (result == null) return;
+
+    if (result.delete) {
       await bc.deleteCard(card.id);
-    } else if (renamed != card.name) {
-      await bc.renameCard(card.id, renamed);
+      return;
+    }
+
+    if (result.name != null && result.name != card.name) {
+      await bc.renameCard(card.id, result.name!);
+    }
+    if (result.description != null && result.description != card.description) {
+      await bc.updateCardDescription(card.id, result.description!);
+    }
+    if (result.labelIds != null) {
+      try {
+        await LabelApi().setCardLabels(card.id, result.labelIds!);
+      } catch (_) {}
     }
   }
+
 }

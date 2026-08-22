@@ -161,6 +161,35 @@ class BoardController extends Cubit<KanbanBoardState?> {
     }
   }
 
+  /// 重命名列（仅在线路径）。
+  Future<bool> renameColumn(int columnId, String name) async {
+    final prev = state;
+    if (prev == null || _offline) return false;
+
+    emit(KanbanBoardState(
+      board: prev.board,
+      columns: prev.columns.map((c) => c.id == columnId ? c.copyWith(name: name) : c).toList(),
+      cards: prev.cards,
+      labels: prev.labels,
+    ));
+
+    try {
+      await _api.columnService.update(api.BoardServiceV1UpdateColumnRequest(
+        id: columnId,
+        data: api.BoardServiceV1Column(name: name),
+        updateMask: 'name',
+      ));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+        return false;
+      }
+      emit(prev);
+      return false;
+    }
+  }
+
   Future<bool> moveCard(int cardId, int toColumnId, int toIndex) async {
     final prev = state;
     if (prev == null) return false;
@@ -241,6 +270,36 @@ class BoardController extends Cubit<KanbanBoardState?> {
         await _pending.enqueue(
             PendingOps.renameCardOp(cardId: cardId, name: name, expectedVersion: card.version));
         return true;
+      }
+      emit(prev);
+      return false;
+    }
+  }
+
+  /// 更新卡片描述（在线路径，乐观更新）。
+  Future<bool> updateCardDescription(int cardId, String description) async {
+    final prev = state;
+    if (prev == null) return false;
+    final card = prev.cards.where((c) => c.id == cardId).firstOrNull;
+    if (card == null) return false;
+
+    emit(_mapCards(prev, (c) => c.id == cardId ? c.copyWith(description: description) : c));
+
+    if (_offline) {
+      return false;
+    }
+    try {
+      await _api.cardService.update(api.BoardServiceV1UpdateCardRequest(
+        id: cardId,
+        data: api.BoardServiceV1Card(description: description),
+        updateMask: 'description',
+        expectedVersion: card.version,
+      ));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+        return false;
       }
       emit(prev);
       return false;
