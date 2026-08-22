@@ -9,6 +9,7 @@ import 'package:flutter_app/src/core/widgets/not_found_page.dart';
 import 'package:flutter_app/src/core/widgets/web_shell_layout.dart';
 import 'package:flutter_app/src/features/auth/pages/login_page.dart';
 import 'package:flutter_app/src/features/board/pages/board_home_page.dart';
+import 'package:flutter_app/src/features/board/pages/board_list_page.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 
 /// 看板应用路由
@@ -32,10 +33,17 @@ class AppRouter {
           );
         },
         routes: [
-          // 看板主页（占位，后续接入 appflowy_board）
+          // 看板列表（在线拉取，断网回落缓存）
           GoRoute(
             path: constants.AppRoutePath.initial,
-            builder: (context, state) => const BoardHomePage(),
+            builder: (context, state) => const BoardListPage(),
+          ),
+          // 看板详情（宽屏多列 / 窄屏分页）
+          GoRoute(
+            path: '/board/:id',
+            builder: (context, state) => BoardHomePage(
+              boardId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            ),
           ),
         ],
       ),

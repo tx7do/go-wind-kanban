@@ -13,6 +13,9 @@ import 'package:flutter_app/src/core/transport/http/index.dart'
 import 'package:flutter_app/src/core/transport/init.dart' as transport;
 import 'package:flutter_app/src/core/widgets/error_page.dart';
 import 'package:get_it/get_it.dart' show GetIt;
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'package:flutter_app/src/features/board/data/board_cache.dart';
 
 import 'init_thirdparty_plugins.dart';
 
@@ -24,11 +27,21 @@ Future<void> init() async {
 
   await initThirdPartyPlugins();
 
+  await _initBoardStorage();
+
   _initTransport();
 
   await repos.init();
 
   _initErrorWidget();
+}
+
+/// 初始化看板离线存储（Hive：快照缓存 + 待同步队列）
+Future<void> _initBoardStorage() async {
+  await Hive.initFlutter();
+  final getIt = GetIt.instance;
+  getIt.registerSingleton<BoardCache>(await BoardCache.open());
+  getIt.registerSingleton<PendingOps>(await PendingOps.open());
 }
 
 /// 初始化传输层

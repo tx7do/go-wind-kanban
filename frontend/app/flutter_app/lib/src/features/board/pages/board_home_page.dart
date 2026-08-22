@@ -1,35 +1,152 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_app/generated/l10n.dart' as l10n;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
-/// 看板主页（占位）。
+import 'package:flutter_app/src/features/board/data/board_cache.dart';
+import 'package:flutter_app/src/features/board/logic/board_controller.dart';
+import 'package:flutter_app/src/features/board/models/board_models.dart';
+import 'package:flutter_app/src/features/board/pages/board_desktop_page.dart';
+import 'package:flutter_app/src/features/board/pages/board_mobile_page.dart';
+
+/// 看板主页：响应式分派。
 ///
-/// CMS 功能树已移除；此处为看板 UI 的挂载点，
-/// 后续将接入 GetBoardSnapshot → appflowy_board 渲染。
-class BoardHomePage extends StatelessWidget {
-  const BoardHomePage({super.key});
+/// 宽屏（桌面/Web，>=900dp）：AppFlowyBoard 横向多列看板，
+/// 鼠标流畅拖拽 + 吸附动画；窄屏（手机，<900dp）：TabBarView 单列分页，
+/// 长按激活拖拽。
+class BoardHomePage extends StatefulWidget {
+  final int boardId;
+
+  const BoardHomePage({super.key, required this.boardId});
+
+  @override
+  State<BoardHomePage> createState() => _BoardHomePageState();
+}
+
+class _BoardHomePageState extends State<BoardHomePage> {
+  late final BoardController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = BoardController(
+      cache: GetIt.instance<BoardCache>(),
+      pending: GetIt.instance<PendingOps>(),
+    );
+    _controller.load(widget.boardId);
+  }
+
+  @override
+  void dispose() {
+    _controller.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.view_kanban_outlined, size: 64),
-            const SizedBox(height: 16),
-            Text(
-              l10n.S.of(context).appName,
-              style: Theme.of(context).textTheme.headlineSmall,
+    return BlocProvider<BoardController>.value(
+      value: _controller,
+      child: Scaffold(
+        appBar: AppBar(
+          title: BlocBuilder<BoardController, KanbanBoardState?>(
+            buildWhen: (a, b) => a?.board.name != b?.board.name,
+            builder: (context, state) => Text(state?.board.name ?? ''),
+          ),
+          actions: [
+            // 离线徽标：断网或存在待同步操作时显示
+            BlocBuilder<BoardController, KanbanBoardState?>(
+              builder: (context, _) {
+                final c = context.read<BoardController>();
+                if (!c.isOffline && c.pendingCount == 0) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Chip(
+                    avatar: const Icon(Icons.cloud_off, size: 16),
+                    label: Text(c.isOffline
+                        ? '离线'
+                        : '待同步 ${c.pendingCount}'),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
-            Text(
-              '看板模块开发中（Board / Column / Card API 已就绪）',
-              style: Theme.of(context).textTheme.bodyMedium,
+          ],
+        ),
+        body: BlocBuilder<BoardController, KanbanBoardState?>(
+          builder: (context, state) {
+            if (state == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state.columns.isEmpty) {
+              return const Center(child: Text('看板暂无列，请先在管理端创建列'));
+            }
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 900;
+                return wide
+                    ? const BoardDesktopPage()
+                    : const BoardMobilePage();
+              },
+            );
+          },
+        ),
+        floatingActionButton: BlocBuilder<BoardController, KanbanBoardState?>(
+          builder: (context, state) {
+            if (state == null || state.columns.isEmpty) return const SizedBox.shrink();
+            return FloatingActionButton.extended(
+              icon: const Icon(Icons.add),
+              label: const Text('新建卡片'),
+              onPressed: () => _promptCreateCard(context),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _promptCreateCard(BuildContext context) async {
+    final state = _controller.state;
+    if (state == null) return;
+
+    final nameCtrl = TextEditingController();
+    var columnId = state.columns.first.id;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialog) => AlertDialog(
+          title: const Text('新建卡片'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                autofocus: true,
+                decoration: const InputDecoration(labelText: '卡片标题'),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<int>(
+                value: columnId,
+                decoration: const InputDecoration(labelText: '目标列'),
+                items: state.columns
+                    .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
+                    .toList(),
+                onChanged: (v) => setDialog(() => columnId = v ?? columnId),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('创建'),
             ),
           ],
         ),
       ),
     );
+    final name = nameCtrl.text.trim();
+    if (confirmed == true && name.isNotEmpty) {
+      await _controller.createCard(columnId, name);
+    }
   }
 }
