@@ -9,9 +9,9 @@ import (
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 
-	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-kanban/app/core/service/internal/data"
 
-	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
+	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
 )
 
 type OperationAuditLogService struct {

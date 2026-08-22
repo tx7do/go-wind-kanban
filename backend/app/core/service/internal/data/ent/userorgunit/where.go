@@ -3,7 +3,7 @@
 package userorgunit
 
 import (
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

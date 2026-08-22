@@ -8,12 +8,12 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	appV1 "go-wind-cms/api/gen/go/app/service/v1"
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	appV1 "go-wind-kanban/api/gen/go/app/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 type UserProfileService struct {

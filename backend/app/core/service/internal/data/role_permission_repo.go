@@ -12,10 +12,10 @@ import (
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/rolepermission"
 
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 )
 
 type RolePermissionRepo struct {

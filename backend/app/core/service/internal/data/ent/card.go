@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/board"
-	"go-wind-cms/app/core/service/internal/data/ent/card"
-	"go-wind-cms/app/core/service/internal/data/ent/column"
+	"go-wind-kanban/app/core/service/internal/data/ent/board"
+	"go-wind-kanban/app/core/service/internal/data/ent/card"
+	"go-wind-kanban/app/core/service/internal/data/ent/column"
 	"strings"
 	"time"
 

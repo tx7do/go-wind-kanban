@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	taskpb "go-wind-cms/api/gen/go/task/service/v1"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-	"go-wind-cms/app/core/service/internal/data/ent/task"
+	taskpb "go-wind-kanban/api/gen/go/task/service/v1"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent/task"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

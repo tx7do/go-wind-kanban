@@ -8,12 +8,12 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-kanban/app/core/service/internal/data"
 
-	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
+	dictV1 "go-wind-kanban/api/gen/go/dict/service/v1"
 
-	"go-wind-cms/pkg/constants"
-	appViewer "go-wind-cms/pkg/entgo/viewer"
+	"go-wind-kanban/pkg/constants"
+	appViewer "go-wind-kanban/pkg/entgo/viewer"
 )
 
 type LanguageService struct {

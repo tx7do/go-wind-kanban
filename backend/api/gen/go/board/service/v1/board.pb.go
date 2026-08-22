@@ -985,9 +985,9 @@ const file_board_service_v1_board_proto_rawDesc = "" +
 	"\x06Delete\x12$.board.service.v1.DeleteBoardRequest\x1a\x16.google.protobuf.Empty\"\x00\x12E\n" +
 	"\x04Move\x12\".board.service.v1.MoveBoardRequest\x1a\x17.board.service.v1.Board\"\x00\x12`\n" +
 	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"\x00\x12V\n" +
-	"\tSyncBoard\x12\".board.service.v1.SyncBoardRequest\x1a#.board.service.v1.SyncBoardResponse\"\x00B\xb5\x01\n" +
+	"\tSyncBoard\x12\".board.service.v1.SyncBoardRequest\x1a#.board.service.v1.SyncBoardResponse\"\x00B\xb8\x01\n" +
 	"\x14com.board.service.v1B\n" +
-	"BoardProtoP\x01Z/go-wind-cms/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
+	"BoardProtoP\x01Z2go-wind-kanban/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
 
 var (
 	file_board_service_v1_board_proto_rawDescOnce sync.Once

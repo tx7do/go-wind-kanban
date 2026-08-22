@@ -9,7 +9,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
-	"go-wind-cms/pkg/middleware/ent"
+	"go-wind-kanban/pkg/middleware/ent"
 )
 
 type GrpcMiddlewares []middleware.Middleware

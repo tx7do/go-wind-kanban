@@ -8,19 +8,19 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
-	"go-wind-cms/app/core/service/internal/service"
+	"go-wind-kanban/app/core/service/internal/service"
 
-	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
-	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
+	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
+	dictV1 "go-wind-kanban/api/gen/go/dict/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	internalMessageV1 "go-wind-kanban/api/gen/go/internal_message/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
+	taskV1 "go-wind-kanban/api/gen/go/task/service/v1"
 
-	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
+	boardV1 "go-wind-kanban/api/gen/go/board/service/v1"
 
-	"go-wind-cms/pkg/middleware/ent"
+	"go-wind-kanban/pkg/middleware/ent"
 )
 
 func NewGrpcMiddleware(ctx *bootstrap.Context) []middleware.Middleware {

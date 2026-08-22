@@ -11,14 +11,14 @@ import (
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/dataaccessauditlog"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 
-	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
+	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
 )
 
 type DataAccessAuditLogRepo struct {

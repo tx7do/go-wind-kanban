@@ -19,12 +19,12 @@ import (
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	internalMessageV1 "go-wind-kanban/api/gen/go/internal_message/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 type InternalMessagePublisher interface {

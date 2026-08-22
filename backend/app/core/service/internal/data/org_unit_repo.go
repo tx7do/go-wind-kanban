@@ -17,11 +17,11 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/timeutil"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/orgunit"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
 )
 
 type OrgUnitRepo struct {

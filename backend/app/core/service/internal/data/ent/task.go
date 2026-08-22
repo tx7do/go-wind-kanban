@@ -5,8 +5,8 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	taskpb "go-wind-cms/api/gen/go/task/service/v1"
-	"go-wind-cms/app/core/service/internal/data/ent/task"
+	taskpb "go-wind-kanban/api/gen/go/task/service/v1"
+	"go-wind-kanban/app/core/service/internal/data/ent/task"
 	"strings"
 	"time"
 

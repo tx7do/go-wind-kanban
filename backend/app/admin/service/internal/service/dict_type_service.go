@@ -9,10 +9,10 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	dictV1 "go-wind-kanban/api/gen/go/dict/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 type DictTypeService struct {

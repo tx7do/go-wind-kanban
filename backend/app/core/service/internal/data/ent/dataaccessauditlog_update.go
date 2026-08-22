@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	auditpb "go-wind-cms/api/gen/go/audit/service/v1"
-	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	auditpb "go-wind-kanban/api/gen/go/audit/service/v1"
+	"go-wind-kanban/app/core/service/internal/data/ent/dataaccessauditlog"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

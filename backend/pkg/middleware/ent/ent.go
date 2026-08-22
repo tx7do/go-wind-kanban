@@ -12,10 +12,10 @@ import (
 	"github.com/tx7do/go-crud/viewer"
 	"go.opentelemetry.io/otel/trace"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 
-	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/metadata"
+	appViewer "go-wind-kanban/pkg/entgo/viewer"
+	"go-wind-kanban/pkg/metadata"
 )
 
 // TenantResolver 按 Host 解析 tenant_id。

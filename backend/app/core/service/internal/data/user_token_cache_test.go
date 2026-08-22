@@ -13,7 +13,7 @@ import (
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 )
 
 func TestUserTokenCache_BasicOperations(t *testing.T) {

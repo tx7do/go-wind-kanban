@@ -13,9 +13,9 @@ package providers
 import (
 	"github.com/google/wire"
 
-	"go-wind-cms/app/app/service/internal/data"
+	"go-wind-kanban/app/app/service/internal/data"
 
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 // ProviderSet is the Wire provider set for data layer.

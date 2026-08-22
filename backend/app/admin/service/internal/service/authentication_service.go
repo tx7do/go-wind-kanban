@@ -10,11 +10,11 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
-	"go-wind-cms/pkg/netutil"
+	"go-wind-kanban/pkg/middleware/auth"
+	"go-wind-kanban/pkg/netutil"
 )
 
 // 验证码相关请求头（H5：登录强制验证码，通过 header 传递以避免改动 proto 与三套前端生成代码）。

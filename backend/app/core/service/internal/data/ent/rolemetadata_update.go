@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
+	permissionpb "go-wind-kanban/api/gen/go/permission/service/v1"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent/rolemetadata"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

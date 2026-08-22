@@ -642,9 +642,9 @@ const file_board_service_v1_label_proto_rawDesc = "" +
 	"\x06Update\x12$.board.service.v1.UpdateLabelRequest\x1a\x17.board.service.v1.Label\"\x00\x12H\n" +
 	"\x06Delete\x12$.board.service.v1.DeleteLabelRequest\x1a\x16.google.protobuf.Empty\"\x00\x12Q\n" +
 	"\rSetCardLabels\x12&.board.service.v1.SetCardLabelsRequest\x1a\x16.google.protobuf.Empty\"\x00\x12^\n" +
-	"\rGetCardLabels\x12&.board.service.v1.GetCardLabelsRequest\x1a#.board.service.v1.ListLabelResponse\"\x00B\xb5\x01\n" +
+	"\rGetCardLabels\x12&.board.service.v1.GetCardLabelsRequest\x1a#.board.service.v1.ListLabelResponse\"\x00B\xb8\x01\n" +
 	"\x14com.board.service.v1B\n" +
-	"LabelProtoP\x01Z/go-wind-cms/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
+	"LabelProtoP\x01Z2go-wind-kanban/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
 
 var (
 	file_board_service_v1_label_proto_rawDescOnce sync.Once

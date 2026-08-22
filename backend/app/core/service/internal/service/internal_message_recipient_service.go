@@ -8,9 +8,9 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-kanban/app/core/service/internal/data"
 
-	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	internalMessageV1 "go-wind-kanban/api/gen/go/internal_message/service/v1"
 )
 
 type InternalMessageRecipientService struct {

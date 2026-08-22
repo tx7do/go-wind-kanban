@@ -8,7 +8,7 @@ package adminpb
 
 import (
 	_ "github.com/google/gnostic/openapiv3"
-	v1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	v1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -34,8 +34,8 @@ const file_admin_service_v1_i_authentication_proto_rawDesc = "" +
 	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/admin/v1/logout\x12\x85\x01\n" +
 	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/admin/v1/refresh-token\x12}\n" +
 	"\x0fGenerateCaptcha\x12\x16.google.protobuf.Empty\x1a2.authentication.service.v1.GenerateCaptchaResponse\"\x1e\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x13\x12\x11/admin/v1/captcha\x12\x9c\x01\n" +
-	"\rVerifyCaptcha\x12/.authentication.service.v1.VerifyCaptchaRequest\x1a0.authentication.service.v1.VerifyCaptchaResponse\"(\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/admin/v1/captcha/verifyB\xbf\x01\n" +
-	"\x14com.admin.service.v1B\x14IAuthenticationProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
+	"\rVerifyCaptcha\x12/.authentication.service.v1.VerifyCaptchaRequest\x1a0.authentication.service.v1.VerifyCaptchaResponse\"(\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/admin/v1/captcha/verifyB\xc2\x01\n" +
+	"\x14com.admin.service.v1B\x14IAuthenticationProtoP\x01Z2go-wind-kanban/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_authentication_proto_goTypes = []any{
 	(*v1.LoginRequest)(nil),            // 0: authentication.service.v1.LoginRequest

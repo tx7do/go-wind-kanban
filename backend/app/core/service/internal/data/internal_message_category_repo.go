@@ -14,11 +14,11 @@ import (
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/internalmessagecategory"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	internalMessageV1 "go-wind-kanban/api/gen/go/internal_message/service/v1"
 )
 
 type InternalMessageCategoryRepo struct {

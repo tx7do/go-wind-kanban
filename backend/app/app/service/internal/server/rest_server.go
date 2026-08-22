@@ -16,15 +16,15 @@ import (
 
 	swaggerUI "github.com/tx7do/kratos-swagger-ui"
 
-	"go-wind-cms/app/app/service/cmd/server/assets"
-	"go-wind-cms/app/app/service/internal/service"
+	"go-wind-kanban/app/app/service/cmd/server/assets"
+	"go-wind-kanban/app/app/service/internal/service"
 
-	appV1 "go-wind-cms/api/gen/go/app/service/v1"
-	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
+	appV1 "go-wind-kanban/api/gen/go/app/service/v1"
+	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
-	applogging "go-wind-cms/pkg/middleware/logging"
-	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	"go-wind-kanban/pkg/middleware/auth"
+	applogging "go-wind-kanban/pkg/middleware/logging"
+	entmiddleware "go-wind-kanban/pkg/middleware/ent"
 )
 
 // NewRestMiddleware 创建中间件

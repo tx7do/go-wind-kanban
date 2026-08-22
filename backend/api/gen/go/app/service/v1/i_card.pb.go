@@ -8,7 +8,7 @@ package servicev1
 
 import (
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	v11 "go-wind-cms/api/gen/go/board/service/v1"
+	v11 "go-wind-kanban/api/gen/go/board/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -35,9 +35,9 @@ const file_app_service_v1_i_card_proto_rawDesc = "" +
 	"\x06Create\x12#.board.service.v1.CreateCardRequest\x1a\x16.board.service.v1.Card\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/cards\x12d\n" +
 	"\x06Update\x12#.board.service.v1.UpdateCardRequest\x1a\x16.board.service.v1.Card\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/app/v1/cards/{id}\x12a\n" +
 	"\x06Delete\x12#.board.service.v1.DeleteCardRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/app/v1/cards/{id}\x12e\n" +
-	"\x04Move\x12!.board.service.v1.MoveCardRequest\x1a\x16.board.service.v1.Card\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/app/v1/cards/{id}:moveB\xab\x01\n" +
+	"\x04Move\x12!.board.service.v1.MoveCardRequest\x1a\x16.board.service.v1.Card\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/app/v1/cards/{id}:moveB\xae\x01\n" +
 	"\x12com.app.service.v1B\n" +
-	"ICardProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
+	"ICardProtoP\x01Z2go-wind-kanban/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_card_proto_goTypes = []any{
 	(*v1.PagingRequest)(nil),      // 0: pagination.PagingRequest

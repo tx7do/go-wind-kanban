@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	auditpb "go-wind-cms/api/gen/go/audit/service/v1"
-	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
+	auditpb "go-wind-kanban/api/gen/go/audit/service/v1"
+	"go-wind-kanban/app/core/service/internal/data/ent/apiauditlog"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

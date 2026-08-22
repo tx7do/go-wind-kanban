@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 	"strings"
 	"time"
 
@@ -16,12 +16,12 @@ import (
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
-	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentry"
+	"go-wind-kanban/app/core/service/internal/data/ent/dicttype"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
+	dictV1 "go-wind-kanban/api/gen/go/dict/service/v1"
 )
 
 type DictEntryRepo struct {

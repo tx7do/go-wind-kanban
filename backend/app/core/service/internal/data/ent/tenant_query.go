@@ -5,8 +5,8 @@ package ent
 import (
 	"context"
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-	"go-wind-cms/app/core/service/internal/data/ent/tenant"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent/tenant"
 	"math"
 
 	"entgo.io/ent"

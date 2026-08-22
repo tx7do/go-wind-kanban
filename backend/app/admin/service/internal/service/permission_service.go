@@ -16,13 +16,13 @@ import (
 	"github.com/tx7do/go-utils/sliceutil"
 	"github.com/tx7do/go-utils/trans"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 
-	"go-wind-cms/pkg/constants"
-	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/middleware/auth"
-	"go-wind-cms/pkg/utils/converter"
+	"go-wind-kanban/pkg/constants"
+	appViewer "go-wind-kanban/pkg/entgo/viewer"
+	"go-wind-kanban/pkg/middleware/auth"
+	"go-wind-kanban/pkg/utils/converter"
 )
 
 type PermissionService struct {

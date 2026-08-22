@@ -16,17 +16,17 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
-	"go-wind-cms/app/admin/service/cmd/server/assets"
-	"go-wind-cms/app/admin/service/internal/service"
+	"go-wind-kanban/app/admin/service/cmd/server/assets"
+	"go-wind-kanban/app/admin/service/internal/service"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
 
-	"go-wind-cms/pkg/metadata"
-	"go-wind-cms/pkg/middleware/auth"
-	applogging "go-wind-cms/pkg/middleware/logging"
-	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	"go-wind-kanban/pkg/metadata"
+	"go-wind-kanban/pkg/middleware/auth"
+	applogging "go-wind-kanban/pkg/middleware/logging"
+	entmiddleware "go-wind-kanban/pkg/middleware/ent"
 )
 
 // NewRestMiddleware 创建中间件

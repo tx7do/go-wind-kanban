@@ -14,10 +14,10 @@ import (
 
 	"github.com/tx7do/go-crud/viewer"
 
-	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-kanban/app/core/service/internal/data"
 
-	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+	internalMessageV1 "go-wind-kanban/api/gen/go/internal_message/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
 )
 
 type InternalMessageService struct {

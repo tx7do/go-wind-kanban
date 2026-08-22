@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 )
 
 type ctxKey string

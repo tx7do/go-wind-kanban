@@ -9,7 +9,7 @@ import (
 
 	"github.com/tx7do/go-crud/entgo/mixin"
 
-	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
+	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
 )
 
 // DataAccessAuditLog holds the schema definition for the DataAccessAuditLog entity.

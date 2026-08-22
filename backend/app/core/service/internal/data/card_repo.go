@@ -14,14 +14,14 @@ import (
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/card"
-	"go-wind-cms/app/core/service/internal/data/ent/column"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/card"
+	"go-wind-kanban/app/core/service/internal/data/ent/column"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
+	boardV1 "go-wind-kanban/api/gen/go/board/service/v1"
 
-	"go-wind-cms/pkg/lexorank"
+	"go-wind-kanban/pkg/lexorank"
 )
 
 type CardRepo struct {

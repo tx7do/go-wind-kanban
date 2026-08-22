@@ -17,11 +17,11 @@ import (
 	entgoUpdate "github.com/tx7do/go-crud/entgo/update"
 	"github.com/tx7do/go-crud/pagination"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/menu"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/menu"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 )
 
 type MenuRepo struct {

@@ -4,7 +4,7 @@ package rolemetadata
 
 import (
 	"fmt"
-	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionpb "go-wind-kanban/api/gen/go/permission/service/v1"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -86,7 +86,7 @@ func ValidColumn(column string) bool {
 // package on the initialization of the application. Therefore,
 // it should be imported in the main as follows:
 //
-//	import _ "go-wind-cms/app/core/service/internal/data/ent/runtime"
+//	import _ "go-wind-kanban/app/core/service/internal/data/ent/runtime"
 var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy

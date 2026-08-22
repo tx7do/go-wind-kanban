@@ -12,13 +12,13 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
-	"go-wind-cms/app/core/service/internal/data/ent/privacy"
+	"go-wind-kanban/app/core/service/internal/data"
+	"go-wind-kanban/app/core/service/internal/data/ent/privacy"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	"go-wind-cms/pkg/constants"
-	"go-wind-cms/pkg/metadata"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	"go-wind-kanban/pkg/constants"
+	"go-wind-kanban/pkg/metadata"
 )
 
 func normalizeLoginVerifyError(err error) error {

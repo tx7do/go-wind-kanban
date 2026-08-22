@@ -13,9 +13,9 @@ import (
 	_ "github.com/tx7do/kratos-bootstrap/registry/etcd"
 	_ "github.com/tx7do/kratos-bootstrap/tracer"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 
-	"go-wind-cms/pkg/serviceid"
+	"go-wind-kanban/pkg/serviceid"
 )
 
 var version = "1.0.0"

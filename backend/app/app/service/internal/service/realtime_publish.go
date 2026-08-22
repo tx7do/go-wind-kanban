@@ -6,10 +6,10 @@ import (
 	"github.com/tx7do/go-utils/trans"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
+	boardV1 "go-wind-kanban/api/gen/go/board/service/v1"
 
-	"go-wind-cms/pkg/broadcast"
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/pkg/broadcast"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 // publishBoardEntity 发布看板实体变更事件（board 自身的增改移）。

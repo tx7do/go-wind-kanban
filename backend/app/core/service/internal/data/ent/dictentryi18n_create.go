@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentry"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentryi18n"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

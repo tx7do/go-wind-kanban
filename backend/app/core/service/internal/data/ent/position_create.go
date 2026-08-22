@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/position"
+	"go-wind-kanban/app/core/service/internal/data/ent/position"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

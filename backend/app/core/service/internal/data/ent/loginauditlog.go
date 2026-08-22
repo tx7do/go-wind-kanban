@@ -5,8 +5,8 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	auditpb "go-wind-cms/api/gen/go/audit/service/v1"
-	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
+	auditpb "go-wind-kanban/api/gen/go/audit/service/v1"
+	"go-wind-kanban/app/core/service/internal/data/ent/loginauditlog"
 	"strings"
 	"time"
 

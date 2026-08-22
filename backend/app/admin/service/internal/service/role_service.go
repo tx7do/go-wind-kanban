@@ -9,12 +9,12 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 
-	"go-wind-cms/pkg/middleware/auth"
-	"go-wind-cms/pkg/utils"
+	"go-wind-kanban/pkg/middleware/auth"
+	"go-wind-kanban/pkg/utils"
 )
 
 type RoleService struct {

@@ -9,7 +9,7 @@ package servicev1
 import (
 	_ "github.com/google/gnostic/openapiv3"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	v11 "go-wind-cms/api/gen/go/board/service/v1"
+	v11 "go-wind-kanban/api/gen/go/board/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -37,8 +37,8 @@ const file_app_service_v1_i_board_proto_rawDesc = "" +
 	"\x06Update\x12$.board.service.v1.UpdateBoardRequest\x1a\x17.board.service.v1.Board\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\x1a\x13/app/v1/boards/{id}\x12c\n" +
 	"\x06Delete\x12$.board.service.v1.DeleteBoardRequest\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/app/v1/boards/{id}\x12h\n" +
 	"\x04Move\x12\".board.service.v1.MoveBoardRequest\x1a\x17.board.service.v1.Board\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/app/v1/boards/{id}:move\x12\x8a\x01\n" +
-	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/boards/{board_id}/snapshotB\xac\x01\n" +
-	"\x12com.app.service.v1B\vIBoardProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
+	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/boards/{board_id}/snapshotB\xaf\x01\n" +
+	"\x12com.app.service.v1B\vIBoardProtoP\x01Z2go-wind-kanban/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_board_proto_goTypes = []any{
 	(*v1.PagingRequest)(nil),            // 0: pagination.PagingRequest

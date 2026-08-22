@@ -275,8 +275,8 @@ const file_board_service_v1_realtime_proto_rawDesc = "" +
 	"\x05_typeB\v\n" +
 	"\t_board_idB\v\n" +
 	"\t_actor_idB\x0e\n" +
-	"\f_occurred_atB\xb8\x01\n" +
-	"\x14com.board.service.v1B\rRealtimeProtoP\x01Z/go-wind-cms/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
+	"\f_occurred_atB\xbb\x01\n" +
+	"\x14com.board.service.v1B\rRealtimeProtoP\x01Z2go-wind-kanban/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
 
 var (
 	file_board_service_v1_realtime_proto_rawDescOnce sync.Once

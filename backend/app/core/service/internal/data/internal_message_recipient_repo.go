@@ -16,11 +16,11 @@ import (
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/internalmessagerecipient"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	internalMessageV1 "go-wind-kanban/api/gen/go/internal_message/service/v1"
 )
 
 type InternalMessageRecipientRepo struct {

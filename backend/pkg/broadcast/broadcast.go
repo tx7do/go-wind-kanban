@@ -21,7 +21,7 @@ import (
 
 	"google.golang.org/protobuf/encoding/protojson"
 
-	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
+	boardV1 "go-wind-kanban/api/gen/go/board/service/v1"
 )
 
 // DefaultChannel Redis 总线频道名（单频道、按事件内 board_id 路由）。

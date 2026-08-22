@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentry"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentryi18n"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 	"math"
 
 	"entgo.io/ent"

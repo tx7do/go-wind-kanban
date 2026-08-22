@@ -5,7 +5,7 @@ import (
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	"go-wind-cms/pkg/broadcast"
+	"go-wind-kanban/pkg/broadcast"
 )
 
 // NewBoardEventHub 创建看板实时事件总线。

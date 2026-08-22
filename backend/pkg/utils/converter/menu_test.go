@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/inflection"
 
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 )
 
 func permBaseFromPath(p string) string {

@@ -3,8 +3,8 @@ package data
 import (
 	"context"
 
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	entmiddleware "go-wind-kanban/pkg/middleware/ent"
 )
 
 // tenantResolver 把 core TenantServiceClient 适配为 ent 中间件的 TenantResolver。

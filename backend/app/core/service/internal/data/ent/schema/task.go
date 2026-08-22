@@ -10,7 +10,7 @@ import (
 
 	"github.com/tx7do/go-crud/entgo/mixin"
 
-	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
+	taskV1 "go-wind-kanban/api/gen/go/task/service/v1"
 )
 
 // Task holds the schema definition for the Task entity.

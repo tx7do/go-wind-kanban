@@ -8,7 +8,7 @@ package servicev1
 
 import (
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	v11 "go-wind-cms/api/gen/go/board/service/v1"
+	v11 "go-wind-kanban/api/gen/go/board/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -36,8 +36,8 @@ const file_app_service_v1_i_label_proto_rawDesc = "" +
 	"\x06Update\x12$.board.service.v1.UpdateLabelRequest\x1a\x17.board.service.v1.Label\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\x1a\x13/app/v1/labels/{id}\x12c\n" +
 	"\x06Delete\x12$.board.service.v1.DeleteLabelRequest\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/app/v1/labels/{id}\x12~\n" +
 	"\rSetCardLabels\x12&.board.service.v1.SetCardLabelsRequest\x1a\x16.google.protobuf.Empty\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/app/v1/cards/{card_id}:set-labels\x12\x84\x01\n" +
-	"\rGetCardLabels\x12&.board.service.v1.GetCardLabelsRequest\x1a#.board.service.v1.ListLabelResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/cards/{card_id}/labelsB\xac\x01\n" +
-	"\x12com.app.service.v1B\vILabelProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
+	"\rGetCardLabels\x12&.board.service.v1.GetCardLabelsRequest\x1a#.board.service.v1.ListLabelResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/cards/{card_id}/labelsB\xaf\x01\n" +
+	"\x12com.app.service.v1B\vILabelProtoP\x01Z2go-wind-kanban/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_label_proto_goTypes = []any{
 	(*v1.PagingRequest)(nil),         // 0: pagination.PagingRequest

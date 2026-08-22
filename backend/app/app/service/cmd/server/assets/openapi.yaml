@@ -7,11 +7,11 @@ info:
     description: GoWind Kanban App API
     contact:
         name: tx7do
-        url: https://github.com/tx7do/go-wind-cms
+        url: https://github.com/tx7do/go-wind-kanban
         email: yanglinbo@gmail.com
     license:
         name: MIT License
-        url: https://github.com/tx7do/go-wind-cms/blob/master/LICENSE
+        url: https://github.com/tx7do/go-wind-kanban/blob/master/LICENSE
     version: "1.0"
 paths:
     /app/v1/boards:

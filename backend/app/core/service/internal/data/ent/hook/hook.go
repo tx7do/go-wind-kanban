@@ -5,7 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent"
 )
 
 // The ApiFunc type is an adapter to allow the use of ordinary

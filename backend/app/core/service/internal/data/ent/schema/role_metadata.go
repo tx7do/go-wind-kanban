@@ -9,7 +9,7 @@ import (
 
 	"github.com/tx7do/go-crud/entgo/mixin"
 
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 )
 
 // RoleMetadata 角色元数据（模板标记/覆盖项/版本控制）

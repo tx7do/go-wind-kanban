@@ -17,12 +17,12 @@ import (
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
-	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
+	boardV1 "go-wind-kanban/api/gen/go/board/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 
-	"go-wind-cms/pkg/serviceid"
+	"go-wind-kanban/pkg/serviceid"
 )
 
 func NewClientType() authenticationV1.ClientType {

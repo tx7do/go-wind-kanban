@@ -666,8 +666,8 @@ const file_board_service_v1_column_proto_rawDesc = "" +
 	"\x06Create\x12%.board.service.v1.CreateColumnRequest\x1a\x18.board.service.v1.Column\"\x00\x12K\n" +
 	"\x06Update\x12%.board.service.v1.UpdateColumnRequest\x1a\x18.board.service.v1.Column\"\x00\x12I\n" +
 	"\x06Delete\x12%.board.service.v1.DeleteColumnRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n" +
-	"\x04Move\x12#.board.service.v1.MoveColumnRequest\x1a\x18.board.service.v1.Column\"\x00B\xb6\x01\n" +
-	"\x14com.board.service.v1B\vColumnProtoP\x01Z/go-wind-cms/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
+	"\x04Move\x12#.board.service.v1.MoveColumnRequest\x1a\x18.board.service.v1.Column\"\x00B\xb9\x01\n" +
+	"\x14com.board.service.v1B\vColumnProtoP\x01Z2go-wind-kanban/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
 
 var (
 	file_board_service_v1_column_proto_rawDescOnce sync.Once

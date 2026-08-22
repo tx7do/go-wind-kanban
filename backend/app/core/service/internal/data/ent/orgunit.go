@@ -5,7 +5,7 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
+	"go-wind-kanban/app/core/service/internal/data/ent/orgunit"
 	"strings"
 	"time"
 

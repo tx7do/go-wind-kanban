@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"go-wind-cms/pkg/crypto"
+	"go-wind-kanban/pkg/crypto"
 )
 
 func ExampleEncryptor_Encrypt() {

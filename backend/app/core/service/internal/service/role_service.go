@@ -13,14 +13,14 @@ import (
 	"github.com/tx7do/go-crud/viewer"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-kanban/app/core/service/internal/data"
 
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	identityV1 "go-wind-kanban/api/gen/go/identity/service/v1"
+	permissionV1 "go-wind-kanban/api/gen/go/permission/service/v1"
 
-	"go-wind-cms/pkg/constants"
-	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/utils"
+	"go-wind-kanban/pkg/constants"
+	appViewer "go-wind-kanban/pkg/entgo/viewer"
+	"go-wind-kanban/pkg/utils"
 )
 
 type RoleService struct {

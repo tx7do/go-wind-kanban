@@ -1354,8 +1354,8 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\fTenantExists\x12(.identity.service.v1.TenantExistsRequest\x1a).identity.service.v1.TenantExistsResponse\"\x00\x12\x80\x01\n" +
 	"\x15ResolveTenantByDomain\x121.identity.service.v1.ResolveTenantByDomainRequest\x1a2.identity.service.v1.ResolveTenantByDomainResponse\"\x00\x12\\\n" +
 	"\x11AssignTenantAdmin\x12-.identity.service.v1.AssignTenantAdminRequest\x1a\x16.google.protobuf.Empty\"\x00\x12l\n" +
-	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcb\x01\n" +
-	"\x17com.identity.service.v1B\vTenantProtoP\x01Z5go-wind-cms/api/gen/go/identity/service/v1;identitypb\xa2\x02\x03ISX\xaa\x02\x13Identity.Service.V1\xca\x02\x13Identity\\Service\\V1\xe2\x02\x1fIdentity\\Service\\V1\\GPBMetadata\xea\x02\x15Identity::Service::V1b\x06proto3"
+	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00B\xce\x01\n" +
+	"\x17com.identity.service.v1B\vTenantProtoP\x01Z8go-wind-kanban/api/gen/go/identity/service/v1;identitypb\xa2\x02\x03ISX\xaa\x02\x13Identity.Service.V1\xca\x02\x13Identity\\Service\\V1\xe2\x02\x1fIdentity\\Service\\V1\\GPBMetadata\xea\x02\x15Identity::Service::V1b\x06proto3"
 
 var (
 	file_identity_service_v1_tenant_proto_rawDescOnce sync.Once

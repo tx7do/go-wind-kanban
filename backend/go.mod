@@ -1,4 +1,4 @@
-module go-wind-cms
+module go-wind-kanban
 
 go 1.26.4
 

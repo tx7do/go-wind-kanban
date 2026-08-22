@@ -14,8 +14,8 @@ import (
 	_ "github.com/tx7do/kratos-bootstrap/registry/etcd"
 	_ "github.com/tx7do/kratos-bootstrap/tracer"
 
-	"go-wind-cms/app/app/service/internal/server"
-	"go-wind-cms/pkg/serviceid"
+	"go-wind-kanban/app/app/service/internal/server"
+	"go-wind-kanban/pkg/serviceid"
 )
 
 var version = "1.0.0"

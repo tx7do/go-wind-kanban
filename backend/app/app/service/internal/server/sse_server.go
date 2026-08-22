@@ -12,7 +12,7 @@ import (
 
 	sseServer "github.com/tx7do/kratos-transport/transport/sse"
 
-	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	authenticationV1 "go-wind-kanban/api/gen/go/authentication/service/v1"
 )
 
 // NewSseServer creates a new SSE server.

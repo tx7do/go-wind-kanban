@@ -4,7 +4,7 @@ package ent
 
 import (
 	"fmt"
-	"go-wind-cms/app/core/service/internal/data/ent/permissionmenu"
+	"go-wind-kanban/app/core/service/internal/data/ent/permissionmenu"
 	"strings"
 	"time"
 

@@ -9,10 +9,10 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"go-wind-cms/app/admin/service/internal/data"
-	"go-wind-cms/app/admin/service/internal/server"
-	"go-wind-cms/app/admin/service/internal/service"
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/app/admin/service/internal/data"
+	"go-wind-kanban/app/admin/service/internal/server"
+	"go-wind-kanban/app/admin/service/internal/service"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 import (

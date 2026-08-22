@@ -10,11 +10,11 @@ import (
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 
-	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
-	boardV1 "go-wind-cms/api/gen/go/board/service/v1"
+	adminV1 "go-wind-kanban/api/gen/go/admin/service/v1"
+	boardV1 "go-wind-kanban/api/gen/go/board/service/v1"
 
-	"go-wind-cms/pkg/broadcast"
-	"go-wind-cms/pkg/middleware/auth"
+	"go-wind-kanban/pkg/broadcast"
+	"go-wind-kanban/pkg/middleware/auth"
 )
 
 type CardService struct {

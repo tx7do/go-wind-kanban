@@ -8,7 +8,7 @@ package adminpb
 
 import (
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	v11 "go-wind-cms/api/gen/go/board/service/v1"
+	v11 "go-wind-kanban/api/gen/go/board/service/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -35,9 +35,9 @@ const file_admin_service_v1_i_card_proto_rawDesc = "" +
 	"\x06Create\x12#.board.service.v1.CreateCardRequest\x1a\x16.board.service.v1.Card\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/v1/cards\x12f\n" +
 	"\x06Update\x12#.board.service.v1.UpdateCardRequest\x1a\x16.board.service.v1.Card\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\x1a\x14/admin/v1/cards/{id}\x12c\n" +
 	"\x06Delete\x12#.board.service.v1.DeleteCardRequest\x1a\x16.google.protobuf.Empty\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/admin/v1/cards/{id}\x12g\n" +
-	"\x04Move\x12!.board.service.v1.MoveCardRequest\x1a\x16.board.service.v1.Card\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/admin/v1/cards/{id}:moveB\xb5\x01\n" +
+	"\x04Move\x12!.board.service.v1.MoveCardRequest\x1a\x16.board.service.v1.Card\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/admin/v1/cards/{id}:moveB\xb8\x01\n" +
 	"\x14com.admin.service.v1B\n" +
-	"ICardProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
+	"ICardProtoP\x01Z2go-wind-kanban/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_card_proto_goTypes = []any{
 	(*v1.PagingRequest)(nil),      // 0: pagination.PagingRequest

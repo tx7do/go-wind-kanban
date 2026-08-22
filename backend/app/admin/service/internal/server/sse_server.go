@@ -6,7 +6,7 @@ import (
 
 	sseServer "github.com/tx7do/kratos-transport/transport/sse"
 
-	"go-wind-cms/app/admin/service/internal/service"
+	"go-wind-kanban/app/admin/service/internal/service"
 )
 
 // NewSseServer creates a new SSE server.

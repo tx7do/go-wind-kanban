@@ -131,8 +131,8 @@ const file_board_service_v1_board_error_proto_rawDesc = "" +
 	"\bCONFLICT\x10\x84\a\x1a\x04\xa8E\x99\x03\x12 \n" +
 	"\x15INTERNAL_SERVER_ERROR\x10\xd0\x0f\x1a\x04\xa8E\xf4\x03\x12\x1b\n" +
 	"\x10REBALANCE_FAILED\x10\xd1\x0f\x1a\x04\xa8E\xf4\x03\x12\x1e\n" +
-	"\x13SERVICE_UNAVAILABLE\x10\xfc\x11\x1a\x04\xa8E\xf7\x03\x1a\x04\xa0E\xf4\x03B\xba\x01\n" +
-	"\x14com.board.service.v1B\x0fBoardErrorProtoP\x01Z/go-wind-cms/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
+	"\x13SERVICE_UNAVAILABLE\x10\xfc\x11\x1a\x04\xa8E\xf7\x03\x1a\x04\xa0E\xf4\x03B\xbd\x01\n" +
+	"\x14com.board.service.v1B\x0fBoardErrorProtoP\x01Z2go-wind-kanban/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
 
 var (
 	file_board_service_v1_board_error_proto_rawDescOnce sync.Once

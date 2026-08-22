@@ -11,12 +11,12 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	"go-wind-cms/app/core/service/internal/data/ent"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
-	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
-	"go-wind-cms/app/core/service/internal/data/ent/predicate"
+	"go-wind-kanban/app/core/service/internal/data/ent"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentry"
+	"go-wind-kanban/app/core/service/internal/data/ent/dictentryi18n"
+	"go-wind-kanban/app/core/service/internal/data/ent/predicate"
 
-	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
+	dictV1 "go-wind-kanban/api/gen/go/dict/service/v1"
 )
 
 type DictEntryI18nRepo struct {
