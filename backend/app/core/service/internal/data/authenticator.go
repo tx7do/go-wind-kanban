@@ -468,3 +468,19 @@ func (a *Authenticator) newRefreshToken() (refreshToken string, err error) {
 func (a *Authenticator) newJwtId() string {
 	return jwtutil.NewJWTId()
 }
+
+// CreateWebSocketTicket 生成一次性 WS ticket 并存入 Redis（60s 有效）。
+// 调用方须已通过 JWT 鉴权（由 service 层的 auth 中间件保证），
+// userId 与 boardId 绑定写入 ticket，握手时校验一致性。
+func (a *Authenticator) CreateWebSocketTicket(ctx context.Context, userId, boardId string) (string, error) {
+	ticket := jwtutil.NewJWTId()
+	if err := a.userTokenCache.StoreWebSocketTicket(ctx, ticket, userId, boardId); err != nil {
+		return "", err
+	}
+	return ticket, nil
+}
+
+// ConsumeWebSocketTicket 原子消费 ticket，返回绑定的 userId:boardId。
+func (a *Authenticator) ConsumeWebSocketTicket(ctx context.Context, ticket string) (string, bool, error) {
+	return a.userTokenCache.ConsumeWebSocketTicket(ctx, ticket)
+}

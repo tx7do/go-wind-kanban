@@ -181,6 +181,28 @@ func (s *redactedAuthenticationServiceServer) VerifyCaptcha(ctx context.Context,
 	return res, err
 }
 
+// CreateWebSocketTicket is the redacted wrapper for the actual AuthenticationServiceServer.CreateWebSocketTicket method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) CreateWebSocketTicket(ctx context.Context, in *CreateWebSocketTicketRequest) (*CreateWebSocketTicketResponse, error) {
+	res, err := s.srv.CreateWebSocketTicket(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
+// ConsumeWebSocketTicket is the redacted wrapper for the actual AuthenticationServiceServer.ConsumeWebSocketTicket method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) ConsumeWebSocketTicket(ctx context.Context, in *ConsumeWebSocketTicketRequest) (*ConsumeWebSocketTicketResponse, error) {
+	res, err := s.srv.ConsumeWebSocketTicket(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Ensure LoginRequest implements the Redactor interface at compile time.
 var _ redact.Redactor = (*LoginRequest)(nil)
 
@@ -467,4 +489,56 @@ func (x *VerifyCaptchaResponse) Redact() {
 	}
 
 	// Safe field: Valid
+}
+
+// Ensure CreateWebSocketTicketRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*CreateWebSocketTicketRequest)(nil)
+
+// Redact method implementation for CreateWebSocketTicketRequest
+func (x *CreateWebSocketTicketRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: BoardId
+}
+
+// Ensure CreateWebSocketTicketResponse implements the Redactor interface at compile time.
+var _ redact.Redactor = (*CreateWebSocketTicketResponse)(nil)
+
+// Redact method implementation for CreateWebSocketTicketResponse
+func (x *CreateWebSocketTicketResponse) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Ticket
+}
+
+// Ensure ConsumeWebSocketTicketRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*ConsumeWebSocketTicketRequest)(nil)
+
+// Redact method implementation for ConsumeWebSocketTicketRequest
+func (x *ConsumeWebSocketTicketRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Ticket
+}
+
+// Ensure ConsumeWebSocketTicketResponse implements the Redactor interface at compile time.
+var _ redact.Redactor = (*ConsumeWebSocketTicketResponse)(nil)
+
+// Redact method implementation for ConsumeWebSocketTicketResponse
+func (x *ConsumeWebSocketTicketResponse) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Valid
+
+	// Safe field: UserId
+
+	// Safe field: BoardId
 }

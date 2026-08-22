@@ -57,6 +57,13 @@ service AuthenticationService {
 
   // 验证验证码
   rpc VerifyCaptcha (VerifyCaptchaRequest) returns (VerifyCaptchaResponse) {}
+
+  // 创建 WebSocket 一次性 ticket（以 Bearer JWT 鉴权，返回短时 ticket，
+  // 供 WS 握手替代 URL 传 JWT）。
+  rpc CreateWebSocketTicket (CreateWebSocketTicketRequest) returns (CreateWebSocketTicketResponse) {}
+
+  // 消费 WebSocket ticket（握手时调用，原子取回绑定的 userId:boardId）
+  rpc ConsumeWebSocketTicket (ConsumeWebSocketTicketRequest) returns (ConsumeWebSocketTicketResponse) {}
 }
 
 // 授权类型
@@ -555,4 +562,46 @@ message VerifyCaptchaResponse {
       description: "验证码验证结果，true表示验证成功，false表示验证失败"
     }
   ]; // 验证码验证结果，true表示验证成功，false表示验证失败
+}
+
+// WebSocket 一次性 ticket（替代 URL 传 JWT）。
+// 客户端以 Bearer JWT POST 换取短时 ticket，再用 ticket 做 WS 握手。
+// ticket 60 秒有效、单次使用、Redis 存储。
+message CreateWebSocketTicketRequest {
+  uint32 board_id = 1 [
+    json_name = "boardId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {description: "订阅看板ID（写入 ticket 绑定，握手时校验）"}
+  ]; // 订阅看板ID（写入 ticket 绑定，握手时校验）
+}
+
+message CreateWebSocketTicketResponse {
+  string ticket = 1 [
+    json_name = "ticket",
+    (gnostic.openapi.v3.property) = {description: "一次性 WebSocket ticket"}
+  ]; // 一次性 WebSocket ticket
+}
+
+message ConsumeWebSocketTicketRequest {
+  string ticket = 1 [
+    json_name = "ticket",
+    (gnostic.openapi.v3.property) = {description: "待消费的 WebSocket ticket"}
+  ]; // 待消费的 WebSocket ticket
+}
+
+message ConsumeWebSocketTicketResponse {
+  optional bool valid = 1 [
+    json_name = "valid",
+    (gnostic.openapi.v3.property) = {description: "ticket 是否有效"}
+  ]; // ticket 是否有效
+
+  optional uint32 user_id = 2 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "绑定的用户ID（有效时返回）"}
+  ]; // 绑定的用户ID（有效时返回）
+
+  optional uint32 board_id = 3 [
+    json_name = "boardId",
+    (gnostic.openapi.v3.property) = {description: "绑定的看板ID（有效时返回）"}
+  ]; // 绑定的看板ID（有效时返回）
 }

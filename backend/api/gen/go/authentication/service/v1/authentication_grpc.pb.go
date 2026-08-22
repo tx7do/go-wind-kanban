@@ -20,18 +20,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthenticationService_Login_FullMethodName           = "/authentication.service.v1.AuthenticationService/Login"
-	AuthenticationService_Logout_FullMethodName          = "/authentication.service.v1.AuthenticationService/Logout"
-	AuthenticationService_RegisterUser_FullMethodName    = "/authentication.service.v1.AuthenticationService/RegisterUser"
-	AuthenticationService_RefreshToken_FullMethodName    = "/authentication.service.v1.AuthenticationService/RefreshToken"
-	AuthenticationService_ValidateToken_FullMethodName   = "/authentication.service.v1.AuthenticationService/ValidateToken"
-	AuthenticationService_GetAccessTokens_FullMethodName = "/authentication.service.v1.AuthenticationService/GetAccessTokens"
-	AuthenticationService_RevokeTokenById_FullMethodName = "/authentication.service.v1.AuthenticationService/RevokeTokenById"
-	AuthenticationService_BlockToken_FullMethodName      = "/authentication.service.v1.AuthenticationService/BlockToken"
-	AuthenticationService_UnblockToken_FullMethodName    = "/authentication.service.v1.AuthenticationService/UnblockToken"
-	AuthenticationService_WhoAmI_FullMethodName          = "/authentication.service.v1.AuthenticationService/WhoAmI"
-	AuthenticationService_GenerateCaptcha_FullMethodName = "/authentication.service.v1.AuthenticationService/GenerateCaptcha"
-	AuthenticationService_VerifyCaptcha_FullMethodName   = "/authentication.service.v1.AuthenticationService/VerifyCaptcha"
+	AuthenticationService_Login_FullMethodName                  = "/authentication.service.v1.AuthenticationService/Login"
+	AuthenticationService_Logout_FullMethodName                 = "/authentication.service.v1.AuthenticationService/Logout"
+	AuthenticationService_RegisterUser_FullMethodName           = "/authentication.service.v1.AuthenticationService/RegisterUser"
+	AuthenticationService_RefreshToken_FullMethodName           = "/authentication.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_ValidateToken_FullMethodName          = "/authentication.service.v1.AuthenticationService/ValidateToken"
+	AuthenticationService_GetAccessTokens_FullMethodName        = "/authentication.service.v1.AuthenticationService/GetAccessTokens"
+	AuthenticationService_RevokeTokenById_FullMethodName        = "/authentication.service.v1.AuthenticationService/RevokeTokenById"
+	AuthenticationService_BlockToken_FullMethodName             = "/authentication.service.v1.AuthenticationService/BlockToken"
+	AuthenticationService_UnblockToken_FullMethodName           = "/authentication.service.v1.AuthenticationService/UnblockToken"
+	AuthenticationService_WhoAmI_FullMethodName                 = "/authentication.service.v1.AuthenticationService/WhoAmI"
+	AuthenticationService_GenerateCaptcha_FullMethodName        = "/authentication.service.v1.AuthenticationService/GenerateCaptcha"
+	AuthenticationService_VerifyCaptcha_FullMethodName          = "/authentication.service.v1.AuthenticationService/VerifyCaptcha"
+	AuthenticationService_CreateWebSocketTicket_FullMethodName  = "/authentication.service.v1.AuthenticationService/CreateWebSocketTicket"
+	AuthenticationService_ConsumeWebSocketTicket_FullMethodName = "/authentication.service.v1.AuthenticationService/ConsumeWebSocketTicket"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -64,6 +66,11 @@ type AuthenticationServiceClient interface {
 	GenerateCaptcha(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GenerateCaptchaResponse, error)
 	// 验证验证码
 	VerifyCaptcha(ctx context.Context, in *VerifyCaptchaRequest, opts ...grpc.CallOption) (*VerifyCaptchaResponse, error)
+	// 创建 WebSocket 一次性 ticket（以 Bearer JWT 鉴权，返回短时 ticket，
+	// 供 WS 握手替代 URL 传 JWT）。
+	CreateWebSocketTicket(ctx context.Context, in *CreateWebSocketTicketRequest, opts ...grpc.CallOption) (*CreateWebSocketTicketResponse, error)
+	// 消费 WebSocket ticket（握手时调用，原子取回绑定的 userId:boardId）
+	ConsumeWebSocketTicket(ctx context.Context, in *ConsumeWebSocketTicketRequest, opts ...grpc.CallOption) (*ConsumeWebSocketTicketResponse, error)
 }
 
 type authenticationServiceClient struct {
@@ -194,6 +201,26 @@ func (c *authenticationServiceClient) VerifyCaptcha(ctx context.Context, in *Ver
 	return out, nil
 }
 
+func (c *authenticationServiceClient) CreateWebSocketTicket(ctx context.Context, in *CreateWebSocketTicketRequest, opts ...grpc.CallOption) (*CreateWebSocketTicketResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateWebSocketTicketResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_CreateWebSocketTicket_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) ConsumeWebSocketTicket(ctx context.Context, in *ConsumeWebSocketTicketRequest, opts ...grpc.CallOption) (*ConsumeWebSocketTicketResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConsumeWebSocketTicketResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_ConsumeWebSocketTicket_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -224,6 +251,11 @@ type AuthenticationServiceServer interface {
 	GenerateCaptcha(context.Context, *emptypb.Empty) (*GenerateCaptchaResponse, error)
 	// 验证验证码
 	VerifyCaptcha(context.Context, *VerifyCaptchaRequest) (*VerifyCaptchaResponse, error)
+	// 创建 WebSocket 一次性 ticket（以 Bearer JWT 鉴权，返回短时 ticket，
+	// 供 WS 握手替代 URL 传 JWT）。
+	CreateWebSocketTicket(context.Context, *CreateWebSocketTicketRequest) (*CreateWebSocketTicketResponse, error)
+	// 消费 WebSocket ticket（握手时调用，原子取回绑定的 userId:boardId）
+	ConsumeWebSocketTicket(context.Context, *ConsumeWebSocketTicketRequest) (*ConsumeWebSocketTicketResponse, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -269,6 +301,12 @@ func (UnimplementedAuthenticationServiceServer) GenerateCaptcha(context.Context,
 }
 func (UnimplementedAuthenticationServiceServer) VerifyCaptcha(context.Context, *VerifyCaptchaRequest) (*VerifyCaptchaResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerifyCaptcha not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) CreateWebSocketTicket(context.Context, *CreateWebSocketTicketRequest) (*CreateWebSocketTicketResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateWebSocketTicket not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) ConsumeWebSocketTicket(context.Context, *ConsumeWebSocketTicketRequest) (*ConsumeWebSocketTicketResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConsumeWebSocketTicket not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -507,6 +545,42 @@ func _AuthenticationService_VerifyCaptcha_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_CreateWebSocketTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWebSocketTicketRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).CreateWebSocketTicket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_CreateWebSocketTicket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).CreateWebSocketTicket(ctx, req.(*CreateWebSocketTicketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_ConsumeWebSocketTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConsumeWebSocketTicketRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).ConsumeWebSocketTicket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_ConsumeWebSocketTicket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).ConsumeWebSocketTicket(ctx, req.(*ConsumeWebSocketTicketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -561,6 +635,14 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyCaptcha",
 			Handler:    _AuthenticationService_VerifyCaptcha_Handler,
+		},
+		{
+			MethodName: "CreateWebSocketTicket",
+			Handler:    _AuthenticationService_CreateWebSocketTicket_Handler,
+		},
+		{
+			MethodName: "ConsumeWebSocketTicket",
+			Handler:    _AuthenticationService_ConsumeWebSocketTicket_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

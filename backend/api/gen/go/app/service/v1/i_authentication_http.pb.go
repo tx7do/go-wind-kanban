@@ -21,11 +21,14 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAuthenticationServiceCreateWebSocketTicket = "/app.service.v1.AuthenticationService/CreateWebSocketTicket"
 const OperationAuthenticationServiceLogin = "/app.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/app.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/app.service.v1.AuthenticationService/RefreshToken"
 
 type AuthenticationServiceHTTPServer interface {
+	// CreateWebSocketTicket 创建 WebSocket 一次性 ticket
+	CreateWebSocketTicket(context.Context, *v1.CreateWebSocketTicketRequest) (*v1.CreateWebSocketTicketResponse, error)
 	// Login 登录
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
 	// Logout 登出
@@ -39,6 +42,7 @@ func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationS
 	r.POST("/app/v1/login", _AuthenticationService_Login0_HTTP_Handler(srv))
 	r.POST("/app/v1/logout", _AuthenticationService_Logout0_HTTP_Handler(srv))
 	r.POST("/app/v1/refresh-token", _AuthenticationService_RefreshToken0_HTTP_Handler(srv))
+	r.POST("/app/v1/ws-ticket", _AuthenticationService_CreateWebSocketTicket0_HTTP_Handler(srv))
 }
 
 func _AuthenticationService_Login0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
@@ -107,7 +111,31 @@ func _AuthenticationService_RefreshToken0_HTTP_Handler(srv AuthenticationService
 	}
 }
 
+func _AuthenticationService_CreateWebSocketTicket0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.CreateWebSocketTicketRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceCreateWebSocketTicket)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateWebSocketTicket(ctx, req.(*v1.CreateWebSocketTicketRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.CreateWebSocketTicketResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthenticationServiceHTTPClient interface {
+	// CreateWebSocketTicket 创建 WebSocket 一次性 ticket
+	CreateWebSocketTicket(ctx context.Context, req *v1.CreateWebSocketTicketRequest, opts ...http.CallOption) (rsp *v1.CreateWebSocketTicketResponse, err error)
 	// Login 登录
 	Login(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
 	// Logout 登出
@@ -122,6 +150,20 @@ type AuthenticationServiceHTTPClientImpl struct {
 
 func NewAuthenticationServiceHTTPClient(client *http.Client) AuthenticationServiceHTTPClient {
 	return &AuthenticationServiceHTTPClientImpl{client}
+}
+
+// CreateWebSocketTicket 创建 WebSocket 一次性 ticket
+func (c *AuthenticationServiceHTTPClientImpl) CreateWebSocketTicket(ctx context.Context, in *v1.CreateWebSocketTicketRequest, opts ...http.CallOption) (*v1.CreateWebSocketTicketResponse, error) {
+	var out v1.CreateWebSocketTicketResponse
+	pattern := "/app/v1/ws-ticket"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceCreateWebSocketTicket))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Login 登录

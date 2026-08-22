@@ -38,4 +38,12 @@ service AuthenticationService {
       body: "*"
     };
   }
+
+  // 创建 WebSocket 一次性 ticket
+  rpc CreateWebSocketTicket (authentication.service.v1.CreateWebSocketTicketRequest) returns (authentication.service.v1.CreateWebSocketTicketResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/ws-ticket"
+      body: "*"
+    };
+  }
 }

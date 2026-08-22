@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -498,5 +500,42 @@ func (s *AuthenticationService) WhoAmI(ctx context.Context, _ *emptypb.Empty) (*
 	return &authenticationV1.WhoAmIResponse{
 		UserId:   user.GetId(),
 		Username: user.GetUsername(),
+	}, nil
+}
+
+// CreateWebSocketTicket 以当前 JWT 身份生成一次性 WS ticket。
+// ticket 绑定 userId + boardId，60s 有效、单次使用。
+func (s *AuthenticationService) CreateWebSocketTicket(ctx context.Context, req *authenticationV1.CreateWebSocketTicketRequest) (*authenticationV1.CreateWebSocketTicketResponse, error) {
+	userID, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser || req.GetBoardId() == 0 {
+		return nil, authenticationV1.ErrorBadRequest("invalid parameter")
+	}
+	ticket, err := s.authenticator.CreateWebSocketTicket(ctx, fmt.Sprintf("%d", userID), fmt.Sprintf("%d", req.GetBoardId()))
+	if err != nil {
+		return nil, authenticationV1.ErrorInternalServerError("create ticket failed")
+	}
+	return &authenticationV1.CreateWebSocketTicketResponse{Ticket: ticket}, nil
+}
+
+// ConsumeWebSocketTicket 原子消费 ticket，返回绑定的 userId:boardId。
+// ticket 无效或已消费返回 valid=false。
+func (s *AuthenticationService) ConsumeWebSocketTicket(ctx context.Context, req *authenticationV1.ConsumeWebSocketTicketRequest) (*authenticationV1.ConsumeWebSocketTicketResponse, error) {
+	if req == nil || req.GetTicket() == "" {
+		return &authenticationV1.ConsumeWebSocketTicketResponse{Valid: trans.Ptr(false)}, nil
+	}
+	payload, ok, err := s.authenticator.ConsumeWebSocketTicket(ctx, req.GetTicket())
+	if err != nil || !ok {
+		return &authenticationV1.ConsumeWebSocketTicketResponse{Valid: trans.Ptr(false)}, nil
+	}
+	parts := strings.SplitN(payload, ":", 2)
+	if len(parts) != 2 {
+		return &authenticationV1.ConsumeWebSocketTicketResponse{Valid: trans.Ptr(false)}, nil
+	}
+	uid, _ := strconv.ParseUint(parts[0], 10, 32)
+	bid, _ := strconv.ParseUint(parts[1], 10, 32)
+	return &authenticationV1.ConsumeWebSocketTicketResponse{
+		Valid:   trans.Ptr(true),
+		UserId:  trans.Ptr(uint32(uid)),
+		BoardId: trans.Ptr(uint32(bid)),
 	}, nil
 }

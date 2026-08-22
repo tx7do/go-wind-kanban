@@ -21,9 +21,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthenticationService_Login_FullMethodName        = "/app.service.v1.AuthenticationService/Login"
-	AuthenticationService_Logout_FullMethodName       = "/app.service.v1.AuthenticationService/Logout"
-	AuthenticationService_RefreshToken_FullMethodName = "/app.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_Login_FullMethodName                 = "/app.service.v1.AuthenticationService/Login"
+	AuthenticationService_Logout_FullMethodName                = "/app.service.v1.AuthenticationService/Logout"
+	AuthenticationService_RefreshToken_FullMethodName          = "/app.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_CreateWebSocketTicket_FullMethodName = "/app.service.v1.AuthenticationService/CreateWebSocketTicket"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -38,6 +39,8 @@ type AuthenticationServiceClient interface {
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 刷新认证令牌
 	RefreshToken(ctx context.Context, in *v1.LoginRequest, opts ...grpc.CallOption) (*v1.LoginResponse, error)
+	// 创建 WebSocket 一次性 ticket
+	CreateWebSocketTicket(ctx context.Context, in *v1.CreateWebSocketTicketRequest, opts ...grpc.CallOption) (*v1.CreateWebSocketTicketResponse, error)
 }
 
 type authenticationServiceClient struct {
@@ -78,6 +81,16 @@ func (c *authenticationServiceClient) RefreshToken(ctx context.Context, in *v1.L
 	return out, nil
 }
 
+func (c *authenticationServiceClient) CreateWebSocketTicket(ctx context.Context, in *v1.CreateWebSocketTicketRequest, opts ...grpc.CallOption) (*v1.CreateWebSocketTicketResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.CreateWebSocketTicketResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_CreateWebSocketTicket_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -90,6 +103,8 @@ type AuthenticationServiceServer interface {
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 刷新认证令牌
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// 创建 WebSocket 一次性 ticket
+	CreateWebSocketTicket(context.Context, *v1.CreateWebSocketTicketRequest) (*v1.CreateWebSocketTicketResponse, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -108,6 +123,9 @@ func (UnimplementedAuthenticationServiceServer) Logout(context.Context, *emptypb
 }
 func (UnimplementedAuthenticationServiceServer) RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RefreshToken not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) CreateWebSocketTicket(context.Context, *v1.CreateWebSocketTicketRequest) (*v1.CreateWebSocketTicketResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateWebSocketTicket not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -184,6 +202,24 @@ func _AuthenticationService_RefreshToken_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_CreateWebSocketTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.CreateWebSocketTicketRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).CreateWebSocketTicket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_CreateWebSocketTicket_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).CreateWebSocketTicket(ctx, req.(*v1.CreateWebSocketTicketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,6 +238,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshToken",
 			Handler:    _AuthenticationService_RefreshToken_Handler,
+		},
+		{
+			MethodName: "CreateWebSocketTicket",
+			Handler:    _AuthenticationService_CreateWebSocketTicket_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

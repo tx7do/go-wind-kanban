@@ -954,6 +954,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+    /app/v1/ws-ticket:
+        post:
+            tags:
+                - AuthenticationService
+            description: 创建 WebSocket 一次性 ticket
+            operationId: AuthenticationService_CreateWebSocketTicket
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.CreateWebSocketTicketRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.CreateWebSocketTicketResponse'
 components:
     schemas:
         KratosStatus:
@@ -973,6 +992,25 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        authentication.service.v1.CreateWebSocketTicketRequest:
+            required:
+                - boardId
+            type: object
+            properties:
+                boardId:
+                    type: integer
+                    description: 订阅看板ID（写入 ticket 绑定，握手时校验）
+                    format: uint32
+            description: |-
+                WebSocket 一次性 ticket（替代 URL 传 JWT）。
+                 客户端以 Bearer JWT POST 换取短时 ticket，再用 ticket 做 WS 握手。
+                 ticket 60 秒有效、单次使用、Redis 存储。
+        authentication.service.v1.CreateWebSocketTicketResponse:
+            type: object
+            properties:
+                ticket:
+                    type: string
+                    description: 一次性 WebSocket ticket
         authentication.service.v1.LoginRequest:
             required:
                 - grant_type

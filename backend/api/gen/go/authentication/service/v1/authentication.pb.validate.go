@@ -2107,3 +2107,433 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = VerifyCaptchaResponseValidationError{}
+
+// Validate checks the field values on CreateWebSocketTicketRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateWebSocketTicketRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateWebSocketTicketRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateWebSocketTicketRequestMultiError, or nil if none found.
+func (m *CreateWebSocketTicketRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateWebSocketTicketRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BoardId
+
+	if len(errors) > 0 {
+		return CreateWebSocketTicketRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateWebSocketTicketRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateWebSocketTicketRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateWebSocketTicketRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateWebSocketTicketRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateWebSocketTicketRequestMultiError) AllErrors() []error { return m }
+
+// CreateWebSocketTicketRequestValidationError is the validation error returned
+// by CreateWebSocketTicketRequest.Validate if the designated constraints
+// aren't met.
+type CreateWebSocketTicketRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateWebSocketTicketRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateWebSocketTicketRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateWebSocketTicketRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateWebSocketTicketRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateWebSocketTicketRequestValidationError) ErrorName() string {
+	return "CreateWebSocketTicketRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateWebSocketTicketRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateWebSocketTicketRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateWebSocketTicketRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateWebSocketTicketRequestValidationError{}
+
+// Validate checks the field values on CreateWebSocketTicketResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateWebSocketTicketResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateWebSocketTicketResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CreateWebSocketTicketResponseMultiError, or nil if none found.
+func (m *CreateWebSocketTicketResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateWebSocketTicketResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Ticket
+
+	if len(errors) > 0 {
+		return CreateWebSocketTicketResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateWebSocketTicketResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateWebSocketTicketResponse.ValidateAll()
+// if the designated constraints aren't met.
+type CreateWebSocketTicketResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateWebSocketTicketResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateWebSocketTicketResponseMultiError) AllErrors() []error { return m }
+
+// CreateWebSocketTicketResponseValidationError is the validation error
+// returned by CreateWebSocketTicketResponse.Validate if the designated
+// constraints aren't met.
+type CreateWebSocketTicketResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateWebSocketTicketResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateWebSocketTicketResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateWebSocketTicketResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateWebSocketTicketResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateWebSocketTicketResponseValidationError) ErrorName() string {
+	return "CreateWebSocketTicketResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateWebSocketTicketResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateWebSocketTicketResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateWebSocketTicketResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateWebSocketTicketResponseValidationError{}
+
+// Validate checks the field values on ConsumeWebSocketTicketRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ConsumeWebSocketTicketRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConsumeWebSocketTicketRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ConsumeWebSocketTicketRequestMultiError, or nil if none found.
+func (m *ConsumeWebSocketTicketRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConsumeWebSocketTicketRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Ticket
+
+	if len(errors) > 0 {
+		return ConsumeWebSocketTicketRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConsumeWebSocketTicketRequestMultiError is an error wrapping multiple
+// validation errors returned by ConsumeWebSocketTicketRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ConsumeWebSocketTicketRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConsumeWebSocketTicketRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConsumeWebSocketTicketRequestMultiError) AllErrors() []error { return m }
+
+// ConsumeWebSocketTicketRequestValidationError is the validation error
+// returned by ConsumeWebSocketTicketRequest.Validate if the designated
+// constraints aren't met.
+type ConsumeWebSocketTicketRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConsumeWebSocketTicketRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConsumeWebSocketTicketRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConsumeWebSocketTicketRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConsumeWebSocketTicketRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConsumeWebSocketTicketRequestValidationError) ErrorName() string {
+	return "ConsumeWebSocketTicketRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ConsumeWebSocketTicketRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConsumeWebSocketTicketRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConsumeWebSocketTicketRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConsumeWebSocketTicketRequestValidationError{}
+
+// Validate checks the field values on ConsumeWebSocketTicketResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ConsumeWebSocketTicketResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConsumeWebSocketTicketResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ConsumeWebSocketTicketResponseMultiError, or nil if none found.
+func (m *ConsumeWebSocketTicketResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConsumeWebSocketTicketResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Valid != nil {
+		// no validation rules for Valid
+	}
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
+	if m.BoardId != nil {
+		// no validation rules for BoardId
+	}
+
+	if len(errors) > 0 {
+		return ConsumeWebSocketTicketResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConsumeWebSocketTicketResponseMultiError is an error wrapping multiple
+// validation errors returned by ConsumeWebSocketTicketResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ConsumeWebSocketTicketResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConsumeWebSocketTicketResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConsumeWebSocketTicketResponseMultiError) AllErrors() []error { return m }
+
+// ConsumeWebSocketTicketResponseValidationError is the validation error
+// returned by ConsumeWebSocketTicketResponse.Validate if the designated
+// constraints aren't met.
+type ConsumeWebSocketTicketResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConsumeWebSocketTicketResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConsumeWebSocketTicketResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConsumeWebSocketTicketResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConsumeWebSocketTicketResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConsumeWebSocketTicketResponseValidationError) ErrorName() string {
+	return "ConsumeWebSocketTicketResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ConsumeWebSocketTicketResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConsumeWebSocketTicketResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConsumeWebSocketTicketResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConsumeWebSocketTicketResponseValidationError{}

@@ -501,3 +501,25 @@ func (r *UserTokenCache) extractJtiFromKey(key string) string {
 	}
 	return parts[len(parts)-1]
 }
+
+// StoreWebSocketTicket 存储一次性 WS ticket（60s 有效）。
+// ticket 绑定 userId + boardId，握手时校验一致性。
+func (r *UserTokenCache) StoreWebSocketTicket(ctx context.Context, ticket, userId, boardId string) error {
+	key := "ws:ticket:" + ticket
+	payload := userId + ":" + boardId
+	return r.rdb.Set(ctx, key, payload, 60*time.Second).Err()
+}
+
+// ConsumeWebSocketTicket 原子消费 ticket（GETDEL），返回绑定的 userId:boardId。
+// ticket 不存在或已消费返回 ("", false, nil)。
+func (r *UserTokenCache) ConsumeWebSocketTicket(ctx context.Context, ticket string) (string, bool, error) {
+	key := "ws:ticket:" + ticket
+	val, err := r.rdb.GetDel(ctx, key).Result()
+	if err == redis.Nil {
+		return "", false, nil
+	}
+	if err != nil {
+		return "", false, err
+	}
+	return val, true, nil
+}

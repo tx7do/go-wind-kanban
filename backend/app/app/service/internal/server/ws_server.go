@@ -105,32 +105,29 @@ type wsEnvelope struct {
 }
 
 func (s *WsServer) serveWs(w http.ResponseWriter, r *http.Request) {
-	// ===== 握手鉴权 =====
-	token := r.URL.Query().Get("access_token")
+	// ===== 握手鉴权（ticket 模式，替代 URL 传 JWT）=====
+	ticket := r.URL.Query().Get("ticket")
 	boardID64, err := parseBoardID(r.URL.Query().Get("board_id"))
-	if err != nil || token == "" {
-		http.Error(w, "board_id and access_token are required", http.StatusBadRequest)
+	if err != nil || ticket == "" {
+		http.Error(w, "board_id and ticket are required", http.StatusBadRequest)
 		return
 	}
 	boardID := uint32(boardID64)
 
-	payload, err := s.validateToken(r.Context(), token)
-	if err != nil {
-		s.log.Errorf("ws handshake: validate token failed: %s", err.Error())
-		http.Error(w, "invalid token", http.StatusUnauthorized)
+	// 消费 ticket：原子 GETDEL，返回绑定的 userId + boardId。
+	// ticket 无效/过期/已用 → valid=false。
+	ticketResp, err := s.authenticationServiceClient.ConsumeWebSocketTicket(r.Context(), &authenticationV1.ConsumeWebSocketTicketRequest{
+		Ticket: ticket,
+	})
+	if err != nil || !ticketResp.GetValid() {
+		s.log.Errorf("ws handshake: ticket invalid or consumed")
+		http.Error(w, "invalid ticket", http.StatusUnauthorized)
 		return
 	}
 
-	// 看板租户归属校验：token 租户必须与看板租户一致，防跨租户订阅。
-	board, err := s.boardServiceClient.Get(r.Context(), &boardV1.GetBoardRequest{
-		QueryBy: &boardV1.GetBoardRequest_Id{Id: boardID},
-	})
-	if err != nil || board == nil {
-		http.Error(w, "board not found", http.StatusNotFound)
-		return
-	}
-	if payload.GetTenantId() != 0 && board.GetTenantId() != 0 && payload.GetTenantId() != board.GetTenantId() {
-		http.Error(w, "board not accessible", http.StatusForbidden)
+	// ticket 绑定的 boardId 必须与请求 boardId 一致（防篡改）。
+	if ticketResp.GetBoardId() != boardID {
+		http.Error(w, "ticket board mismatch", http.StatusForbidden)
 		return
 	}
 
@@ -142,25 +139,9 @@ func (s *WsServer) serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	events := s.hub.Subscribe(boardID)
-	go s.writePump(conn, events, payload.GetUserId())
+	go s.writePump(conn, events, ticketResp.GetUserId())
 	s.readPump(conn)
 	s.hub.Unsubscribe(boardID, events)
-}
-
-// validateToken 经 core 校验 JWT 并返回令牌载荷。
-func (s *WsServer) validateToken(ctx context.Context, token string) (*authenticationV1.UserTokenPayload, error) {
-	resp, err := s.authenticationServiceClient.ValidateToken(ctx, &authenticationV1.ValidateTokenRequest{
-		Token:         token,
-		ClientType:    authenticationV1.ClientType_app,
-		TokenCategory: authenticationV1.TokenCategory_ACCESS,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if !resp.GetIsValid() {
-		return nil, errInvalidToken
-	}
-	return resp.GetPayload(), nil
 }
 
 // writePump 事件写出泵：订阅通道 → JSON 帧；心跳 ping 维持连接。

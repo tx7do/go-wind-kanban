@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:convert' show base64;
 
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:flutter_app/src/features/board/models/board_models.dart';
@@ -49,7 +53,19 @@ class RealtimeClient {
       return;
     }
 
-    final uri = Uri.parse('$baseWsUrl/app/v1/ws?board_id=$_boardId&access_token=$token');
+    _connectWithTicket(token);
+  }
+
+  /// 先以 Bearer JWT POST 换取一次性 ticket，再用 ticket 做 WS 握手。
+  /// ticket 60s 有效、单次使用，避免 JWT 经 URL 暴露于日志/Referer。
+  Future<void> _connectWithTicket(String token) async {
+    final ticket = await _requestTicket(token);
+    if (ticket == null) {
+      _scheduleReconnect();
+      return;
+    }
+
+    final uri = Uri.parse('$baseWsUrl/app/v1/ws?board_id=$_boardId&ticket=$ticket');
     try {
       _channel = WebSocketChannel.connect(uri);
     } catch (_) {
@@ -67,6 +83,21 @@ class RealtimeClient {
       onDone: () => _onDown(),
       cancelOnError: true,
     );
+  }
+
+  /// POST /app/v1/ws-ticket 换取一次性 ticket。
+  /// dio 的 auth interceptor 会自动加 Authorization: Bearer <jwt>。
+  Future<String?> _requestTicket(String token) async {
+    try {
+      final dio = GetIt.instance<Dio>();
+      final resp = await dio.post<Map<String, dynamic>>(
+        '/app/v1/ws-ticket',
+        data: {'board_id': _boardId},
+      );
+      return resp.data?['ticket'] as String?;
+    } catch (_) {
+      return null;
+    }
   }
 
   void _handleFrame(dynamic data) {
