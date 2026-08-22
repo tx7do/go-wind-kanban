@@ -7,6 +7,7 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart' as api;
 import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 import 'package:dio/dio.dart' show Dio;
 import 'package:flutter_app/src/features/board/data/board_cache.dart';
+import 'package:flutter_app/src/features/board/data/label_api.dart';
 import 'package:flutter_app/src/features/board/data/realtime_client.dart';
 import 'package:flutter_app/src/features/board/data/sync_api.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
@@ -92,6 +93,23 @@ class BoardController extends Cubit<KanbanBoardState?> {
         await _cache.save(state);
       }
       _offline = false;
+      // 标签是独立资源（不在快照/差量中），在线时单独拉取并合入 state。
+      if (!_offline) {
+        try {
+          final labels = await LabelApi().listByBoard(boardId);
+          final cur = state;
+          if (cur != null && labels.isNotEmpty) {
+            emit(KanbanBoardState(
+              board: cur.board,
+              columns: cur.columns,
+              cards: cur.cards,
+              labels: labels,
+            ));
+          }
+        } on DioException catch (_) {
+          // 标签拉取失败不阻断看板渲染
+        }
+      }
     } on DioException catch (e) {
       if (_isConnectionError(e)) {
         _offline = true;
@@ -350,6 +368,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
     final board = cur.board;
     final columns = cur.columns;
     final cards = cur.cards;
+    final labels = cur.labels;
 
     switch (ev.type) {
       case BoardEvent.cardCreated:
@@ -362,6 +381,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
             board: board,
             columns: columns,
             cards: cards.where((c) => c.id != ev.card!.id).toList(),
+            labels: labels,
           ));
         }
       // 标签相关事件（labelCreated/Updated/Deleted/cardLabelsChanged）：
@@ -379,7 +399,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
           final col = KanbanColumn.fromDto(ev.column!);
           final rest = columns.where((c) => c.id != col.id).toList()..add(col);
           rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-          emit(KanbanBoardState(board: board, columns: rest, cards: cards));
+          emit(KanbanBoardState(board: board, columns: rest, cards: cards, labels: labels));
         }
       case BoardEvent.columnDeleted:
         if (ev.column != null) {
@@ -387,6 +407,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
             board: board,
             columns: columns.where((c) => c.id != ev.column!.id).toList(),
             cards: cards.where((c) => c.columnId != ev.column!.id).toList(),
+            labels: labels,
           ));
         }
       case BoardEvent.boardUpdated:
@@ -396,6 +417,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
             board: KanbanBoard.fromDto(ev.board!),
             columns: columns,
             cards: cards,
+            labels: labels,
           ));
         }
       case BoardEvent.boardDeleted:
@@ -445,7 +467,7 @@ void _onConnection(bool up) {
     final liveColIds = columns.map((c) => c.id).toSet();
     cards = cards.where((c) => liveColIds.contains(c.columnId)).toList();
 
-    return KanbanBoardState(board: board, columns: columns, cards: cards);
+    return KanbanBoardState(board: board, columns: columns, cards: cards, labels: base.labels);
   }
 
   // ===== 内部工具 =====
@@ -456,11 +478,11 @@ void _onConnection(bool up) {
     final card = KanbanCard.fromDto(dto);
     final rest = state.cards.where((c) => c.id != card.id).toList()..add(card);
     rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-    emit(KanbanBoardState(board: state.board, columns: state.columns, cards: rest));
+    emit(KanbanBoardState(board: state.board, columns: state.columns, cards: rest, labels: state.labels));
   }
 
   KanbanBoardState _mapCards(KanbanBoardState s, KanbanCard Function(KanbanCard) f) {
-    return KanbanBoardState(board: s.board, columns: s.columns, cards: s.cards.map(f).toList());
+    return KanbanBoardState(board: s.board, columns: s.columns, cards: s.cards.map(f).toList(), labels: s.labels);
   }
 
   KanbanBoardState _applyLocalMove(KanbanBoardState s, KanbanCard card, int toColumnId, int toIndex) {
@@ -477,7 +499,7 @@ void _onConnection(bool up) {
 
     final rest = s.cards.where((c) => c.id != card.id).toList()..add(withRank);
     rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-    return KanbanBoardState(board: s.board, columns: s.columns, cards: rest);
+    return KanbanBoardState(board: s.board, columns: s.columns, cards: rest, labels: s.labels);
   }
 
   /// 客户端侧 base-36 中点（展示用；服务端为权威）。

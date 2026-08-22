@@ -1,4 +1,5 @@
 import 'package:flutter_app/generated/api/app/service/v1/index.dart' as api;
+import 'package:flutter_app/src/features/board/data/label_api.dart';
 
 /// 看板领域模型（不可变）。
 ///
@@ -176,16 +177,20 @@ class KanbanCard {
       );
 }
 
-/// 看板完整状态（快照）：board + 列（rank 升序）+ 卡片（列内 rank 升序）。
+/// 看板完整状态（快照）：board + 列（rank 升序）+ 卡片（列内 rank 升序）+ 标签集合。
 class KanbanBoardState {
   final KanbanBoard board;
   final List<KanbanColumn> columns;
   final List<KanbanCard> cards;
+  final List<int> cardLabelIds;
+  final List<KanbanLabel> labels;
 
   const KanbanBoardState({
     required this.board,
     required this.columns,
     required this.cards,
+    this.cardLabelIds = const [],
+    this.labels = const [],
   });
 
   factory KanbanBoardState.fromSnapshot(api.BoardServiceV1BoardSnapshot s) {
@@ -226,6 +231,7 @@ class KanbanBoardState {
         'board': board.toJson(),
         'columns': columns.map((c) => c.toJson()).toList(),
         'cards': cards.map((c) => c.toJson()).toList(),
+        'labels': labels.map((l) => l.toJson()).toList(),
       };
 
   factory KanbanBoardState.fromJson(Map<String, dynamic> j) => KanbanBoardState(
@@ -235,6 +241,9 @@ class KanbanBoardState {
             .toList(),
         cards: ((j['cards'] as List?) ?? [])
             .map((e) => KanbanCard.fromJson((e as Map).cast<String, dynamic>()))
+            .toList(),
+        labels: ((j['labels'] as List?) ?? [])
+            .map((e) => KanbanLabel.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
       );
 }

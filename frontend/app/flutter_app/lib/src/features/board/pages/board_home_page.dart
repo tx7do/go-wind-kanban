@@ -8,6 +8,7 @@ import 'package:flutter_app/src/features/board/logic/board_controller.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
 import 'package:flutter_app/src/features/board/pages/board_desktop_page.dart';
 import 'package:flutter_app/src/features/board/pages/board_mobile_page.dart';
+import 'package:flutter_app/src/features/board/pages/label_manager_drawer.dart';
 
 /// 看板主页：响应式分派。
 ///
@@ -53,6 +54,14 @@ class _BoardHomePageState extends State<BoardHomePage> {
             builder: (context, state) => Text(state?.board.name ?? ''),
           ),
           actions: [
+            // 标签管理入口
+            Builder(
+              builder: (scaffoldCtx) => IconButton(
+                icon: const Icon(Icons.label_outline),
+                tooltip: '标签管理',
+                onPressed: () => Scaffold.of(scaffoldCtx).openEndDrawer(),
+              ),
+            ),
             // 离线徽标：断网或存在待同步操作时显示
             BlocBuilder<BoardController, KanbanBoardState?>(
               builder: (context, _) {
@@ -71,6 +80,7 @@ class _BoardHomePageState extends State<BoardHomePage> {
             ),
           ],
         ),
+        endDrawer: LabelManagerDrawer(boardId: widget.boardId),
         body: BlocBuilder<BoardController, KanbanBoardState?>(
           builder: (context, state) {
             if (state == null) {
