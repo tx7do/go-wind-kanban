@@ -779,6 +779,10 @@ func (m *UpdateCardRequest) validate(all bool) error {
 		// no validation rules for AllowMissing
 	}
 
+	if m.ExpectedVersion != nil {
+		// no validation rules for ExpectedVersion
+	}
+
 	if len(errors) > 0 {
 		return UpdateCardRequestMultiError(errors)
 	}
@@ -1033,6 +1037,10 @@ func (m *MoveCardRequest) validate(all bool) error {
 
 	if m.TargetColumnId != nil {
 		// no validation rules for TargetColumnId
+	}
+
+	if m.ExpectedVersion != nil {
+		// no validation rules for ExpectedVersion
 	}
 
 	if len(errors) > 0 {

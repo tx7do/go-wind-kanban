@@ -134,6 +134,11 @@ message UpdateCardRequest {
     (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
     json_name = "allowMissing"
   ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+
+  optional uint32 expected_version = 5 [
+    json_name = "expectedVersion",
+    (gnostic.openapi.v3.property) = {description: "乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）"}
+  ]; // 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
 }
 
 // 删除卡片 - 请求
@@ -172,4 +177,9 @@ message MoveCardRequest {
   }
 
   // anchor 为空时追加到目标列末尾
+
+  optional uint32 expected_version = 10 [
+    json_name = "expectedVersion",
+    (gnostic.openapi.v3.property) = {description: "乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）"}
+  ]; // 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
 }

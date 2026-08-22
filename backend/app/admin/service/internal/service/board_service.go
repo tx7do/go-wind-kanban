@@ -108,3 +108,8 @@ func (s *BoardService) Move(ctx context.Context, req *boardV1.MoveBoardRequest) 
 	}
 	return resp, err
 }
+
+// SyncBoard 差量同步
+func (s *BoardService) SyncBoard(ctx context.Context, req *boardV1.SyncBoardRequest) (*boardV1.SyncBoardResponse, error) {
+	return s.boardServiceClient.SyncBoard(ctx, req)
+}

@@ -99,3 +99,11 @@ func (s *BoardService) GetBoardSnapshot(ctx context.Context, req *boardV1.GetBoa
 	}
 	return s.boardRepo.GetBoardSnapshot(ctx, req)
 }
+
+// SyncBoard 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+func (s *BoardService) SyncBoard(ctx context.Context, req *boardV1.SyncBoardRequest) (*boardV1.SyncBoardResponse, error) {
+	if req == nil || req.GetBoardId() == 0 {
+		return nil, boardV1.ErrorBadRequest("invalid request")
+	}
+	return s.boardRepo.SyncBoard(ctx, req)
+}

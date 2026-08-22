@@ -79,6 +79,7 @@ class PendingOps {
     int? targetColumnId,
     int? beforeId,
     int? afterId,
+    int? expectedVersion,
   }) =>
       {
         'op': 'card.move',
@@ -86,12 +87,15 @@ class PendingOps {
         if (targetColumnId != null) 'targetColumnId': targetColumnId,
         if (beforeId != null) 'beforeId': beforeId,
         if (afterId != null) 'afterId': afterId,
+        if (expectedVersion != null) 'expectedVersion': expectedVersion,
       };
 
-  static Map<String, dynamic> renameCardOp({required int cardId, required String name}) => {
+  static Map<String, dynamic> renameCardOp(
+      {required int cardId, required String name, int? expectedVersion}) => {
         'op': 'card.rename',
         'cardId': cardId,
         'name': name,
+        if (expectedVersion != null) 'expectedVersion': expectedVersion,
       };
 
   static Map<String, dynamic> createCardOp({

@@ -970,6 +970,10 @@ func (m *UpdateBoardRequest) validate(all bool) error {
 		// no validation rules for AllowMissing
 	}
 
+	if m.ExpectedVersion != nil {
+		// no validation rules for ExpectedVersion
+	}
+
 	if len(errors) > 0 {
 		return UpdateBoardRequestMultiError(errors)
 	}
@@ -1222,6 +1226,10 @@ func (m *MoveBoardRequest) validate(all bool) error {
 		_ = v // ensures v is used
 	}
 
+	if m.ExpectedVersion != nil {
+		// no validation rules for ExpectedVersion
+	}
+
 	if len(errors) > 0 {
 		return MoveBoardRequestMultiError(errors)
 	}
@@ -1403,3 +1411,483 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetBoardSnapshotRequestValidationError{}
+
+// Validate checks the field values on SyncBoardRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SyncBoardRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SyncBoardRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SyncBoardRequestMultiError, or nil if none found.
+func (m *SyncBoardRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SyncBoardRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BoardId
+
+	for idx, item := range m.GetKnownColumnVersions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncBoardRequestValidationError{
+						field:  fmt.Sprintf("KnownColumnVersions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncBoardRequestValidationError{
+						field:  fmt.Sprintf("KnownColumnVersions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncBoardRequestValidationError{
+					field:  fmt.Sprintf("KnownColumnVersions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetKnownCardVersions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncBoardRequestValidationError{
+						field:  fmt.Sprintf("KnownCardVersions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncBoardRequestValidationError{
+						field:  fmt.Sprintf("KnownCardVersions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncBoardRequestValidationError{
+					field:  fmt.Sprintf("KnownCardVersions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.KnownBoardVersion != nil {
+		// no validation rules for KnownBoardVersion
+	}
+
+	if len(errors) > 0 {
+		return SyncBoardRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SyncBoardRequestMultiError is an error wrapping multiple validation errors
+// returned by SyncBoardRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SyncBoardRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SyncBoardRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SyncBoardRequestMultiError) AllErrors() []error { return m }
+
+// SyncBoardRequestValidationError is the validation error returned by
+// SyncBoardRequest.Validate if the designated constraints aren't met.
+type SyncBoardRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SyncBoardRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SyncBoardRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SyncBoardRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SyncBoardRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SyncBoardRequestValidationError) ErrorName() string { return "SyncBoardRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SyncBoardRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSyncBoardRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SyncBoardRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SyncBoardRequestValidationError{}
+
+// Validate checks the field values on VersionEntry with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *VersionEntry) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VersionEntry with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in VersionEntryMultiError, or
+// nil if none found.
+func (m *VersionEntry) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VersionEntry) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Version
+
+	if len(errors) > 0 {
+		return VersionEntryMultiError(errors)
+	}
+
+	return nil
+}
+
+// VersionEntryMultiError is an error wrapping multiple validation errors
+// returned by VersionEntry.ValidateAll() if the designated constraints aren't met.
+type VersionEntryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VersionEntryMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VersionEntryMultiError) AllErrors() []error { return m }
+
+// VersionEntryValidationError is the validation error returned by
+// VersionEntry.Validate if the designated constraints aren't met.
+type VersionEntryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VersionEntryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VersionEntryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VersionEntryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VersionEntryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VersionEntryValidationError) ErrorName() string { return "VersionEntryValidationError" }
+
+// Error satisfies the builtin error interface
+func (e VersionEntryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVersionEntry.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VersionEntryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VersionEntryValidationError{}
+
+// Validate checks the field values on SyncBoardResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SyncBoardResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SyncBoardResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SyncBoardResponseMultiError, or nil if none found.
+func (m *SyncBoardResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SyncBoardResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetUpsertedColumns() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncBoardResponseValidationError{
+						field:  fmt.Sprintf("UpsertedColumns[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncBoardResponseValidationError{
+						field:  fmt.Sprintf("UpsertedColumns[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncBoardResponseValidationError{
+					field:  fmt.Sprintf("UpsertedColumns[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetUpsertedCards() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncBoardResponseValidationError{
+						field:  fmt.Sprintf("UpsertedCards[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncBoardResponseValidationError{
+						field:  fmt.Sprintf("UpsertedCards[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncBoardResponseValidationError{
+					field:  fmt.Sprintf("UpsertedCards[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Board != nil {
+
+		if all {
+			switch v := interface{}(m.GetBoard()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncBoardResponseValidationError{
+						field:  "Board",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncBoardResponseValidationError{
+						field:  "Board",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetBoard()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncBoardResponseValidationError{
+					field:  "Board",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SyncBoardResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SyncBoardResponseMultiError is an error wrapping multiple validation errors
+// returned by SyncBoardResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SyncBoardResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SyncBoardResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SyncBoardResponseMultiError) AllErrors() []error { return m }
+
+// SyncBoardResponseValidationError is the validation error returned by
+// SyncBoardResponse.Validate if the designated constraints aren't met.
+type SyncBoardResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SyncBoardResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SyncBoardResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SyncBoardResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SyncBoardResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SyncBoardResponseValidationError) ErrorName() string {
+	return "SyncBoardResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SyncBoardResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSyncBoardResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SyncBoardResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SyncBoardResponseValidationError{}

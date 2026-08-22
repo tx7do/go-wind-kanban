@@ -1120,6 +1120,10 @@ components:
                     type: integer
                     description: 移动到该看板之后（同级邻居看板ID）
                     format: uint32
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+                    format: uint32
             description: 移动看板 - 请求
         board.service.v1.MoveCardRequest:
             required:
@@ -1142,6 +1146,10 @@ components:
                     type: integer
                     description: 移动到目标列中该卡片之后（目标列内邻居卡片ID）
                     format: uint32
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+                    format: uint32
             description: 移动卡片 - 请求
         board.service.v1.MoveColumnRequest:
             required:
@@ -1160,6 +1168,10 @@ components:
                     type: integer
                     description: 移动到该列之后（同看板邻居列ID）
                     format: uint32
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+                    format: uint32
             description: 移动列 - 请求
         board.service.v1.UpdateBoardRequest:
             type: object
@@ -1177,6 +1189,10 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+                    format: uint32
             description: 更新看板 - 请求
         board.service.v1.UpdateCardRequest:
             type: object
@@ -1194,6 +1210,10 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+                    format: uint32
             description: 更新卡片 - 请求
         board.service.v1.UpdateColumnRequest:
             type: object
@@ -1211,6 +1231,10 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+                    format: uint32
             description: 更新列 - 请求
         identity.service.v1.BindContactRequest:
             type: object

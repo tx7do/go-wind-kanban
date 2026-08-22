@@ -204,6 +204,10 @@ func (r *BoardRepo) Update(ctx context.Context, req *boardV1.UpdateBoardRequest)
 	if hasTenant {
 		builder.Where(board.TenantIDEQ(tid))
 	}
+	// 乐观锁：期望版本不匹配（0 行命中）时由 UpdateOne 返回空结果 → 上层转 CONFLICT。
+	if req.GetExpectedVersion() > 0 {
+		builder.Where(board.VersionEQ(req.GetExpectedVersion()))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *boardV1.Board) {
 			builder.
@@ -220,6 +224,11 @@ func (r *BoardRepo) Update(ctx context.Context, req *boardV1.UpdateBoardRequest)
 			s.Where(sql.EQ(board.FieldID, req.GetId()))
 		},
 	)
+
+	// 乐观锁命中失败：版本不匹配，返回 409。
+	if err == nil && result == nil && req.GetExpectedVersion() > 0 {
+		return nil, boardV1.ErrorConflict("board version conflict: expected=%d", req.GetExpectedVersion())
+	}
 
 	// 乐观锁预埋：每次 Update 成功后 version+1（AddVersion 为 SQL 原子自增）。
 	if result != nil {
@@ -322,7 +331,13 @@ func (r *BoardRepo) Move(ctx context.Context, req *boardV1.MoveBoardRequest) (*b
 
 	builder := r.entClient.Client().Board.UpdateOneID(req.GetId())
 	builder.Where(board.IDEQ(req.GetId()), board.TenantIDEQ(tid))
+	if req.GetExpectedVersion() > 0 {
+		builder.Where(board.VersionEQ(req.GetExpectedVersion()))
+	}
 	if _, err := builder.SetRank(newRank).AddVersion(1).Save(ctx); err != nil {
+		if ent.IsNotFound(err) && req.GetExpectedVersion() > 0 {
+			return nil, boardV1.ErrorConflict("board version conflict: expected=%d", req.GetExpectedVersion())
+		}
 		r.log.Errorf("move board: set rank failed: %s", err.Error())
 		return nil, boardV1.ErrorInternalServerError("move board failed")
 	}
@@ -538,4 +553,81 @@ func (r *BoardRepo) GetBoardSnapshot(ctx context.Context, req *boardV1.GetBoardS
 		snap.Cards = append(snap.Cards, cardToDTO(c))
 	}
 	return snap, nil
+}
+
+// SyncBoard 差量同步：客户端上报已知版本，仅返回版本有变化的实体与已删除 ID。
+//
+// 语义：
+//   - board 版本与 known 不一致 → 返回最新本体；一致 → 不带本体
+//   - 列/卡片：DB 中不存在于 known（新）或版本不同（变）→ upserted
+//   - known 中存在但 DB 已无（删）→ deleted_ids
+func (r *BoardRepo) SyncBoard(ctx context.Context, req *boardV1.SyncBoardRequest) (*boardV1.SyncBoardResponse, error) {
+	if req == nil || req.GetBoardId() == 0 {
+		return nil, boardV1.ErrorBadRequest("invalid parameter")
+	}
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	bq := r.entClient.Client().Board.Query().Where(board.IDEQ(req.GetBoardId()))
+	if hasTenant {
+		bq = bq.Where(board.TenantIDEQ(tid))
+	}
+	b, err := bq.Only(ctx)
+	if err != nil {
+		return nil, boardV1.ErrorNotFound("board not found")
+	}
+
+	resp := &boardV1.SyncBoardResponse{}
+
+	if req.GetKnownBoardVersion() != b.Version {
+		resp.Board = r.mapper.ToDTO(b)
+	}
+
+	// 列差量
+	cols, err := b.QueryColumns().Order(ent.Asc(column.FieldRank)).All(ctx)
+	if err != nil {
+		r.log.Errorf("sync board: query columns failed: %s", err.Error())
+		return nil, boardV1.ErrorInternalServerError("sync board failed")
+	}
+	knownCols := make(map[uint32]uint32, len(req.GetKnownColumnVersions()))
+	for _, e := range req.GetKnownColumnVersions() {
+		knownCols[e.GetId()] = e.GetVersion()
+	}
+	liveCols := make(map[uint32]struct{}, len(cols))
+	for _, c := range cols {
+		liveCols[c.ID] = struct{}{}
+		if v, known := knownCols[c.ID]; !known || v != c.Version {
+			resp.UpsertedColumns = append(resp.UpsertedColumns, columnToDTO(c))
+		}
+	}
+	for id := range knownCols {
+		if _, live := liveCols[id]; !live {
+			resp.DeletedColumnIds = append(resp.DeletedColumnIds, id)
+		}
+	}
+
+	// 卡片差量
+	cards, err := b.QueryCards().Order(ent.Asc(card.FieldRank)).All(ctx)
+	if err != nil {
+		r.log.Errorf("sync board: query cards failed: %s", err.Error())
+		return nil, boardV1.ErrorInternalServerError("sync board failed")
+	}
+	knownCards := make(map[uint32]uint32, len(req.GetKnownCardVersions()))
+	for _, e := range req.GetKnownCardVersions() {
+		knownCards[e.GetId()] = e.GetVersion()
+	}
+	liveCards := make(map[uint32]struct{}, len(cards))
+	for _, c := range cards {
+		liveCards[c.ID] = struct{}{}
+		if v, known := knownCards[c.ID]; !known || v != c.Version {
+			resp.UpsertedCards = append(resp.UpsertedCards, cardToDTO(c))
+		}
+	}
+	for id := range knownCards {
+		if _, live := liveCards[id]; !live {
+			resp.DeletedCardIds = append(resp.DeletedCardIds, id)
+		}
+	}
+
+	return resp, nil
 }

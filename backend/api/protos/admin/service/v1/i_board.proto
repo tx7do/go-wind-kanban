@@ -48,6 +48,14 @@ service BoardService {
     };
   }
 
+  // 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+  rpc SyncBoard (board.service.v1.SyncBoardRequest) returns (board.service.v1.SyncBoardResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/boards/{board_id}:sync"
+      body: "*"
+    };
+  }
+
   // 移动看板（租户内重排序）
   rpc Move (board.service.v1.MoveBoardRequest) returns (board.service.v1.Board) {
     option (google.api.http) = {

@@ -351,13 +351,14 @@ func (x *CreateCardRequest) GetData() *Card {
 
 // 更新卡片 - 请求
 type UpdateCardRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Data          *Card                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
-	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Data            *Card                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	UpdateMask      *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`                       // 要更新的字段列表
+	AllowMissing    *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"`          // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+	ExpectedVersion *uint32                `protobuf:"varint,5,opt,name=expected_version,json=expectedVersion,proto3,oneof" json:"expected_version,omitempty"` // 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *UpdateCardRequest) Reset() {
@@ -416,6 +417,13 @@ func (x *UpdateCardRequest) GetAllowMissing() bool {
 		return *x.AllowMissing
 	}
 	return false
+}
+
+func (x *UpdateCardRequest) GetExpectedVersion() uint32 {
+	if x != nil && x.ExpectedVersion != nil {
+		return *x.ExpectedVersion
+	}
+	return 0
 }
 
 // 删除卡片 - 请求
@@ -494,9 +502,10 @@ type MoveCardRequest struct {
 	//
 	//	*MoveCardRequest_BeforeId
 	//	*MoveCardRequest_AfterId
-	Anchor        isMoveCardRequest_Anchor `protobuf_oneof:"anchor"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Anchor          isMoveCardRequest_Anchor `protobuf_oneof:"anchor"`
+	ExpectedVersion *uint32                  `protobuf:"varint,10,opt,name=expected_version,json=expectedVersion,proto3,oneof" json:"expected_version,omitempty"` // 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *MoveCardRequest) Reset() {
@@ -564,6 +573,13 @@ func (x *MoveCardRequest) GetAfterId() uint32 {
 		if x, ok := x.Anchor.(*MoveCardRequest_AfterId); ok {
 			return x.AfterId
 		}
+	}
+	return 0
+}
+
+func (x *MoveCardRequest) GetExpectedVersion() uint32 {
+	if x != nil && x.ExpectedVersion != nil {
+		return *x.ExpectedVersion
 	}
 	return 0
 }
@@ -640,26 +656,31 @@ const file_board_service_v1_card_proto_rawDesc = "" +
 	"\n" +
 	"_view_mask\"?\n" +
 	"\x11CreateCardRequest\x12*\n" +
-	"\x04data\x18\x01 \x01(\v2\x16.board.service.v1.CardR\x04data\"\x8c\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x16.board.service.v1.CardR\x04data\"\xd0\x04\n" +
 	"\x11UpdateCardRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12*\n" +
 	"\x04data\x18\x02 \x01(\v2\x16.board.service.v1.CardR\x04data\x12r\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB5\xbaG2:\x15\x12\x13id,name,description\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
-	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
-	"\x0e_allow_missing\"=\n" +
+	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01\x12\xac\x01\n" +
+	"\x10expected_version\x18\x05 \x01(\rB|\xbaGy\x92\x02v乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）H\x01R\x0fexpectedVersion\x88\x01\x01B\x10\n" +
+	"\x0e_allow_missingB\x13\n" +
+	"\x11_expected_version\"=\n" +
 	"\x11DeleteCardRequest\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by\"\x9f\x03\n" +
+	"\bquery_by\"\xc5\x04\n" +
 	"\x0fMoveCardRequest\x12-\n" +
 	"\x02id\x18\x01 \x01(\rB\x1d\xe0A\x02\xbaG\x17\x92\x02\x14要移动的卡片IDR\x02id\x12j\n" +
 	"\x10target_column_id\x18\x02 \x01(\rB;\xbaG8\x92\x025目标列ID；为 0/缺省表示在当前列内重排H\x01R\x0etargetColumnId\x88\x01\x01\x12i\n" +
 	"\tbefore_id\x18\x03 \x01(\rBJ\xbaGG\x92\x02D移动到目标列中该卡片之前（目标列内邻居卡片ID）H\x00R\bbeforeId\x12g\n" +
-	"\bafter_id\x18\x04 \x01(\rBJ\xbaGG\x92\x02D移动到目标列中该卡片之后（目标列内邻居卡片ID）H\x00R\aafterIdB\b\n" +
+	"\bafter_id\x18\x04 \x01(\rBJ\xbaGG\x92\x02D移动到目标列中该卡片之后（目标列内邻居卡片ID）H\x00R\aafterId\x12\x8e\x01\n" +
+	"\x10expected_version\x18\n" +
+	" \x01(\rB^\xbaG[\x92\x02X乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）H\x02R\x0fexpectedVersion\x88\x01\x01B\b\n" +
 	"\x06anchorB\x13\n" +
-	"\x11_target_column_id2\xb9\x03\n" +
+	"\x11_target_column_idB\x13\n" +
+	"\x11_expected_version2\xb9\x03\n" +
 	"\vCardService\x12G\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a\".board.service.v1.ListCardResponse\"\x00\x12A\n" +
 	"\x03Get\x12 .board.service.v1.GetCardRequest\x1a\x16.board.service.v1.Card\"\x00\x12G\n" +

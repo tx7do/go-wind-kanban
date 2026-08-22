@@ -777,6 +777,10 @@ func (m *UpdateColumnRequest) validate(all bool) error {
 		// no validation rules for AllowMissing
 	}
 
+	if m.ExpectedVersion != nil {
+		// no validation rules for ExpectedVersion
+	}
+
 	if len(errors) > 0 {
 		return UpdateColumnRequestMultiError(errors)
 	}
@@ -1027,6 +1031,10 @@ func (m *MoveColumnRequest) validate(all bool) error {
 		// no validation rules for AfterId
 	default:
 		_ = v // ensures v is used
+	}
+
+	if m.ExpectedVersion != nil {
+		// no validation rules for ExpectedVersion
 	}
 
 	if len(errors) > 0 {

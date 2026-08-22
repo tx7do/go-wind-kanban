@@ -28,13 +28,14 @@ var File_admin_service_v1_i_board_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_board_proto_rawDesc = "" +
 	"\n" +
-	"\x1eadmin/service/v1/i_board.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cboard/service/v1/board.proto2\xf6\x04\n" +
+	"\x1eadmin/service/v1/i_board.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cboard/service/v1/board.proto2\xfa\x05\n" +
 	"\fBoardService\x12`\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.board.service.v1.ListBoardResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/admin/v1/boards\x12`\n" +
 	"\x03Get\x12!.board.service.v1.GetBoardRequest\x1a\x17.board.service.v1.Board\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/admin/v1/boards/{id}\x12d\n" +
 	"\x06Create\x12$.board.service.v1.CreateBoardRequest\x1a\x17.board.service.v1.Board\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/admin/v1/boards\x12i\n" +
 	"\x06Update\x12$.board.service.v1.UpdateBoardRequest\x1a\x17.board.service.v1.Board\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/admin/v1/boards/{id}\x12e\n" +
-	"\x06Delete\x12$.board.service.v1.DeleteBoardRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/admin/v1/boards/{id}\x12j\n" +
+	"\x06Delete\x12$.board.service.v1.DeleteBoardRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/admin/v1/boards/{id}\x12\x81\x01\n" +
+	"\tSyncBoard\x12\".board.service.v1.SyncBoardRequest\x1a#.board.service.v1.SyncBoardResponse\"+\x82\xd3\xe4\x93\x02%:\x01*\" /admin/v1/boards/{board_id}:sync\x12j\n" +
 	"\x04Move\x12\".board.service.v1.MoveBoardRequest\x1a\x17.board.service.v1.Board\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/admin/v1/boards/{id}:moveB\xb6\x01\n" +
 	"\x14com.admin.service.v1B\vIBoardProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
@@ -44,29 +45,33 @@ var file_admin_service_v1_i_board_proto_goTypes = []any{
 	(*v11.CreateBoardRequest)(nil), // 2: board.service.v1.CreateBoardRequest
 	(*v11.UpdateBoardRequest)(nil), // 3: board.service.v1.UpdateBoardRequest
 	(*v11.DeleteBoardRequest)(nil), // 4: board.service.v1.DeleteBoardRequest
-	(*v11.MoveBoardRequest)(nil),   // 5: board.service.v1.MoveBoardRequest
-	(*v11.ListBoardResponse)(nil),  // 6: board.service.v1.ListBoardResponse
-	(*v11.Board)(nil),              // 7: board.service.v1.Board
-	(*emptypb.Empty)(nil),          // 8: google.protobuf.Empty
+	(*v11.SyncBoardRequest)(nil),   // 5: board.service.v1.SyncBoardRequest
+	(*v11.MoveBoardRequest)(nil),   // 6: board.service.v1.MoveBoardRequest
+	(*v11.ListBoardResponse)(nil),  // 7: board.service.v1.ListBoardResponse
+	(*v11.Board)(nil),              // 8: board.service.v1.Board
+	(*emptypb.Empty)(nil),          // 9: google.protobuf.Empty
+	(*v11.SyncBoardResponse)(nil),  // 10: board.service.v1.SyncBoardResponse
 }
 var file_admin_service_v1_i_board_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.BoardService.List:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.BoardService.Get:input_type -> board.service.v1.GetBoardRequest
-	2, // 2: admin.service.v1.BoardService.Create:input_type -> board.service.v1.CreateBoardRequest
-	3, // 3: admin.service.v1.BoardService.Update:input_type -> board.service.v1.UpdateBoardRequest
-	4, // 4: admin.service.v1.BoardService.Delete:input_type -> board.service.v1.DeleteBoardRequest
-	5, // 5: admin.service.v1.BoardService.Move:input_type -> board.service.v1.MoveBoardRequest
-	6, // 6: admin.service.v1.BoardService.List:output_type -> board.service.v1.ListBoardResponse
-	7, // 7: admin.service.v1.BoardService.Get:output_type -> board.service.v1.Board
-	7, // 8: admin.service.v1.BoardService.Create:output_type -> board.service.v1.Board
-	7, // 9: admin.service.v1.BoardService.Update:output_type -> board.service.v1.Board
-	8, // 10: admin.service.v1.BoardService.Delete:output_type -> google.protobuf.Empty
-	7, // 11: admin.service.v1.BoardService.Move:output_type -> board.service.v1.Board
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.BoardService.List:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.BoardService.Get:input_type -> board.service.v1.GetBoardRequest
+	2,  // 2: admin.service.v1.BoardService.Create:input_type -> board.service.v1.CreateBoardRequest
+	3,  // 3: admin.service.v1.BoardService.Update:input_type -> board.service.v1.UpdateBoardRequest
+	4,  // 4: admin.service.v1.BoardService.Delete:input_type -> board.service.v1.DeleteBoardRequest
+	5,  // 5: admin.service.v1.BoardService.SyncBoard:input_type -> board.service.v1.SyncBoardRequest
+	6,  // 6: admin.service.v1.BoardService.Move:input_type -> board.service.v1.MoveBoardRequest
+	7,  // 7: admin.service.v1.BoardService.List:output_type -> board.service.v1.ListBoardResponse
+	8,  // 8: admin.service.v1.BoardService.Get:output_type -> board.service.v1.Board
+	8,  // 9: admin.service.v1.BoardService.Create:output_type -> board.service.v1.Board
+	8,  // 10: admin.service.v1.BoardService.Update:output_type -> board.service.v1.Board
+	9,  // 11: admin.service.v1.BoardService.Delete:output_type -> google.protobuf.Empty
+	10, // 12: admin.service.v1.BoardService.SyncBoard:output_type -> board.service.v1.SyncBoardResponse
+	8,  // 13: admin.service.v1.BoardService.Move:output_type -> board.service.v1.Board
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_board_proto_init() }

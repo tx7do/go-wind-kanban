@@ -1131,6 +1131,10 @@ export interface BoardService {
   Delete(
     request: boardservicev1_DeleteBoardRequest,
   ): Promise<wellKnownEmpty>;
+  // 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+  SyncBoard(
+    request: boardservicev1_SyncBoardRequest,
+  ): Promise<boardservicev1_SyncBoardResponse>;
   // 移动看板（租户内重排序）
   Move(
     request: boardservicev1_MoveBoardRequest,
@@ -1307,6 +1311,17 @@ export function createBoardServiceClient(
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
     },
+    SyncBoard(request) {
+      if (request.boardId === undefined || request.boardId === null) {
+        throw new Error('missing required field request.board_id');
+      }
+      const path = `admin/v1/boards/${request.boardId}:sync`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'BoardService',
+        method: 'SyncBoard',
+      }) as Promise<boardservicev1_SyncBoardResponse>;
+    },
     Move(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
@@ -1361,6 +1376,7 @@ export type boardservicev1_CreateBoardRequest = {
 export type boardservicev1_UpdateBoardRequest = {
   allowMissing?: boolean;
   data: boardservicev1_Board | undefined;
+  expectedVersion?: number;
   id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
@@ -1370,10 +1386,83 @@ export type boardservicev1_DeleteBoardRequest = {
   id?: number;
 };
 
+// 差量同步 - 请求
+export type boardservicev1_SyncBoardRequest = {
+  //
+  // Behaviors: REQUIRED
+  boardId: number | undefined;
+  knownBoardVersion?: number;
+  knownCardVersions: boardservicev1_VersionEntry[] | undefined;
+  knownColumnVersions: boardservicev1_VersionEntry[] | undefined;
+};
+
+// 版本条目（差量同步用；以消息替代 map 以兼容各端代码生成器）
+export type boardservicev1_VersionEntry = {
+  id: number | undefined;
+  version: number | undefined;
+};
+
+// 差量同步 - 回应
+export type boardservicev1_SyncBoardResponse = {
+  board?: boardservicev1_Board;
+  deletedCardIds: number[] | undefined;
+  deletedColumnIds: number[] | undefined;
+  upsertedCards: boardservicev1_Card[] | undefined;
+  upsertedColumns: boardservicev1_Column[] | undefined;
+};
+
+// 看板列
+export type boardservicev1_Column = {
+  //
+  // Behaviors: REQUIRED
+  boardId?: number;
+  //
+  // Behaviors: OPTIONAL
+  color?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  rank?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  version?: number;
+};
+
+// 看板卡片
+export type boardservicev1_Card = {
+  boardId?: number;
+  //
+  // Behaviors: REQUIRED
+  columnId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  description?: string;
+  id?: number;
+  //
+  // Behaviors: REQUIRED
+  name?: string;
+  rank?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  version?: number;
+};
+
 // 移动看板 - 请求
 export type boardservicev1_MoveBoardRequest = {
   afterId?: number;
   beforeId?: number;
+  expectedVersion?: number;
   //
   // Behaviors: REQUIRED
   id: number | undefined;
@@ -1596,30 +1685,6 @@ export type boardservicev1_ListCardResponse = {
   total: number | undefined;
 };
 
-// 看板卡片
-export type boardservicev1_Card = {
-  boardId?: number;
-  //
-  // Behaviors: REQUIRED
-  columnId?: number;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  //
-  // Behaviors: OPTIONAL
-  description?: string;
-  id?: number;
-  //
-  // Behaviors: REQUIRED
-  name?: string;
-  rank?: string;
-  tenantId?: number;
-  updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  version?: number;
-};
-
 // 查询卡片详情 - 请求
 export type boardservicev1_GetCardRequest = {
   id?: number;
@@ -1635,6 +1700,7 @@ export type boardservicev1_CreateCardRequest = {
 export type boardservicev1_UpdateCardRequest = {
   allowMissing?: boolean;
   data: boardservicev1_Card | undefined;
+  expectedVersion?: number;
   id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
@@ -1648,6 +1714,7 @@ export type boardservicev1_DeleteCardRequest = {
 export type boardservicev1_MoveCardRequest = {
   afterId?: number;
   beforeId?: number;
+  expectedVersion?: number;
   //
   // Behaviors: REQUIRED
   id: number | undefined;
@@ -1871,29 +1938,6 @@ export type boardservicev1_ListColumnResponse = {
   total: number | undefined;
 };
 
-// 看板列
-export type boardservicev1_Column = {
-  //
-  // Behaviors: REQUIRED
-  boardId?: number;
-  //
-  // Behaviors: OPTIONAL
-  color?: string;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  //
-  // Behaviors: REQUIRED
-  name?: string;
-  rank?: string;
-  tenantId?: number;
-  updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  version?: number;
-};
-
 // 查询列详情 - 请求
 export type boardservicev1_GetColumnRequest = {
   id?: number;
@@ -1909,6 +1953,7 @@ export type boardservicev1_CreateColumnRequest = {
 export type boardservicev1_UpdateColumnRequest = {
   allowMissing?: boolean;
   data: boardservicev1_Column | undefined;
+  expectedVersion?: number;
   id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
@@ -1922,6 +1967,7 @@ export type boardservicev1_DeleteColumnRequest = {
 export type boardservicev1_MoveColumnRequest = {
   afterId?: number;
   beforeId?: number;
+  expectedVersion?: number;
   //
   // Behaviors: REQUIRED
   id: number | undefined;

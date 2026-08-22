@@ -27,6 +27,7 @@ const OperationBoardServiceDelete = "/admin.service.v1.BoardService/Delete"
 const OperationBoardServiceGet = "/admin.service.v1.BoardService/Get"
 const OperationBoardServiceList = "/admin.service.v1.BoardService/List"
 const OperationBoardServiceMove = "/admin.service.v1.BoardService/Move"
+const OperationBoardServiceSyncBoard = "/admin.service.v1.BoardService/SyncBoard"
 const OperationBoardServiceUpdate = "/admin.service.v1.BoardService/Update"
 
 type BoardServiceHTTPServer interface {
@@ -40,6 +41,8 @@ type BoardServiceHTTPServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListBoardResponse, error)
 	// Move 移动看板（租户内重排序）
 	Move(context.Context, *v11.MoveBoardRequest) (*v11.Board, error)
+	// SyncBoard 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+	SyncBoard(context.Context, *v11.SyncBoardRequest) (*v11.SyncBoardResponse, error)
 	// Update 更新看板
 	Update(context.Context, *v11.UpdateBoardRequest) (*v11.Board, error)
 }
@@ -51,6 +54,7 @@ func RegisterBoardServiceHTTPServer(s *http.Server, srv BoardServiceHTTPServer) 
 	r.POST("/admin/v1/boards", _BoardService_Create1_HTTP_Handler(srv))
 	r.PUT("/admin/v1/boards/{id}", _BoardService_Update1_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/boards/{id}", _BoardService_Delete1_HTTP_Handler(srv))
+	r.POST("/admin/v1/boards/{board_id}:sync", _BoardService_SyncBoard0_HTTP_Handler(srv))
 	r.POST("/admin/v1/boards/{id}:move", _BoardService_Move0_HTTP_Handler(srv))
 }
 
@@ -164,6 +168,31 @@ func _BoardService_Delete1_HTTP_Handler(srv BoardServiceHTTPServer) func(ctx htt
 	}
 }
 
+func _BoardService_SyncBoard0_HTTP_Handler(srv BoardServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SyncBoardRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationBoardServiceSyncBoard)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SyncBoard(ctx, req.(*v11.SyncBoardRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.SyncBoardResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _BoardService_Move0_HTTP_Handler(srv BoardServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.MoveBoardRequest
@@ -200,6 +229,8 @@ type BoardServiceHTTPClient interface {
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListBoardResponse, err error)
 	// Move 移动看板（租户内重排序）
 	Move(ctx context.Context, req *v11.MoveBoardRequest, opts ...http.CallOption) (rsp *v11.Board, err error)
+	// SyncBoard 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+	SyncBoard(ctx context.Context, req *v11.SyncBoardRequest, opts ...http.CallOption) (rsp *v11.SyncBoardResponse, err error)
 	// Update 更新看板
 	Update(ctx context.Context, req *v11.UpdateBoardRequest, opts ...http.CallOption) (rsp *v11.Board, err error)
 }
@@ -274,6 +305,20 @@ func (c *BoardServiceHTTPClientImpl) Move(ctx context.Context, in *v11.MoveBoard
 	pattern := "/admin/v1/boards/{id}:move"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBoardServiceMove))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SyncBoard 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+func (c *BoardServiceHTTPClientImpl) SyncBoard(ctx context.Context, in *v11.SyncBoardRequest, opts ...http.CallOption) (*v11.SyncBoardResponse, error) {
+	var out v11.SyncBoardResponse
+	pattern := "/admin/v1/boards/{board_id}:sync"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationBoardServiceSyncBoard))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

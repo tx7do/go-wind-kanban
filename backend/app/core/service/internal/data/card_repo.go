@@ -223,6 +223,9 @@ func (r *CardRepo) Update(ctx context.Context, req *boardV1.UpdateCardRequest) (
 	if hasTenant {
 		builder.Where(card.TenantIDEQ(tid))
 	}
+	if req.GetExpectedVersion() > 0 {
+		builder.Where(card.VersionEQ(req.GetExpectedVersion()))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *boardV1.Card) {
 			builder.
@@ -238,6 +241,11 @@ func (r *CardRepo) Update(ctx context.Context, req *boardV1.UpdateCardRequest) (
 			s.Where(sql.EQ(card.FieldID, req.GetId()))
 		},
 	)
+
+	// 乐观锁命中失败：版本不匹配，返回 409。
+	if err == nil && result == nil && req.GetExpectedVersion() > 0 {
+		return nil, boardV1.ErrorConflict("card version conflict: expected=%d", req.GetExpectedVersion())
+	}
 
 	// 乐观锁预埋：每次 Update 成功后 version+1。
 	if result != nil {
@@ -371,6 +379,9 @@ func (r *CardRepo) Move(ctx context.Context, req *boardV1.MoveCardRequest) (*boa
 
 	builder := r.entClient.Client().Card.UpdateOneID(req.GetId())
 	builder.Where(card.IDEQ(req.GetId()), card.TenantIDEQ(tid))
+	if req.GetExpectedVersion() > 0 {
+		builder.Where(card.VersionEQ(req.GetExpectedVersion()))
+	}
 	builder.SetRank(newRank)
 	// 跨列移动：同步 board_id 与 column_id，保持反规范化一致。
 	if targetColID != moverColID {
@@ -378,6 +389,9 @@ func (r *CardRepo) Move(ctx context.Context, req *boardV1.MoveCardRequest) (*boa
 		builder.SetBoardID(targetBoardID)
 	}
 	if _, err := builder.AddVersion(1).Save(ctx); err != nil {
+		if ent.IsNotFound(err) && req.GetExpectedVersion() > 0 {
+			return nil, boardV1.ErrorConflict("card version conflict: expected=%d", req.GetExpectedVersion())
+		}
 		r.log.Errorf("move card: set rank failed: %s", err.Error())
 		return nil, boardV1.ErrorInternalServerError("move card failed")
 	}

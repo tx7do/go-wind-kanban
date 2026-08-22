@@ -113,3 +113,8 @@ func (s *BoardService) Move(ctx context.Context, req *boardV1.MoveBoardRequest) 
 func (s *BoardService) GetBoardSnapshot(ctx context.Context, req *boardV1.GetBoardSnapshotRequest) (*boardV1.BoardSnapshot, error) {
 	return s.boardServiceClient.GetBoardSnapshot(ctx, req)
 }
+
+// SyncBoard 差量同步
+func (s *BoardService) SyncBoard(ctx context.Context, req *boardV1.SyncBoardRequest) (*boardV1.SyncBoardResponse, error) {
+	return s.boardServiceClient.SyncBoard(ctx, req)
+}

@@ -8,6 +8,7 @@ import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 import 'package:dio/dio.dart' show Dio;
 import 'package:flutter_app/src/features/board/data/board_cache.dart';
 import 'package:flutter_app/src/features/board/data/realtime_client.dart';
+import 'package:flutter_app/src/features/board/data/sync_api.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
 
 import 'package:get_it/get_it.dart';
@@ -72,11 +73,24 @@ class BoardController extends Cubit<KanbanBoardState?> {
     }
 
     try {
-      final snap = await _api.boardService
-          .getBoardSnapshot(api.BoardServiceV1GetBoardSnapshotRequest(boardId: boardId));
-      final state = KanbanBoardState.fromSnapshot(snap);
-      emit(state);
-      await _cache.save(state);
+      if (cached != null) {
+        // 差量同步：已知版本对账，仅拉变化实体（手写客户端，见 sync_api.dart）
+        final delta = await syncBoard(
+          boardId: boardId,
+          knownBoardVersion: cached.board.version,
+          knownColumnVersions: {for (final c in cached.columns) c.id: c.version},
+          knownCardVersions: {for (final c in cached.cards) c.id: c.version},
+        );
+        final merged = _mergeDelta(cached, delta);
+        emit(merged);
+        await _cache.save(merged);
+      } else {
+        final snap = await _api.boardService
+            .getBoardSnapshot(api.BoardServiceV1GetBoardSnapshotRequest(boardId: boardId));
+        final state = KanbanBoardState.fromSnapshot(snap);
+        emit(state);
+        await _cache.save(state);
+      }
       _offline = false;
     } on DioException catch (e) {
       if (_isConnectionError(e)) {
@@ -116,8 +130,12 @@ class BoardController extends Cubit<KanbanBoardState?> {
     emit(optimistic);
 
     if (_offline) {
-      await _pending.enqueue(
-          PendingOps.moveCardOp(cardId: cardId, targetColumnId: toColumnId, beforeId: beforeId, afterId: afterId));
+      await _pending.enqueue(PendingOps.moveCardOp(
+          cardId: cardId,
+          targetColumnId: toColumnId,
+          beforeId: beforeId,
+          afterId: afterId,
+          expectedVersion: card.version));
       return true;
     }
 
@@ -127,6 +145,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
         targetColumnId: toColumnId,
         beforeId: beforeId,
         afterId: afterId,
+        expectedVersion: card.version,
       ));
       _upsertCardDto(updated);
       return true;
@@ -153,7 +172,8 @@ class BoardController extends Cubit<KanbanBoardState?> {
     emit(_mapCards(prev, (c) => c.id == cardId ? c.copyWith(name: name) : c));
 
     if (_offline) {
-      await _pending.enqueue(PendingOps.renameCardOp(cardId: cardId, name: name));
+      await _pending.enqueue(
+          PendingOps.renameCardOp(cardId: cardId, name: name, expectedVersion: card.version));
       return true;
     }
     try {
@@ -161,12 +181,14 @@ class BoardController extends Cubit<KanbanBoardState?> {
         id: cardId,
         data: api.BoardServiceV1Card(name: name),
         updateMask: 'name',
+        expectedVersion: card.version,
       ));
       return true;
     } on DioException catch (e) {
       if (_isConnectionError(e)) {
         _offline = true;
-        await _pending.enqueue(PendingOps.renameCardOp(cardId: cardId, name: name));
+        await _pending.enqueue(
+            PendingOps.renameCardOp(cardId: cardId, name: name, expectedVersion: card.version));
         return true;
       }
       emit(prev);
@@ -269,12 +291,14 @@ class BoardController extends Cubit<KanbanBoardState?> {
           targetColumnId: op['targetColumnId'],
           beforeId: op['beforeId'],
           afterId: op['afterId'],
+          expectedVersion: op['expectedVersion'],
         ));
       case 'card.rename':
         await _api.cardService.update(api.BoardServiceV1UpdateCardRequest(
           id: op['cardId'],
           data: api.BoardServiceV1Card(name: op['name']),
           updateMask: 'name',
+          expectedVersion: op['expectedVersion'],
         ));
       case 'card.create':
         await _api.cardService.create(api.BoardServiceV1CreateCardRequest(
@@ -354,6 +378,33 @@ void _onConnection(bool up) {
     } else if (up && !_offline && _boardId != 0) {
       load(_boardId);
     }
+  }
+
+
+  /// 差量合并：缓存状态 + SyncDelta → 最新状态。
+  KanbanBoardState _mergeDelta(KanbanBoardState base, SyncDelta delta) {
+    var board = base.board;
+    if (delta.board != null) {
+      board = delta.board!;
+    }
+
+    var columns = base.columns.where((c) => !delta.deletedColumnIds.contains(c.id)).toList();
+    for (final c in delta.upsertedColumns) {
+      columns = columns.where((e) => e.id != c.id).toList()..add(c);
+    }
+    columns.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
+
+    var cards = base.cards.where((c) => !delta.deletedCardIds.contains(c.id)).toList();
+    for (final c in delta.upsertedCards) {
+      cards = cards.where((e) => e.id != c.id).toList()..add(c);
+    }
+    cards.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
+
+    // 列删除连带清理其下卡片
+    final liveColIds = columns.map((c) => c.id).toSet();
+    cards = cards.where((c) => liveColIds.contains(c.columnId)).toList();
+
+    return KanbanBoardState(board: board, columns: columns, cards: cards);
   }
 
   // ===== 内部工具 =====

@@ -396,6 +396,32 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/board.service.v1.Board'
+    /admin/v1/boards/{boardId}:sync:
+        post:
+            tags:
+                - BoardService
+            description: 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+            operationId: BoardService_SyncBoard
+            parameters:
+                - name: boardId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/board.service.v1.SyncBoardRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/board.service.v1.SyncBoardResponse'
     /admin/v1/boards/{id}:
         get:
             tags:
@@ -5600,6 +5626,10 @@ components:
                     type: integer
                     description: 移动到该看板之后（同级邻居看板ID）
                     format: uint32
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+                    format: uint32
             description: 移动看板 - 请求
         board.service.v1.MoveCardRequest:
             required:
@@ -5622,6 +5652,10 @@ components:
                     type: integer
                     description: 移动到目标列中该卡片之后（目标列内邻居卡片ID）
                     format: uint32
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+                    format: uint32
             description: 移动卡片 - 请求
         board.service.v1.MoveColumnRequest:
             required:
@@ -5640,7 +5674,63 @@ components:
                     type: integer
                     description: 移动到该列之后（同看板邻居列ID）
                     format: uint32
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+                    format: uint32
             description: 移动列 - 请求
+        board.service.v1.SyncBoardRequest:
+            required:
+                - boardId
+            type: object
+            properties:
+                boardId:
+                    type: integer
+                    description: 看板ID
+                    format: uint32
+                knownBoardVersion:
+                    type: integer
+                    description: 客户端已知的看板版本；不一致时返回最新看板本体
+                    format: uint32
+                knownColumnVersions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/board.service.v1.VersionEntry'
+                    description: 客户端已知的列版本条目
+                knownCardVersions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/board.service.v1.VersionEntry'
+                    description: 客户端已知的卡片版本条目
+            description: 差量同步 - 请求
+        board.service.v1.SyncBoardResponse:
+            type: object
+            properties:
+                board:
+                    $ref: '#/components/schemas/board.service.v1.Board'
+                upsertedColumns:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/board.service.v1.Column'
+                    description: 新增或版本变化的列（含新列）
+                deletedColumnIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 客户端已知但服务端已删除的列ID
+                upsertedCards:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/board.service.v1.Card'
+                    description: 新增或版本变化的卡片
+                deletedCardIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 客户端已知但服务端已删除的卡片ID
+            description: 差量同步 - 回应
         board.service.v1.UpdateBoardRequest:
             type: object
             properties:
@@ -5657,6 +5747,10 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+                    format: uint32
             description: 更新看板 - 请求
         board.service.v1.UpdateCardRequest:
             type: object
@@ -5674,6 +5768,10 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+                    format: uint32
             description: 更新卡片 - 请求
         board.service.v1.UpdateColumnRequest:
             type: object
@@ -5691,7 +5789,23 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+                expectedVersion:
+                    type: integer
+                    description: 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+                    format: uint32
             description: 更新列 - 请求
+        board.service.v1.VersionEntry:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 实体ID
+                    format: uint32
+                version:
+                    type: integer
+                    description: 客户端已知的版本
+                    format: uint32
+            description: 版本条目（差量同步用；以消息替代 map 以兼容各端代码生成器）
         dict.service.v1.BatchCreateLanguagesRequest:
             type: object
             properties:

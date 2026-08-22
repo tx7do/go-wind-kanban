@@ -28,6 +28,7 @@ const (
 	BoardService_Delete_FullMethodName           = "/board.service.v1.BoardService/Delete"
 	BoardService_Move_FullMethodName             = "/board.service.v1.BoardService/Move"
 	BoardService_GetBoardSnapshot_FullMethodName = "/board.service.v1.BoardService/GetBoardSnapshot"
+	BoardService_SyncBoard_FullMethodName        = "/board.service.v1.BoardService/SyncBoard"
 )
 
 // BoardServiceClient is the client API for BoardService service.
@@ -50,6 +51,8 @@ type BoardServiceClient interface {
 	Move(ctx context.Context, in *MoveBoardRequest, opts ...grpc.CallOption) (*Board, error)
 	// 获取看板完整快照（看板 + 全部列 + 全部卡片，供客户端一次性加载/离线缓存）
 	GetBoardSnapshot(ctx context.Context, in *GetBoardSnapshotRequest, opts ...grpc.CallOption) (*BoardSnapshot, error)
+	// 差量同步：客户端上报已知版本，服务端仅返回版本有变化的实体与已删除 ID
+	SyncBoard(ctx context.Context, in *SyncBoardRequest, opts ...grpc.CallOption) (*SyncBoardResponse, error)
 }
 
 type boardServiceClient struct {
@@ -130,6 +133,16 @@ func (c *boardServiceClient) GetBoardSnapshot(ctx context.Context, in *GetBoardS
 	return out, nil
 }
 
+func (c *boardServiceClient) SyncBoard(ctx context.Context, in *SyncBoardRequest, opts ...grpc.CallOption) (*SyncBoardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SyncBoardResponse)
+	err := c.cc.Invoke(ctx, BoardService_SyncBoard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BoardServiceServer is the server API for BoardService service.
 // All implementations must embed UnimplementedBoardServiceServer
 // for forward compatibility.
@@ -150,6 +163,8 @@ type BoardServiceServer interface {
 	Move(context.Context, *MoveBoardRequest) (*Board, error)
 	// 获取看板完整快照（看板 + 全部列 + 全部卡片，供客户端一次性加载/离线缓存）
 	GetBoardSnapshot(context.Context, *GetBoardSnapshotRequest) (*BoardSnapshot, error)
+	// 差量同步：客户端上报已知版本，服务端仅返回版本有变化的实体与已删除 ID
+	SyncBoard(context.Context, *SyncBoardRequest) (*SyncBoardResponse, error)
 	mustEmbedUnimplementedBoardServiceServer()
 }
 
@@ -180,6 +195,9 @@ func (UnimplementedBoardServiceServer) Move(context.Context, *MoveBoardRequest) 
 }
 func (UnimplementedBoardServiceServer) GetBoardSnapshot(context.Context, *GetBoardSnapshotRequest) (*BoardSnapshot, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBoardSnapshot not implemented")
+}
+func (UnimplementedBoardServiceServer) SyncBoard(context.Context, *SyncBoardRequest) (*SyncBoardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncBoard not implemented")
 }
 func (UnimplementedBoardServiceServer) mustEmbedUnimplementedBoardServiceServer() {}
 func (UnimplementedBoardServiceServer) testEmbeddedByValue()                      {}
@@ -328,6 +346,24 @@ func _BoardService_GetBoardSnapshot_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoardService_SyncBoard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncBoardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoardServiceServer).SyncBoard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoardService_SyncBoard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoardServiceServer).SyncBoard(ctx, req.(*SyncBoardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BoardService_ServiceDesc is the grpc.ServiceDesc for BoardService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -362,6 +398,10 @@ var BoardService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBoardSnapshot",
 			Handler:    _BoardService_GetBoardSnapshot_Handler,
+		},
+		{
+			MethodName: "SyncBoard",
+			Handler:    _BoardService_SyncBoard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

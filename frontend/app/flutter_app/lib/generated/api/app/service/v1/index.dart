@@ -1350,12 +1350,14 @@ class BoardServiceV1CreateBoardRequest {
 class BoardServiceV1UpdateBoardRequest {
   bool? allowMissing;
   BoardServiceV1Board? data;
+  int? expectedVersion;
   int? id;
   String? updateMask;
 
   BoardServiceV1UpdateBoardRequest({
     this.allowMissing,
     this.data,
+    this.expectedVersion,
     this.id,
     this.updateMask,
   });
@@ -1364,6 +1366,7 @@ class BoardServiceV1UpdateBoardRequest {
     return BoardServiceV1UpdateBoardRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Board.fromJson(json['data'] as Map<String, dynamic>) : null,
+      expectedVersion: json['expectedVersion'] as int?,
       id: json['id'] as int?,
       updateMask: json['updateMask'] as String?,
     );
@@ -1373,6 +1376,7 @@ class BoardServiceV1UpdateBoardRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
     if (id != null) json['id'] = id;
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
@@ -1380,7 +1384,7 @@ class BoardServiceV1UpdateBoardRequest {
 
   @override
   String toString() {
-    return 'BoardServiceV1UpdateBoardRequest(allowMissing: $allowMissing, data: $data, id: $id, updateMask: $updateMask)';
+    return 'BoardServiceV1UpdateBoardRequest(allowMissing: $allowMissing, data: $data, expectedVersion: $expectedVersion, id: $id, updateMask: $updateMask)';
   }
 
   @override
@@ -1390,6 +1394,7 @@ class BoardServiceV1UpdateBoardRequest {
       runtimeType == other.runtimeType
       && allowMissing == other.allowMissing
       && data == other.data
+      && expectedVersion == other.expectedVersion
       && id == other.id
       && updateMask == other.updateMask
     ;
@@ -1398,6 +1403,7 @@ class BoardServiceV1UpdateBoardRequest {
   int get hashCode => Object.hashAll([
     allowMissing,
     data,
+    expectedVersion,
     id,
     updateMask,
   ]);
@@ -1405,12 +1411,14 @@ class BoardServiceV1UpdateBoardRequest {
   BoardServiceV1UpdateBoardRequest copyWith({
     bool? allowMissing,
     BoardServiceV1Board? data,
+    int? expectedVersion,
     int? id,
     String? updateMask,
   }) {
     return BoardServiceV1UpdateBoardRequest(
       allowMissing: allowMissing ?? this.allowMissing,
       data: data ?? this.data,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
       id: id ?? this.id,
       updateMask: updateMask ?? this.updateMask,
     );
@@ -1468,6 +1476,7 @@ class BoardServiceV1DeleteBoardRequest {
 class BoardServiceV1MoveBoardRequest {
   int? afterId;
   int? beforeId;
+  int? expectedVersion;
   ///
   /// Behaviors: REQUIRED
   int? id;
@@ -1475,6 +1484,7 @@ class BoardServiceV1MoveBoardRequest {
   BoardServiceV1MoveBoardRequest({
     this.afterId,
     this.beforeId,
+    this.expectedVersion,
     this.id,
   });
 
@@ -1482,6 +1492,7 @@ class BoardServiceV1MoveBoardRequest {
     return BoardServiceV1MoveBoardRequest(
       afterId: json['afterId'] as int?,
       beforeId: json['beforeId'] as int?,
+      expectedVersion: json['expectedVersion'] as int?,
       id: json['id'] as int?,
     );
   }
@@ -1490,13 +1501,14 @@ class BoardServiceV1MoveBoardRequest {
     final json = <String, dynamic>{};
     if (afterId != null) json['afterId'] = afterId;
     if (beforeId != null) json['beforeId'] = beforeId;
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
     if (id != null) json['id'] = id;
     return json;
   }
 
   @override
   String toString() {
-    return 'BoardServiceV1MoveBoardRequest(afterId: $afterId, beforeId: $beforeId, id: $id)';
+    return 'BoardServiceV1MoveBoardRequest(afterId: $afterId, beforeId: $beforeId, expectedVersion: $expectedVersion, id: $id)';
   }
 
   @override
@@ -1506,6 +1518,7 @@ class BoardServiceV1MoveBoardRequest {
       runtimeType == other.runtimeType
       && afterId == other.afterId
       && beforeId == other.beforeId
+      && expectedVersion == other.expectedVersion
       && id == other.id
     ;
 
@@ -1513,17 +1526,20 @@ class BoardServiceV1MoveBoardRequest {
   int get hashCode => Object.hashAll([
     afterId,
     beforeId,
+    expectedVersion,
     id,
   ]);
 
   BoardServiceV1MoveBoardRequest copyWith({
     int? afterId,
     int? beforeId,
+    int? expectedVersion,
     int? id,
   }) {
     return BoardServiceV1MoveBoardRequest(
       afterId: afterId ?? this.afterId,
       beforeId: beforeId ?? this.beforeId,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
       id: id ?? this.id,
     );
   }
@@ -2236,12 +2252,14 @@ class BoardServiceV1CreateCardRequest {
 class BoardServiceV1UpdateCardRequest {
   bool? allowMissing;
   BoardServiceV1Card? data;
+  int? expectedVersion;
   int? id;
   String? updateMask;
 
   BoardServiceV1UpdateCardRequest({
     this.allowMissing,
     this.data,
+    this.expectedVersion,
     this.id,
     this.updateMask,
   });
@@ -2250,6 +2268,7 @@ class BoardServiceV1UpdateCardRequest {
     return BoardServiceV1UpdateCardRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Card.fromJson(json['data'] as Map<String, dynamic>) : null,
+      expectedVersion: json['expectedVersion'] as int?,
       id: json['id'] as int?,
       updateMask: json['updateMask'] as String?,
     );
@@ -2259,6 +2278,7 @@ class BoardServiceV1UpdateCardRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
     if (id != null) json['id'] = id;
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
@@ -2266,7 +2286,7 @@ class BoardServiceV1UpdateCardRequest {
 
   @override
   String toString() {
-    return 'BoardServiceV1UpdateCardRequest(allowMissing: $allowMissing, data: $data, id: $id, updateMask: $updateMask)';
+    return 'BoardServiceV1UpdateCardRequest(allowMissing: $allowMissing, data: $data, expectedVersion: $expectedVersion, id: $id, updateMask: $updateMask)';
   }
 
   @override
@@ -2276,6 +2296,7 @@ class BoardServiceV1UpdateCardRequest {
       runtimeType == other.runtimeType
       && allowMissing == other.allowMissing
       && data == other.data
+      && expectedVersion == other.expectedVersion
       && id == other.id
       && updateMask == other.updateMask
     ;
@@ -2284,6 +2305,7 @@ class BoardServiceV1UpdateCardRequest {
   int get hashCode => Object.hashAll([
     allowMissing,
     data,
+    expectedVersion,
     id,
     updateMask,
   ]);
@@ -2291,12 +2313,14 @@ class BoardServiceV1UpdateCardRequest {
   BoardServiceV1UpdateCardRequest copyWith({
     bool? allowMissing,
     BoardServiceV1Card? data,
+    int? expectedVersion,
     int? id,
     String? updateMask,
   }) {
     return BoardServiceV1UpdateCardRequest(
       allowMissing: allowMissing ?? this.allowMissing,
       data: data ?? this.data,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
       id: id ?? this.id,
       updateMask: updateMask ?? this.updateMask,
     );
@@ -2354,6 +2378,7 @@ class BoardServiceV1DeleteCardRequest {
 class BoardServiceV1MoveCardRequest {
   int? afterId;
   int? beforeId;
+  int? expectedVersion;
   ///
   /// Behaviors: REQUIRED
   int? id;
@@ -2362,6 +2387,7 @@ class BoardServiceV1MoveCardRequest {
   BoardServiceV1MoveCardRequest({
     this.afterId,
     this.beforeId,
+    this.expectedVersion,
     this.id,
     this.targetColumnId,
   });
@@ -2370,6 +2396,7 @@ class BoardServiceV1MoveCardRequest {
     return BoardServiceV1MoveCardRequest(
       afterId: json['afterId'] as int?,
       beforeId: json['beforeId'] as int?,
+      expectedVersion: json['expectedVersion'] as int?,
       id: json['id'] as int?,
       targetColumnId: json['targetColumnId'] as int?,
     );
@@ -2379,6 +2406,7 @@ class BoardServiceV1MoveCardRequest {
     final json = <String, dynamic>{};
     if (afterId != null) json['afterId'] = afterId;
     if (beforeId != null) json['beforeId'] = beforeId;
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
     if (id != null) json['id'] = id;
     if (targetColumnId != null) json['targetColumnId'] = targetColumnId;
     return json;
@@ -2386,7 +2414,7 @@ class BoardServiceV1MoveCardRequest {
 
   @override
   String toString() {
-    return 'BoardServiceV1MoveCardRequest(afterId: $afterId, beforeId: $beforeId, id: $id, targetColumnId: $targetColumnId)';
+    return 'BoardServiceV1MoveCardRequest(afterId: $afterId, beforeId: $beforeId, expectedVersion: $expectedVersion, id: $id, targetColumnId: $targetColumnId)';
   }
 
   @override
@@ -2396,6 +2424,7 @@ class BoardServiceV1MoveCardRequest {
       runtimeType == other.runtimeType
       && afterId == other.afterId
       && beforeId == other.beforeId
+      && expectedVersion == other.expectedVersion
       && id == other.id
       && targetColumnId == other.targetColumnId
     ;
@@ -2404,6 +2433,7 @@ class BoardServiceV1MoveCardRequest {
   int get hashCode => Object.hashAll([
     afterId,
     beforeId,
+    expectedVersion,
     id,
     targetColumnId,
   ]);
@@ -2411,12 +2441,14 @@ class BoardServiceV1MoveCardRequest {
   BoardServiceV1MoveCardRequest copyWith({
     int? afterId,
     int? beforeId,
+    int? expectedVersion,
     int? id,
     int? targetColumnId,
   }) {
     return BoardServiceV1MoveCardRequest(
       afterId: afterId ?? this.afterId,
       beforeId: beforeId ?? this.beforeId,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
       id: id ?? this.id,
       targetColumnId: targetColumnId ?? this.targetColumnId,
     );
@@ -2712,12 +2744,14 @@ class BoardServiceV1CreateColumnRequest {
 class BoardServiceV1UpdateColumnRequest {
   bool? allowMissing;
   BoardServiceV1Column? data;
+  int? expectedVersion;
   int? id;
   String? updateMask;
 
   BoardServiceV1UpdateColumnRequest({
     this.allowMissing,
     this.data,
+    this.expectedVersion,
     this.id,
     this.updateMask,
   });
@@ -2726,6 +2760,7 @@ class BoardServiceV1UpdateColumnRequest {
     return BoardServiceV1UpdateColumnRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Column.fromJson(json['data'] as Map<String, dynamic>) : null,
+      expectedVersion: json['expectedVersion'] as int?,
       id: json['id'] as int?,
       updateMask: json['updateMask'] as String?,
     );
@@ -2735,6 +2770,7 @@ class BoardServiceV1UpdateColumnRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
     if (id != null) json['id'] = id;
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
@@ -2742,7 +2778,7 @@ class BoardServiceV1UpdateColumnRequest {
 
   @override
   String toString() {
-    return 'BoardServiceV1UpdateColumnRequest(allowMissing: $allowMissing, data: $data, id: $id, updateMask: $updateMask)';
+    return 'BoardServiceV1UpdateColumnRequest(allowMissing: $allowMissing, data: $data, expectedVersion: $expectedVersion, id: $id, updateMask: $updateMask)';
   }
 
   @override
@@ -2752,6 +2788,7 @@ class BoardServiceV1UpdateColumnRequest {
       runtimeType == other.runtimeType
       && allowMissing == other.allowMissing
       && data == other.data
+      && expectedVersion == other.expectedVersion
       && id == other.id
       && updateMask == other.updateMask
     ;
@@ -2760,6 +2797,7 @@ class BoardServiceV1UpdateColumnRequest {
   int get hashCode => Object.hashAll([
     allowMissing,
     data,
+    expectedVersion,
     id,
     updateMask,
   ]);
@@ -2767,12 +2805,14 @@ class BoardServiceV1UpdateColumnRequest {
   BoardServiceV1UpdateColumnRequest copyWith({
     bool? allowMissing,
     BoardServiceV1Column? data,
+    int? expectedVersion,
     int? id,
     String? updateMask,
   }) {
     return BoardServiceV1UpdateColumnRequest(
       allowMissing: allowMissing ?? this.allowMissing,
       data: data ?? this.data,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
       id: id ?? this.id,
       updateMask: updateMask ?? this.updateMask,
     );
@@ -2830,6 +2870,7 @@ class BoardServiceV1DeleteColumnRequest {
 class BoardServiceV1MoveColumnRequest {
   int? afterId;
   int? beforeId;
+  int? expectedVersion;
   ///
   /// Behaviors: REQUIRED
   int? id;
@@ -2837,6 +2878,7 @@ class BoardServiceV1MoveColumnRequest {
   BoardServiceV1MoveColumnRequest({
     this.afterId,
     this.beforeId,
+    this.expectedVersion,
     this.id,
   });
 
@@ -2844,6 +2886,7 @@ class BoardServiceV1MoveColumnRequest {
     return BoardServiceV1MoveColumnRequest(
       afterId: json['afterId'] as int?,
       beforeId: json['beforeId'] as int?,
+      expectedVersion: json['expectedVersion'] as int?,
       id: json['id'] as int?,
     );
   }
@@ -2852,13 +2895,14 @@ class BoardServiceV1MoveColumnRequest {
     final json = <String, dynamic>{};
     if (afterId != null) json['afterId'] = afterId;
     if (beforeId != null) json['beforeId'] = beforeId;
+    if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
     if (id != null) json['id'] = id;
     return json;
   }
 
   @override
   String toString() {
-    return 'BoardServiceV1MoveColumnRequest(afterId: $afterId, beforeId: $beforeId, id: $id)';
+    return 'BoardServiceV1MoveColumnRequest(afterId: $afterId, beforeId: $beforeId, expectedVersion: $expectedVersion, id: $id)';
   }
 
   @override
@@ -2868,6 +2912,7 @@ class BoardServiceV1MoveColumnRequest {
       runtimeType == other.runtimeType
       && afterId == other.afterId
       && beforeId == other.beforeId
+      && expectedVersion == other.expectedVersion
       && id == other.id
     ;
 
@@ -2875,17 +2920,20 @@ class BoardServiceV1MoveColumnRequest {
   int get hashCode => Object.hashAll([
     afterId,
     beforeId,
+    expectedVersion,
     id,
   ]);
 
   BoardServiceV1MoveColumnRequest copyWith({
     int? afterId,
     int? beforeId,
+    int? expectedVersion,
     int? id,
   }) {
     return BoardServiceV1MoveColumnRequest(
       afterId: afterId ?? this.afterId,
       beforeId: beforeId ?? this.beforeId,
+      expectedVersion: expectedVersion ?? this.expectedVersion,
       id: id ?? this.id,
     );
   }

@@ -22,12 +22,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BoardService_List_FullMethodName   = "/admin.service.v1.BoardService/List"
-	BoardService_Get_FullMethodName    = "/admin.service.v1.BoardService/Get"
-	BoardService_Create_FullMethodName = "/admin.service.v1.BoardService/Create"
-	BoardService_Update_FullMethodName = "/admin.service.v1.BoardService/Update"
-	BoardService_Delete_FullMethodName = "/admin.service.v1.BoardService/Delete"
-	BoardService_Move_FullMethodName   = "/admin.service.v1.BoardService/Move"
+	BoardService_List_FullMethodName      = "/admin.service.v1.BoardService/List"
+	BoardService_Get_FullMethodName       = "/admin.service.v1.BoardService/Get"
+	BoardService_Create_FullMethodName    = "/admin.service.v1.BoardService/Create"
+	BoardService_Update_FullMethodName    = "/admin.service.v1.BoardService/Update"
+	BoardService_Delete_FullMethodName    = "/admin.service.v1.BoardService/Delete"
+	BoardService_SyncBoard_FullMethodName = "/admin.service.v1.BoardService/SyncBoard"
+	BoardService_Move_FullMethodName      = "/admin.service.v1.BoardService/Move"
 )
 
 // BoardServiceClient is the client API for BoardService service.
@@ -46,6 +47,8 @@ type BoardServiceClient interface {
 	Update(ctx context.Context, in *v11.UpdateBoardRequest, opts ...grpc.CallOption) (*v11.Board, error)
 	// 删除看板
 	Delete(ctx context.Context, in *v11.DeleteBoardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+	SyncBoard(ctx context.Context, in *v11.SyncBoardRequest, opts ...grpc.CallOption) (*v11.SyncBoardResponse, error)
 	// 移动看板（租户内重排序）
 	Move(ctx context.Context, in *v11.MoveBoardRequest, opts ...grpc.CallOption) (*v11.Board, error)
 }
@@ -108,6 +111,16 @@ func (c *boardServiceClient) Delete(ctx context.Context, in *v11.DeleteBoardRequ
 	return out, nil
 }
 
+func (c *boardServiceClient) SyncBoard(ctx context.Context, in *v11.SyncBoardRequest, opts ...grpc.CallOption) (*v11.SyncBoardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SyncBoardResponse)
+	err := c.cc.Invoke(ctx, BoardService_SyncBoard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *boardServiceClient) Move(ctx context.Context, in *v11.MoveBoardRequest, opts ...grpc.CallOption) (*v11.Board, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.Board)
@@ -134,6 +147,8 @@ type BoardServiceServer interface {
 	Update(context.Context, *v11.UpdateBoardRequest) (*v11.Board, error)
 	// 删除看板
 	Delete(context.Context, *v11.DeleteBoardRequest) (*emptypb.Empty, error)
+	// 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+	SyncBoard(context.Context, *v11.SyncBoardRequest) (*v11.SyncBoardResponse, error)
 	// 移动看板（租户内重排序）
 	Move(context.Context, *v11.MoveBoardRequest) (*v11.Board, error)
 	mustEmbedUnimplementedBoardServiceServer()
@@ -160,6 +175,9 @@ func (UnimplementedBoardServiceServer) Update(context.Context, *v11.UpdateBoardR
 }
 func (UnimplementedBoardServiceServer) Delete(context.Context, *v11.DeleteBoardRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedBoardServiceServer) SyncBoard(context.Context, *v11.SyncBoardRequest) (*v11.SyncBoardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncBoard not implemented")
 }
 func (UnimplementedBoardServiceServer) Move(context.Context, *v11.MoveBoardRequest) (*v11.Board, error) {
 	return nil, status.Error(codes.Unimplemented, "method Move not implemented")
@@ -275,6 +293,24 @@ func _BoardService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoardService_SyncBoard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.SyncBoardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoardServiceServer).SyncBoard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoardService_SyncBoard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoardServiceServer).SyncBoard(ctx, req.(*v11.SyncBoardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BoardService_Move_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.MoveBoardRequest)
 	if err := dec(in); err != nil {
@@ -319,6 +355,10 @@ var BoardService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _BoardService_Delete_Handler,
+		},
+		{
+			MethodName: "SyncBoard",
+			Handler:    _BoardService_SyncBoard_Handler,
 		},
 		{
 			MethodName: "Move",

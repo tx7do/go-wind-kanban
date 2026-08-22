@@ -396,13 +396,14 @@ func (x *CreateBoardRequest) GetData() *Board {
 
 // 更新看板 - 请求
 type UpdateBoardRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Data          *Board                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
-	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Data            *Board                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	UpdateMask      *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`                       // 要更新的字段列表
+	AllowMissing    *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"`          // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+	ExpectedVersion *uint32                `protobuf:"varint,5,opt,name=expected_version,json=expectedVersion,proto3,oneof" json:"expected_version,omitempty"` // 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *UpdateBoardRequest) Reset() {
@@ -461,6 +462,13 @@ func (x *UpdateBoardRequest) GetAllowMissing() bool {
 		return *x.AllowMissing
 	}
 	return false
+}
+
+func (x *UpdateBoardRequest) GetExpectedVersion() uint32 {
+	if x != nil && x.ExpectedVersion != nil {
+		return *x.ExpectedVersion
+	}
+	return 0
 }
 
 // 删除看板 - 请求
@@ -538,9 +546,10 @@ type MoveBoardRequest struct {
 	//
 	//	*MoveBoardRequest_BeforeId
 	//	*MoveBoardRequest_AfterId
-	Anchor        isMoveBoardRequest_Anchor `protobuf_oneof:"anchor"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Anchor          isMoveBoardRequest_Anchor `protobuf_oneof:"anchor"`
+	ExpectedVersion *uint32                   `protobuf:"varint,10,opt,name=expected_version,json=expectedVersion,proto3,oneof" json:"expected_version,omitempty"` // 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *MoveBoardRequest) Reset() {
@@ -601,6 +610,13 @@ func (x *MoveBoardRequest) GetAfterId() uint32 {
 		if x, ok := x.Anchor.(*MoveBoardRequest_AfterId); ok {
 			return x.AfterId
 		}
+	}
+	return 0
+}
+
+func (x *MoveBoardRequest) GetExpectedVersion() uint32 {
+	if x != nil && x.ExpectedVersion != nil {
+		return *x.ExpectedVersion
 	}
 	return 0
 }
@@ -666,6 +682,205 @@ func (x *GetBoardSnapshotRequest) GetBoardId() uint32 {
 	return 0
 }
 
+// 差量同步 - 请求
+type SyncBoardRequest struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	BoardId             uint32                 `protobuf:"varint,1,opt,name=board_id,json=boardId,proto3" json:"board_id,omitempty"`                                       // 看板ID
+	KnownBoardVersion   *uint32                `protobuf:"varint,2,opt,name=known_board_version,json=knownBoardVersion,proto3,oneof" json:"known_board_version,omitempty"` // 客户端已知的看板版本；不一致时返回最新看板本体
+	KnownColumnVersions []*VersionEntry        `protobuf:"bytes,3,rep,name=known_column_versions,json=knownColumnVersions,proto3" json:"known_column_versions,omitempty"`  // 客户端已知的列版本条目
+	KnownCardVersions   []*VersionEntry        `protobuf:"bytes,4,rep,name=known_card_versions,json=knownCardVersions,proto3" json:"known_card_versions,omitempty"`        // 客户端已知的卡片版本条目
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *SyncBoardRequest) Reset() {
+	*x = SyncBoardRequest{}
+	mi := &file_board_service_v1_board_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SyncBoardRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncBoardRequest) ProtoMessage() {}
+
+func (x *SyncBoardRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_board_service_v1_board_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncBoardRequest.ProtoReflect.Descriptor instead.
+func (*SyncBoardRequest) Descriptor() ([]byte, []int) {
+	return file_board_service_v1_board_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *SyncBoardRequest) GetBoardId() uint32 {
+	if x != nil {
+		return x.BoardId
+	}
+	return 0
+}
+
+func (x *SyncBoardRequest) GetKnownBoardVersion() uint32 {
+	if x != nil && x.KnownBoardVersion != nil {
+		return *x.KnownBoardVersion
+	}
+	return 0
+}
+
+func (x *SyncBoardRequest) GetKnownColumnVersions() []*VersionEntry {
+	if x != nil {
+		return x.KnownColumnVersions
+	}
+	return nil
+}
+
+func (x *SyncBoardRequest) GetKnownCardVersions() []*VersionEntry {
+	if x != nil {
+		return x.KnownCardVersions
+	}
+	return nil
+}
+
+// 版本条目（差量同步用；以消息替代 map 以兼容各端代码生成器）
+type VersionEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`           // 实体ID
+	Version       uint32                 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"` // 客户端已知的版本
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VersionEntry) Reset() {
+	*x = VersionEntry{}
+	mi := &file_board_service_v1_board_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VersionEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VersionEntry) ProtoMessage() {}
+
+func (x *VersionEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_board_service_v1_board_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VersionEntry.ProtoReflect.Descriptor instead.
+func (*VersionEntry) Descriptor() ([]byte, []int) {
+	return file_board_service_v1_board_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *VersionEntry) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *VersionEntry) GetVersion() uint32 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+// 差量同步 - 回应
+type SyncBoardResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Board            *Board                 `protobuf:"bytes,1,opt,name=board,proto3,oneof" json:"board,omitempty"`                                                   // 看板本体；版本未变时不返回
+	UpsertedColumns  []*Column              `protobuf:"bytes,2,rep,name=upserted_columns,json=upsertedColumns,proto3" json:"upserted_columns,omitempty"`              // 新增或版本变化的列（含新列）
+	DeletedColumnIds []uint32               `protobuf:"varint,3,rep,packed,name=deleted_column_ids,json=deletedColumnIds,proto3" json:"deleted_column_ids,omitempty"` // 客户端已知但服务端已删除的列ID
+	UpsertedCards    []*Card                `protobuf:"bytes,4,rep,name=upserted_cards,json=upsertedCards,proto3" json:"upserted_cards,omitempty"`                    // 新增或版本变化的卡片
+	DeletedCardIds   []uint32               `protobuf:"varint,5,rep,packed,name=deleted_card_ids,json=deletedCardIds,proto3" json:"deleted_card_ids,omitempty"`       // 客户端已知但服务端已删除的卡片ID
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SyncBoardResponse) Reset() {
+	*x = SyncBoardResponse{}
+	mi := &file_board_service_v1_board_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SyncBoardResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncBoardResponse) ProtoMessage() {}
+
+func (x *SyncBoardResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_board_service_v1_board_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncBoardResponse.ProtoReflect.Descriptor instead.
+func (*SyncBoardResponse) Descriptor() ([]byte, []int) {
+	return file_board_service_v1_board_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *SyncBoardResponse) GetBoard() *Board {
+	if x != nil {
+		return x.Board
+	}
+	return nil
+}
+
+func (x *SyncBoardResponse) GetUpsertedColumns() []*Column {
+	if x != nil {
+		return x.UpsertedColumns
+	}
+	return nil
+}
+
+func (x *SyncBoardResponse) GetDeletedColumnIds() []uint32 {
+	if x != nil {
+		return x.DeletedColumnIds
+	}
+	return nil
+}
+
+func (x *SyncBoardResponse) GetUpsertedCards() []*Card {
+	if x != nil {
+		return x.UpsertedCards
+	}
+	return nil
+}
+
+func (x *SyncBoardResponse) GetDeletedCardIds() []uint32 {
+	if x != nil {
+		return x.DeletedCardIds
+	}
+	return nil
+}
+
 var File_board_service_v1_board_proto protoreflect.FileDescriptor
 
 const file_board_service_v1_board_proto_rawDesc = "" +
@@ -721,26 +936,47 @@ const file_board_service_v1_board_proto_rawDesc = "" +
 	"\n" +
 	"_view_mask\"A\n" +
 	"\x12CreateBoardRequest\x12+\n" +
-	"\x04data\x18\x01 \x01(\v2\x17.board.service.v1.BoardR\x04data\"\x8e\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x17.board.service.v1.BoardR\x04data\"\xd2\x04\n" +
 	"\x12UpdateBoardRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.board.service.v1.BoardR\x04data\x12r\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB5\xbaG2:\x15\x12\x13id,name,description\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
-	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
-	"\x0e_allow_missing\">\n" +
+	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01\x12\xac\x01\n" +
+	"\x10expected_version\x18\x05 \x01(\rB|\xbaGy\x92\x02v乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）H\x01R\x0fexpectedVersion\x88\x01\x01B\x10\n" +
+	"\x0e_allow_missingB\x13\n" +
+	"\x11_expected_version\">\n" +
 	"\x12DeleteBoardRequest\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by\"\xfb\x01\n" +
+	"\bquery_by\"\xa1\x03\n" +
 	"\x10MoveBoardRequest\x12-\n" +
 	"\x02id\x18\x01 \x01(\rB\x1d\xe0A\x02\xbaG\x17\x92\x02\x14要移动的看板IDR\x02id\x12W\n" +
 	"\tbefore_id\x18\x02 \x01(\rB8\xbaG5\x92\x022移动到该看板之前（同级邻居看板ID）H\x00R\bbeforeId\x12U\n" +
-	"\bafter_id\x18\x03 \x01(\rB8\xbaG5\x92\x022移动到该看板之后（同级邻居看板ID）H\x00R\aafterIdB\b\n" +
-	"\x06anchor\"G\n" +
+	"\bafter_id\x18\x03 \x01(\rB8\xbaG5\x92\x022移动到该看板之后（同级邻居看板ID）H\x00R\aafterId\x12\x8e\x01\n" +
+	"\x10expected_version\x18\n" +
+	" \x01(\rB^\xbaG[\x92\x02X乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）H\x01R\x0fexpectedVersion\x88\x01\x01B\b\n" +
+	"\x06anchorB\x13\n" +
+	"\x11_expected_version\"G\n" +
 	"\x17GetBoardSnapshotRequest\x12,\n" +
-	"\bboard_id\x18\x01 \x01(\rB\x11\xe0A\x02\xbaG\v\x92\x02\b看板IDR\aboardId2\xa6\x04\n" +
+	"\bboard_id\x18\x01 \x01(\rB\x11\xe0A\x02\xbaG\v\x92\x02\b看板IDR\aboardId\"\xd4\x03\n" +
+	"\x10SyncBoardRequest\x12,\n" +
+	"\bboard_id\x18\x01 \x01(\rB\x11\xe0A\x02\xbaG\v\x92\x02\b看板IDR\aboardId\x12\x80\x01\n" +
+	"\x13known_board_version\x18\x02 \x01(\rBK\xbaGH\x92\x02E客户端已知的看板版本；不一致时返回最新看板本体H\x00R\x11knownBoardVersion\x88\x01\x01\x12{\n" +
+	"\x15known_column_versions\x18\x03 \x03(\v2\x1e.board.service.v1.VersionEntryB'\xbaG$\x92\x02!客户端已知的列版本条目R\x13knownColumnVersions\x12z\n" +
+	"\x13known_card_versions\x18\x04 \x03(\v2\x1e.board.service.v1.VersionEntryB*\xbaG'\x92\x02$客户端已知的卡片版本条目R\x11knownCardVersionsB\x16\n" +
+	"\x14_known_board_version\"h\n" +
+	"\fVersionEntry\x12\x1e\n" +
+	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b实体IDR\x02id\x128\n" +
+	"\aversion\x18\x02 \x01(\rB\x1e\xbaG\x1b\x92\x02\x18客户端已知的版本R\aversion\"\x9f\x04\n" +
+	"\x11SyncBoardResponse\x12a\n" +
+	"\x05board\x18\x01 \x01(\v2\x17.board.service.v1.BoardB-\xbaG*\x92\x02'看板本体；版本未变时不返回H\x00R\x05board\x88\x01\x01\x12u\n" +
+	"\x10upserted_columns\x18\x02 \x03(\v2\x18.board.service.v1.ColumnB0\xbaG-\x92\x02*新增或版本变化的列（含新列）R\x0fupsertedColumns\x12`\n" +
+	"\x12deleted_column_ids\x18\x03 \x03(\rB2\xbaG/\x92\x02,客户端已知但服务端已删除的列IDR\x10deletedColumnIds\x12c\n" +
+	"\x0eupserted_cards\x18\x04 \x03(\v2\x16.board.service.v1.CardB$\xbaG!\x92\x02\x1e新增或版本变化的卡片R\rupsertedCards\x12_\n" +
+	"\x10deleted_card_ids\x18\x05 \x03(\rB5\xbaG2\x92\x02/客户端已知但服务端已删除的卡片IDR\x0edeletedCardIdsB\b\n" +
+	"\x06_board2\xfe\x04\n" +
 	"\fBoardService\x12H\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.board.service.v1.ListBoardResponse\"\x00\x12C\n" +
 	"\x03Get\x12!.board.service.v1.GetBoardRequest\x1a\x17.board.service.v1.Board\"\x00\x12I\n" +
@@ -748,7 +984,8 @@ const file_board_service_v1_board_proto_rawDesc = "" +
 	"\x06Update\x12$.board.service.v1.UpdateBoardRequest\x1a\x17.board.service.v1.Board\"\x00\x12H\n" +
 	"\x06Delete\x12$.board.service.v1.DeleteBoardRequest\x1a\x16.google.protobuf.Empty\"\x00\x12E\n" +
 	"\x04Move\x12\".board.service.v1.MoveBoardRequest\x1a\x17.board.service.v1.Board\"\x00\x12`\n" +
-	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"\x00B\xb5\x01\n" +
+	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"\x00\x12V\n" +
+	"\tSyncBoard\x12\".board.service.v1.SyncBoardRequest\x1a#.board.service.v1.SyncBoardResponse\"\x00B\xb5\x01\n" +
 	"\x14com.board.service.v1B\n" +
 	"BoardProtoP\x01Z/go-wind-cms/api/gen/go/board/service/v1;boardpb\xa2\x02\x03BSX\xaa\x02\x10Board.Service.V1\xca\x02\x10Board\\Service\\V1\xe2\x02\x1cBoard\\Service\\V1\\GPBMetadata\xea\x02\x12Board::Service::V1b\x06proto3"
 
@@ -764,7 +1001,7 @@ func file_board_service_v1_board_proto_rawDescGZIP() []byte {
 	return file_board_service_v1_board_proto_rawDescData
 }
 
-var file_board_service_v1_board_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_board_service_v1_board_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_board_service_v1_board_proto_goTypes = []any{
 	(*Board)(nil),                   // 0: board.service.v1.Board
 	(*BoardSnapshot)(nil),           // 1: board.service.v1.BoardSnapshot
@@ -775,44 +1012,54 @@ var file_board_service_v1_board_proto_goTypes = []any{
 	(*DeleteBoardRequest)(nil),      // 6: board.service.v1.DeleteBoardRequest
 	(*MoveBoardRequest)(nil),        // 7: board.service.v1.MoveBoardRequest
 	(*GetBoardSnapshotRequest)(nil), // 8: board.service.v1.GetBoardSnapshotRequest
-	(*timestamppb.Timestamp)(nil),   // 9: google.protobuf.Timestamp
-	(*Column)(nil),                  // 10: board.service.v1.Column
-	(*Card)(nil),                    // 11: board.service.v1.Card
-	(*fieldmaskpb.FieldMask)(nil),   // 12: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),        // 13: pagination.PagingRequest
-	(*emptypb.Empty)(nil),           // 14: google.protobuf.Empty
+	(*SyncBoardRequest)(nil),        // 9: board.service.v1.SyncBoardRequest
+	(*VersionEntry)(nil),            // 10: board.service.v1.VersionEntry
+	(*SyncBoardResponse)(nil),       // 11: board.service.v1.SyncBoardResponse
+	(*timestamppb.Timestamp)(nil),   // 12: google.protobuf.Timestamp
+	(*Column)(nil),                  // 13: board.service.v1.Column
+	(*Card)(nil),                    // 14: board.service.v1.Card
+	(*fieldmaskpb.FieldMask)(nil),   // 15: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),        // 16: pagination.PagingRequest
+	(*emptypb.Empty)(nil),           // 17: google.protobuf.Empty
 }
 var file_board_service_v1_board_proto_depIdxs = []int32{
-	9,  // 0: board.service.v1.Board.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 1: board.service.v1.Board.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 2: board.service.v1.Board.deleted_at:type_name -> google.protobuf.Timestamp
+	12, // 0: board.service.v1.Board.created_at:type_name -> google.protobuf.Timestamp
+	12, // 1: board.service.v1.Board.updated_at:type_name -> google.protobuf.Timestamp
+	12, // 2: board.service.v1.Board.deleted_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: board.service.v1.BoardSnapshot.board:type_name -> board.service.v1.Board
-	10, // 4: board.service.v1.BoardSnapshot.columns:type_name -> board.service.v1.Column
-	11, // 5: board.service.v1.BoardSnapshot.cards:type_name -> board.service.v1.Card
+	13, // 4: board.service.v1.BoardSnapshot.columns:type_name -> board.service.v1.Column
+	14, // 5: board.service.v1.BoardSnapshot.cards:type_name -> board.service.v1.Card
 	0,  // 6: board.service.v1.ListBoardResponse.items:type_name -> board.service.v1.Board
-	12, // 7: board.service.v1.GetBoardRequest.view_mask:type_name -> google.protobuf.FieldMask
+	15, // 7: board.service.v1.GetBoardRequest.view_mask:type_name -> google.protobuf.FieldMask
 	0,  // 8: board.service.v1.CreateBoardRequest.data:type_name -> board.service.v1.Board
 	0,  // 9: board.service.v1.UpdateBoardRequest.data:type_name -> board.service.v1.Board
-	12, // 10: board.service.v1.UpdateBoardRequest.update_mask:type_name -> google.protobuf.FieldMask
-	13, // 11: board.service.v1.BoardService.List:input_type -> pagination.PagingRequest
-	3,  // 12: board.service.v1.BoardService.Get:input_type -> board.service.v1.GetBoardRequest
-	4,  // 13: board.service.v1.BoardService.Create:input_type -> board.service.v1.CreateBoardRequest
-	5,  // 14: board.service.v1.BoardService.Update:input_type -> board.service.v1.UpdateBoardRequest
-	6,  // 15: board.service.v1.BoardService.Delete:input_type -> board.service.v1.DeleteBoardRequest
-	7,  // 16: board.service.v1.BoardService.Move:input_type -> board.service.v1.MoveBoardRequest
-	8,  // 17: board.service.v1.BoardService.GetBoardSnapshot:input_type -> board.service.v1.GetBoardSnapshotRequest
-	2,  // 18: board.service.v1.BoardService.List:output_type -> board.service.v1.ListBoardResponse
-	0,  // 19: board.service.v1.BoardService.Get:output_type -> board.service.v1.Board
-	0,  // 20: board.service.v1.BoardService.Create:output_type -> board.service.v1.Board
-	0,  // 21: board.service.v1.BoardService.Update:output_type -> board.service.v1.Board
-	14, // 22: board.service.v1.BoardService.Delete:output_type -> google.protobuf.Empty
-	0,  // 23: board.service.v1.BoardService.Move:output_type -> board.service.v1.Board
-	1,  // 24: board.service.v1.BoardService.GetBoardSnapshot:output_type -> board.service.v1.BoardSnapshot
-	18, // [18:25] is the sub-list for method output_type
-	11, // [11:18] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	15, // 10: board.service.v1.UpdateBoardRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 11: board.service.v1.SyncBoardRequest.known_column_versions:type_name -> board.service.v1.VersionEntry
+	10, // 12: board.service.v1.SyncBoardRequest.known_card_versions:type_name -> board.service.v1.VersionEntry
+	0,  // 13: board.service.v1.SyncBoardResponse.board:type_name -> board.service.v1.Board
+	13, // 14: board.service.v1.SyncBoardResponse.upserted_columns:type_name -> board.service.v1.Column
+	14, // 15: board.service.v1.SyncBoardResponse.upserted_cards:type_name -> board.service.v1.Card
+	16, // 16: board.service.v1.BoardService.List:input_type -> pagination.PagingRequest
+	3,  // 17: board.service.v1.BoardService.Get:input_type -> board.service.v1.GetBoardRequest
+	4,  // 18: board.service.v1.BoardService.Create:input_type -> board.service.v1.CreateBoardRequest
+	5,  // 19: board.service.v1.BoardService.Update:input_type -> board.service.v1.UpdateBoardRequest
+	6,  // 20: board.service.v1.BoardService.Delete:input_type -> board.service.v1.DeleteBoardRequest
+	7,  // 21: board.service.v1.BoardService.Move:input_type -> board.service.v1.MoveBoardRequest
+	8,  // 22: board.service.v1.BoardService.GetBoardSnapshot:input_type -> board.service.v1.GetBoardSnapshotRequest
+	9,  // 23: board.service.v1.BoardService.SyncBoard:input_type -> board.service.v1.SyncBoardRequest
+	2,  // 24: board.service.v1.BoardService.List:output_type -> board.service.v1.ListBoardResponse
+	0,  // 25: board.service.v1.BoardService.Get:output_type -> board.service.v1.Board
+	0,  // 26: board.service.v1.BoardService.Create:output_type -> board.service.v1.Board
+	0,  // 27: board.service.v1.BoardService.Update:output_type -> board.service.v1.Board
+	17, // 28: board.service.v1.BoardService.Delete:output_type -> google.protobuf.Empty
+	0,  // 29: board.service.v1.BoardService.Move:output_type -> board.service.v1.Board
+	1,  // 30: board.service.v1.BoardService.GetBoardSnapshot:output_type -> board.service.v1.BoardSnapshot
+	11, // 31: board.service.v1.BoardService.SyncBoard:output_type -> board.service.v1.SyncBoardResponse
+	24, // [24:32] is the sub-list for method output_type
+	16, // [16:24] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_board_service_v1_board_proto_init() }
@@ -834,13 +1081,15 @@ func file_board_service_v1_board_proto_init() {
 		(*MoveBoardRequest_BeforeId)(nil),
 		(*MoveBoardRequest_AfterId)(nil),
 	}
+	file_board_service_v1_board_proto_msgTypes[9].OneofWrappers = []any{}
+	file_board_service_v1_board_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_board_service_v1_board_proto_rawDesc), len(file_board_service_v1_board_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

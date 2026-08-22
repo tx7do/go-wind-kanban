@@ -217,6 +217,9 @@ func (r *ColumnRepo) Update(ctx context.Context, req *boardV1.UpdateColumnReques
 	if hasTenant {
 		builder.Where(column.TenantIDEQ(tid))
 	}
+	if req.GetExpectedVersion() > 0 {
+		builder.Where(column.VersionEQ(req.GetExpectedVersion()))
+	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *boardV1.Column) {
 			builder.
@@ -232,6 +235,11 @@ func (r *ColumnRepo) Update(ctx context.Context, req *boardV1.UpdateColumnReques
 			s.Where(sql.EQ(column.FieldID, req.GetId()))
 		},
 	)
+
+	// 乐观锁命中失败：版本不匹配，返回 409。
+	if err == nil && result == nil && req.GetExpectedVersion() > 0 {
+		return nil, boardV1.ErrorConflict("column version conflict: expected=%d", req.GetExpectedVersion())
+	}
 
 	// 乐观锁预埋：每次 Update 成功后 version+1。
 	if result != nil {
@@ -338,7 +346,13 @@ func (r *ColumnRepo) Move(ctx context.Context, req *boardV1.MoveColumnRequest) (
 
 	builder := r.entClient.Client().Column.UpdateOneID(req.GetId())
 	builder.Where(column.IDEQ(req.GetId()), column.TenantIDEQ(tid))
+	if req.GetExpectedVersion() > 0 {
+		builder.Where(column.VersionEQ(req.GetExpectedVersion()))
+	}
 	if _, err := builder.SetRank(newRank).AddVersion(1).Save(ctx); err != nil {
+		if ent.IsNotFound(err) && req.GetExpectedVersion() > 0 {
+			return nil, boardV1.ErrorConflict("column version conflict: expected=%d", req.GetExpectedVersion())
+		}
 		r.log.Errorf("move column: set rank failed: %s", err.Error())
 		return nil, boardV1.ErrorInternalServerError("move column failed")
 	}

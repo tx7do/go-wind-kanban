@@ -343,13 +343,14 @@ func (x *CreateColumnRequest) GetData() *Column {
 
 // 更新列 - 请求
 type UpdateColumnRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Data          *Column                `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
-	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Data            *Column                `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	UpdateMask      *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`                       // 要更新的字段列表
+	AllowMissing    *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"`          // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+	ExpectedVersion *uint32                `protobuf:"varint,5,opt,name=expected_version,json=expectedVersion,proto3,oneof" json:"expected_version,omitempty"` // 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *UpdateColumnRequest) Reset() {
@@ -408,6 +409,13 @@ func (x *UpdateColumnRequest) GetAllowMissing() bool {
 		return *x.AllowMissing
 	}
 	return false
+}
+
+func (x *UpdateColumnRequest) GetExpectedVersion() uint32 {
+	if x != nil && x.ExpectedVersion != nil {
+		return *x.ExpectedVersion
+	}
+	return 0
 }
 
 // 删除列 - 请求
@@ -485,9 +493,10 @@ type MoveColumnRequest struct {
 	//
 	//	*MoveColumnRequest_BeforeId
 	//	*MoveColumnRequest_AfterId
-	Anchor        isMoveColumnRequest_Anchor `protobuf_oneof:"anchor"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Anchor          isMoveColumnRequest_Anchor `protobuf_oneof:"anchor"`
+	ExpectedVersion *uint32                    `protobuf:"varint,10,opt,name=expected_version,json=expectedVersion,proto3,oneof" json:"expected_version,omitempty"` // 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *MoveColumnRequest) Reset() {
@@ -548,6 +557,13 @@ func (x *MoveColumnRequest) GetAfterId() uint32 {
 		if x, ok := x.Anchor.(*MoveColumnRequest_AfterId); ok {
 			return x.AfterId
 		}
+	}
+	return 0
+}
+
+func (x *MoveColumnRequest) GetExpectedVersion() uint32 {
+	if x != nil && x.ExpectedVersion != nil {
+		return *x.ExpectedVersion
 	}
 	return 0
 }
@@ -621,24 +637,29 @@ const file_board_service_v1_column_proto_rawDesc = "" +
 	"\n" +
 	"_view_mask\"C\n" +
 	"\x13CreateColumnRequest\x12,\n" +
-	"\x04data\x18\x01 \x01(\v2\x18.board.service.v1.ColumnR\x04data\"\x8a\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x18.board.service.v1.ColumnR\x04data\"\xce\x04\n" +
 	"\x13UpdateColumnRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12,\n" +
 	"\x04data\x18\x02 \x01(\v2\x18.board.service.v1.ColumnR\x04data\x12l\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB/\xbaG,:\x0f\x12\rid,name,color\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
-	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
-	"\x0e_allow_missing\"?\n" +
+	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01\x12\xac\x01\n" +
+	"\x10expected_version\x18\x05 \x01(\rB|\xbaGy\x92\x02v乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）H\x01R\x0fexpectedVersion\x88\x01\x01B\x10\n" +
+	"\x0e_allow_missingB\x13\n" +
+	"\x11_expected_version\"?\n" +
 	"\x13DeleteColumnRequest\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by\"\xf3\x01\n" +
+	"\bquery_by\"\x99\x03\n" +
 	"\x11MoveColumnRequest\x12*\n" +
 	"\x02id\x18\x01 \x01(\rB\x1a\xe0A\x02\xbaG\x14\x92\x02\x11要移动的列IDR\x02id\x12T\n" +
 	"\tbefore_id\x18\x02 \x01(\rB5\xbaG2\x92\x02/移动到该列之前（同看板邻居列ID）H\x00R\bbeforeId\x12R\n" +
-	"\bafter_id\x18\x03 \x01(\rB5\xbaG2\x92\x02/移动到该列之后（同看板邻居列ID）H\x00R\aafterIdB\b\n" +
-	"\x06anchor2\xcf\x03\n" +
+	"\bafter_id\x18\x03 \x01(\rB5\xbaG2\x92\x02/移动到该列之后（同看板邻居列ID）H\x00R\aafterId\x12\x8e\x01\n" +
+	"\x10expected_version\x18\n" +
+	" \x01(\rB^\xbaG[\x92\x02X乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）H\x01R\x0fexpectedVersion\x88\x01\x01B\b\n" +
+	"\x06anchorB\x13\n" +
+	"\x11_expected_version2\xcf\x03\n" +
 	"\rColumnService\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.board.service.v1.ListColumnResponse\"\x00\x12E\n" +
 	"\x03Get\x12\".board.service.v1.GetColumnRequest\x1a\x18.board.service.v1.Column\"\x00\x12K\n" +

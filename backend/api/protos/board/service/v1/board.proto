@@ -38,6 +38,9 @@ service BoardService {
 
   // 获取看板完整快照（看板 + 全部列 + 全部卡片，供客户端一次性加载/离线缓存）
   rpc GetBoardSnapshot (GetBoardSnapshotRequest) returns (BoardSnapshot) {}
+
+  // 差量同步：客户端上报已知版本，服务端仅返回版本有变化的实体与已删除 ID
+  rpc SyncBoard (SyncBoardRequest) returns (SyncBoardResponse) {}
 }
 
 // 看板
@@ -147,6 +150,11 @@ message UpdateBoardRequest {
     (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
     json_name = "allowMissing"
   ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+
+  optional uint32 expected_version = 5 [
+    json_name = "expectedVersion",
+    (gnostic.openapi.v3.property) = {description: "乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）"}
+  ]; // 乐观锁期望版本；>0 时服务端校验当前版本，不匹配返回 409 CONFLICT（离线同步冲突检测）
 }
 
 // 删除看板 - 请求
@@ -180,6 +188,11 @@ message MoveBoardRequest {
   }
 
   // anchor 为空时追加到租户看板列表末尾
+
+  optional uint32 expected_version = 10 [
+    json_name = "expectedVersion",
+    (gnostic.openapi.v3.property) = {description: "乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）"}
+  ]; // 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
 }
 
 // 获取看板快照 - 请求
@@ -189,4 +202,69 @@ message GetBoardSnapshotRequest {
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {description: "看板ID"}
   ]; // 看板ID
+}
+
+// 差量同步 - 请求
+message SyncBoardRequest {
+  uint32 board_id = 1 [
+    json_name = "boardId",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {description: "看板ID"}
+  ]; // 看板ID
+
+  optional uint32 known_board_version = 2 [
+    json_name = "knownBoardVersion",
+    (gnostic.openapi.v3.property) = {description: "客户端已知的看板版本；不一致时返回最新看板本体"}
+  ]; // 客户端已知的看板版本；不一致时返回最新看板本体
+
+  repeated VersionEntry known_column_versions = 3 [
+    json_name = "knownColumnVersions",
+    (gnostic.openapi.v3.property) = {description: "客户端已知的列版本条目"}
+  ]; // 客户端已知的列版本条目
+
+  repeated VersionEntry known_card_versions = 4 [
+    json_name = "knownCardVersions",
+    (gnostic.openapi.v3.property) = {description: "客户端已知的卡片版本条目"}
+  ]; // 客户端已知的卡片版本条目
+}
+
+// 版本条目（差量同步用；以消息替代 map 以兼容各端代码生成器）
+message VersionEntry {
+  uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "实体ID"}
+  ]; // 实体ID
+
+  uint32 version = 2 [
+    json_name = "version",
+    (gnostic.openapi.v3.property) = {description: "客户端已知的版本"}
+  ]; // 客户端已知的版本
+}
+
+// 差量同步 - 回应
+message SyncBoardResponse {
+  optional Board board = 1 [
+    json_name = "board",
+    (gnostic.openapi.v3.property) = {description: "看板本体；版本未变时不返回"}
+  ]; // 看板本体；版本未变时不返回
+
+  repeated Column upserted_columns = 2 [
+    json_name = "upsertedColumns",
+    (gnostic.openapi.v3.property) = {description: "新增或版本变化的列（含新列）"}
+  ]; // 新增或版本变化的列（含新列）
+
+  repeated uint32 deleted_column_ids = 3 [
+    json_name = "deletedColumnIds",
+    (gnostic.openapi.v3.property) = {description: "客户端已知但服务端已删除的列ID"}
+  ]; // 客户端已知但服务端已删除的列ID
+
+  repeated Card upserted_cards = 4 [
+    json_name = "upsertedCards",
+    (gnostic.openapi.v3.property) = {description: "新增或版本变化的卡片"}
+  ]; // 新增或版本变化的卡片
+
+  repeated uint32 deleted_card_ids = 5 [
+    json_name = "deletedCardIds",
+    (gnostic.openapi.v3.property) = {description: "客户端已知但服务端已删除的卡片ID"}
+  ]; // 客户端已知但服务端已删除的卡片ID
 }
