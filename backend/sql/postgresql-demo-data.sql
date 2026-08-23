@@ -251,6 +251,81 @@ VALUES
 SELECT setval('internal_message_categories_id_seq', (SELECT MAX(id) FROM internal_message_categories));
 
 -- ----------------------------
+-- 看板域演示数据：看板/列/卡片/标签及卡片-标签关联
+-- 仅用于本地联调与功能演示。rank 为 Lexorank 字典序字符串（base-36，
+-- 字符表 0-9a-z），此处用单字符并拉开间隔，使后续 Between 插入有空间、
+-- 不立即触发 rebalance。列 color 不参与当前 UI 渲染，留 NULL。
+-- ----------------------------
+TRUNCATE TABLE public.sys_kanban_boards,
+               public.sys_kanban_columns,
+               public.sys_kanban_cards,
+               public.sys_kanban_labels,
+               public.sys_kanban_card_labels
+RESTART IDENTITY CASCADE;
+
+-- 看板（tenant_id = 1）
+INSERT INTO public.sys_kanban_boards (id, tenant_id, name, description, rank, created_at, updated_at)
+VALUES
+    (1, 1, '新产品研发看板', '研发一部新能源车型配套软件的迭代看板，按敏捷 Sprint 推进。', 'a', now(), now()),
+    (2, 1, '市场推广活动看板', '市场部线上线下推广活动的策划、执行与复盘跟踪。', 'k', now(), now())
+;
+SELECT setval('sys_kanban_boards_id_seq', (SELECT MAX(id) FROM sys_kanban_boards));
+
+-- 看板列
+INSERT INTO public.sys_kanban_columns (id, tenant_id, board_id, name, rank, created_at, updated_at)
+VALUES
+    (1, 1, 1, '待办', 'a', now(), now()),
+    (2, 1, 1, '进行中', 'k', now(), now()),
+    (3, 1, 1, '已完成', 'u', now(), now()),
+    (4, 1, 2, '策划中', 'a', now(), now()),
+    (5, 1, 2, '执行中', 'k', now(), now()),
+    (6, 1, 2, '已结束', 'u', now(), now())
+;
+SELECT setval('sys_kanban_columns_id_seq', (SELECT MAX(id) FROM sys_kanban_columns));
+
+-- 卡片
+INSERT INTO public.sys_kanban_cards (id, tenant_id, board_id, column_id, name, description, rank, created_at, updated_at)
+VALUES
+    (1, 1, 1, 1, '设计用户登录鉴权流程', '梳理 OAuth2 与短信验证码登录的合并方案，输出时序图与接口契约。', 'a', now(), now()),
+    (2, 1, 1, 1, '数据库表结构评审', '对 sys_kanban_* 表的索引、外键与级联策略做一轮评审，产出优化清单。', 'k', now(), now()),
+    (3, 1, 1, 1, '前端组件库接入评估', '评估自研表单组件替换 antd 的可行性，输出迁移成本矩阵。', 'u', now(), now()),
+    (4, 1, 1, 2, 'WebSocket 实时推送联调', '看板拖拽的实时同步，调试一次性 ticket 握手与断线重连。', 'a', now(), now()),
+    (5, 1, 1, 2, '乐观锁并发冲突修复', 'version 字段在多端并发编辑场景下的重试与回退策略。', 'k', now(), now()),
+    (6, 1, 1, 3, 'RBAC 权限种子初始化', '租户管理员角色绑定看板域 13 个 API，修复新部署首启全员 403。', 'a', now(), now()),
+    (7, 1, 1, 3, 'Flutter 看板移动端适配', '响应式布局在窄屏下的列折叠与拖拽手势适配。', 'k', now(), now()),
+    (8, 1, 2, 4, 'Q3 新能源车型发布预热方案', '规划发布前两周的媒体矩阵与话题节奏。', 'a', now(), now()),
+    (9, 1, 2, 4, '线下快闪店选址评估', '一线城市商圈人流量与成本测算。', 'k', now(), now()),
+    (10, 1, 2, 5, '社交媒体投放素材制作', '短视频与信息流图文素材的批量产出。', 'k', now(), now()),
+    (11, 1, 2, 6, '618 大促复盘报告', '汇总各渠道 GMV、ROI 与转化漏斗。', 'k', now(), now())
+;
+SELECT setval('sys_kanban_cards_id_seq', (SELECT MAX(id) FROM sys_kanban_cards));
+
+-- 看板标签（label 表无 rank 列；color 取前端 _parseColor 命名色以便正确渲染）
+INSERT INTO public.sys_kanban_labels (id, tenant_id, board_id, name, color, created_at, updated_at)
+VALUES
+    (1, 1, 1, '功能需求', 'blue', now(), now()),
+    (2, 1, 1, '缺陷', 'red', now(), now()),
+    (3, 1, 1, '紧急', 'orange', now(), now()),
+    (4, 1, 1, '文档', 'gray', now(), now()),
+    (5, 1, 2, '推广活动', 'purple', now(), now()),
+    (6, 1, 2, '内容素材', 'green', now(), now())
+;
+SELECT setval('sys_kanban_labels_id_seq', (SELECT MAX(id) FROM sys_kanban_labels));
+
+-- 卡片-标签关联（card_label 表无 tenant_id 列）
+INSERT INTO public.sys_kanban_card_labels (card_id, label_id, created_at, updated_at)
+VALUES
+    (1, 1, now(), now()),
+    (1, 4, now(), now()),
+    (3, 2, now(), now()),
+    (4, 3, now(), now()),
+    (8, 5, now(), now()),
+    (8, 6, now(), now()),
+    (9, 5, now(), now())
+;
+SELECT setval('sys_kanban_card_labels_id_seq', (SELECT MAX(id) FROM sys_kanban_card_labels));
+
+-- ----------------------------
 -- 看板域 RBAC 种子：为租户管理员角色绑定看板相关权限
 -- 没有这段，新部署环境首次启动全员 403（角色无任何权限绑定）。
 -- ----------------------------
