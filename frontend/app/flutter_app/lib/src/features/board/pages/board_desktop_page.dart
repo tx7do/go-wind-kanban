@@ -158,10 +158,40 @@ class _ColumnHeader extends StatelessWidget {
                 _renameColumn(context, col);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: const Text('删除列', style: TextStyle(color: Colors.red)),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _confirmDeleteColumn(context, col);
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _confirmDeleteColumn(BuildContext context, KanbanColumn col) {
+    showDialog<bool>(
+      context: context,
+      builder: (dlgCtx) => AlertDialog(
+        title: const Text('删除列'),
+        content: Text('确定删除「${col.name}」及其下所有卡片？此操作不可撤销。'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dlgCtx, false), child: const Text('取消')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(dlgCtx, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    ).then((confirmed) async {
+      if (confirmed == true) {
+        context.read<BoardController>().deleteColumn(col.id);
+      }
+    });
   }
 
   void _renameColumn(BuildContext context, KanbanColumn col) {

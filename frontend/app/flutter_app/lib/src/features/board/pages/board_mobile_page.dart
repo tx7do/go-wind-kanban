@@ -87,8 +87,14 @@ class _ColumnList extends StatelessWidget {
         if (state == null) return const SizedBox.shrink();
         final grouped = state.cardsByColumn;
         final cards = grouped[columnId] ?? const <KanbanCard>[];
+        final col = state.columns.where((c) => c.id == columnId).firstOrNull;
+        if (col == null) return const SizedBox.shrink();
 
-        return ReorderableListView.builder(
+        return Column(
+          children: [
+            _MobileColumnHeader(column: col),
+            Expanded(
+              child: ReorderableListView.builder(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 88),
           itemCount: cards.length,
           onReorder: (oldIndex, newIndex) {
@@ -129,6 +135,9 @@ class _ColumnList extends StatelessWidget {
               ),
             );
           },
+        ),
+            ),
+          ],
         );
       },
     );
@@ -167,4 +176,108 @@ class _ColumnList extends StatelessWidget {
     }
   }
 
+}
+
+/// 窄屏列头：提供重命名/删除入口，对齐宽屏功能。
+class _MobileColumnHeader extends StatelessWidget {
+  final KanbanColumn column;
+
+  const _MobileColumnHeader({required this.column});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              column.name,
+              style: Theme.of(context).textTheme.titleSmall,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.more_horiz, size: 16),
+            onPressed: () => _showColumnOptions(context, column),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showColumnOptions(BuildContext context, KanbanColumn col) {
+    showModalBottomSheet(
+      context: context,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('重命名列'),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _renameColumn(context, col);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: const Text('删除列', style: TextStyle(color: Colors.red)),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _confirmDeleteColumn(context, col);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _renameColumn(BuildContext context, KanbanColumn col) {
+    final ctrl = TextEditingController(text: col.name);
+    showDialog<void>(
+      context: context,
+      builder: (dlgCtx) => AlertDialog(
+        title: const Text('重命名列'),
+        content: TextField(controller: ctrl, autofocus: true, decoration: const InputDecoration(labelText: '列名称')),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dlgCtx), child: const Text('取消')),
+          FilledButton(
+            onPressed: () {
+              final name = ctrl.text.trim();
+              Navigator.pop(dlgCtx);
+              if (name.isNotEmpty && name != col.name) {
+                context.read<BoardController>().renameColumn(col.id, name);
+              }
+            },
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteColumn(BuildContext context, KanbanColumn col) {
+    showDialog<bool>(
+      context: context,
+      builder: (dlgCtx) => AlertDialog(
+        title: const Text('删除列'),
+        content: Text('确定删除「${col.name}」及其下所有卡片？此操作不可撤销。'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dlgCtx, false), child: const Text('取消')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(dlgCtx, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    ).then((confirmed) async {
+      if (confirmed == true) {
+        context.read<BoardController>().deleteColumn(col.id);
+      }
+    });
+  }
 }

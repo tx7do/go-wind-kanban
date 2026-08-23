@@ -48,6 +48,7 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
     try {
       await _api.create(widget.boardId, name, color);
       await _load();
+      await context.read<BoardController>().refreshLabels();
     } catch (e) {
       _toast('创建失败: $e');
     }
@@ -61,6 +62,7 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
     try {
       await _api.update(label.id, name, color);
       await _load();
+      await context.read<BoardController>().refreshLabels();
     } catch (e) {
       _toast('更新失败: $e');
     }
@@ -82,6 +84,7 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
     try {
       await _api.delete(label.id);
       await _load();
+      await context.read<BoardController>().refreshLabels();
     } catch (e) {
       _toast('删除失败: $e');
     }

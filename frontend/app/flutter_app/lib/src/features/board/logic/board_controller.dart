@@ -64,6 +64,24 @@ class BoardController extends Cubit<KanbanBoardState?> {
 
   int get pendingCount => _pending.length;
 
+  /// 重新拉取当前看板的标签集合并合入 state。
+  /// 供标签抽屉在本地 CRUD 后同步 cubit，使卡片编辑对话框即时可见。
+  Future<void> refreshLabels() async {
+    final cur = state;
+    if (cur == null || _boardId == 0) return;
+    try {
+      final labels = await LabelApi().listByBoard(_boardId);
+      emit(KanbanBoardState(
+        board: cur.board,
+        columns: cur.columns,
+        cards: cur.cards,
+        labels: labels,
+      ));
+    } on DioException catch (_) {
+      // 标签拉取失败不阻断看板
+    }
+  }
+
   /// 加载看板：缓存先行 → 快照刷新 → WS 订阅。
   Future<void> load(int boardId) async {
     _boardId = boardId;
@@ -184,6 +202,48 @@ class BoardController extends Cubit<KanbanBoardState?> {
       if (_isConnectionError(e)) {
         _offline = true;
         return false;
+      }
+      emit(prev);
+      return false;
+    }
+  }
+
+  /// 新建列（仅在线路径）。
+  /// 服务端对触发者抑制 columnCreated 事件，故本地需主动合入返回的列。
+  Future<bool> createColumn(String name) async {
+    final prev = state;
+    if (prev == null || _offline) return false;
+    try {
+      final created = await _api.columnService.create(
+          api.BoardServiceV1CreateColumnRequest(
+              data: api.BoardServiceV1Column(name: name, boardId: prev.board.id)));
+      _upsertColumnDto(created);
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+      }
+      return false;
+    }
+  }
+
+  /// 删除列（仅在线路径，乐观移除）。
+  Future<bool> deleteColumn(int columnId) async {
+    final prev = state;
+    if (prev == null || _offline) return false;
+    emit(KanbanBoardState(
+      board: prev.board,
+      columns: prev.columns.where((c) => c.id != columnId).toList(),
+      cards: prev.cards.where((c) => c.columnId != columnId).toList(),
+      labels: prev.labels,
+    ));
+    try {
+      await _api.columnService.delete(
+          api.BoardServiceV1DeleteColumnRequest(id: columnId));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
       }
       emit(prev);
       return false;
@@ -443,12 +503,24 @@ class BoardController extends Cubit<KanbanBoardState?> {
             labels: labels,
           ));
         }
-      // 标签相关事件（labelCreated/Updated/Deleted/cardLabelsChanged）：
-      // 当前看板 UI 未实现标签展示，这些事件暂不驱动状态变更。
-      // 标签 UI 落地后在此补全（拉取标签集合、刷新卡片标签关联）。
+      // 标签定义变更：同步更新 state.labels，使标签抽屉与卡片编辑对话框即时一致。
       case BoardEvent.labelCreated:
       case BoardEvent.labelUpdated:
+        if (ev.label != null) {
+          final label = KanbanLabel.fromDto(ev.label!);
+          final rest = labels.where((l) => l.id != label.id).toList()..add(label);
+          emit(KanbanBoardState(board: board, columns: columns, cards: cards, labels: rest));
+        }
       case BoardEvent.labelDeleted:
+        if (ev.label != null) {
+          emit(KanbanBoardState(
+            board: board,
+            columns: columns,
+            cards: cards,
+            labels: labels.where((l) => l.id != ev.label!.id).toList(),
+          ));
+        }
+      // 卡片标签关联变更：关联状态在编辑时按需拉取，board state 无需维护。
       case BoardEvent.cardLabelsChanged:
         break;
       case BoardEvent.columnCreated:
@@ -538,6 +610,15 @@ void _onConnection(bool up) {
     final rest = state.cards.where((c) => c.id != card.id).toList()..add(card);
     rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
     emit(KanbanBoardState(board: state.board, columns: state.columns, cards: rest, labels: state.labels));
+  }
+
+  void _upsertColumnDto(api.BoardServiceV1Column dto) {
+    final state = this.state;
+    if (state == null) return;
+    final col = KanbanColumn.fromDto(dto);
+    final rest = state.columns.where((c) => c.id != col.id).toList()..add(col);
+    rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
+    emit(KanbanBoardState(board: state.board, columns: rest, cards: state.cards, labels: state.labels));
   }
 
   KanbanBoardState _mapCards(KanbanBoardState s, KanbanCard Function(KanbanCard) f) {

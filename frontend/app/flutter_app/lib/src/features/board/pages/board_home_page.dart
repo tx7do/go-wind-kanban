@@ -87,7 +87,20 @@ class _BoardHomePageState extends State<BoardHomePage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.columns.isEmpty) {
-              return const Center(child: Text('看板暂无列，请先在管理端创建列'));
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('看板暂无列'),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: const Text('新建列'),
+                      onPressed: () => _promptCreateColumn(context),
+                    ),
+                  ],
+                ),
+              );
             }
             return LayoutBuilder(
               builder: (context, constraints) {
@@ -101,16 +114,57 @@ class _BoardHomePageState extends State<BoardHomePage> {
         ),
         floatingActionButton: BlocBuilder<BoardController, KanbanBoardState?>(
           builder: (context, state) {
-            if (state == null || state.columns.isEmpty) return const SizedBox.shrink();
-            return FloatingActionButton.extended(
-              icon: const Icon(Icons.add),
-              label: const Text('新建卡片'),
-              onPressed: () => _promptCreateCard(context),
+            if (state == null) return const SizedBox.shrink();
+            if (state.columns.isEmpty) {
+              return FloatingActionButton.extended(
+                icon: const Icon(Icons.add),
+                label: const Text('新建列'),
+                onPressed: () => _promptCreateColumn(context),
+              );
+            }
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton.extended(
+                  icon: const Icon(Icons.view_column),
+                  label: const Text('新建列'),
+                  onPressed: () => _promptCreateColumn(context),
+                ),
+                const SizedBox(width: 12),
+                FloatingActionButton.extended(
+                  icon: const Icon(Icons.add),
+                  label: const Text('新建卡片'),
+                  onPressed: () => _promptCreateCard(context),
+                ),
+              ],
             );
           },
         ),
       ),
     );
+  }
+
+  Future<void> _promptCreateColumn(BuildContext context) async {
+    final nameCtrl = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('新建列'),
+        content: TextField(
+          controller: nameCtrl,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: '列名称'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('创建')),
+        ],
+      ),
+    );
+    final name = nameCtrl.text.trim();
+    if (confirmed == true && name.isNotEmpty) {
+      await _controller.createColumn(name);
+    }
   }
 
   Future<void> _promptCreateCard(BuildContext context) async {

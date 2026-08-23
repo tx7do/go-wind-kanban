@@ -256,6 +256,7 @@ class BoardEvent {
   final api.BoardServiceV1Board? board;
   final api.BoardServiceV1Column? column;
   final api.BoardServiceV1Card? card;
+  final api.BoardServiceV1Label? label;
 
   const BoardEvent({
     required this.type,
@@ -264,6 +265,7 @@ class BoardEvent {
     this.board,
     this.column,
     this.card,
+    this.label,
   });
 
   // 事件类型常量（与 board.service.v1.BoardChangeEvent.Type 对齐）
@@ -302,6 +304,9 @@ class BoardEvent {
       card: payload == null || payload['card'] is! Map
           ? null
           : api.BoardServiceV1Card.fromJson((payload['card'] as Map).cast<String, dynamic>()),
+      label: payload == null || payload['label'] is! Map
+          ? null
+          : api.BoardServiceV1Label.fromJson((payload['label'] as Map).cast<String, dynamic>()),
     );
   }
 }

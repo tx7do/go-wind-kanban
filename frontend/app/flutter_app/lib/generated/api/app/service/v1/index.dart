@@ -109,6 +109,17 @@ class AuthenticationServiceClient {
     ), headers: headers);
     return AuthenticationServiceV1LoginResponse.fromJson(result as Map<String, dynamic>);
   }
+
+  /// 创建 WebSocket 一次性 ticket
+  Future<AuthenticationServiceV1CreateWebSocketTicketResponse> createWebSocketTicket(AuthenticationServiceV1CreateWebSocketTicketRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/ws-ticket';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'AuthenticationService',
+      method: 'CreateWebSocketTicket',
+    ), headers: headers);
+    return AuthenticationServiceV1CreateWebSocketTicketResponse.fromJson(result as Map<String, dynamic>);
+  }
 }
 
 /// 用户登录 - 请求
@@ -423,6 +434,103 @@ enum AuthenticationServiceV1TokenType {
 /// Well-known type: Empty
 ///
 /// Maps to Dart: `Map<String, dynamic>`.
+
+/// WebSocket 一次性 ticket（替代 URL 传 JWT）。
+/// 客户端以 Bearer JWT POST 换取短时 ticket，再用 ticket 做 WS 握手。
+/// ticket 60 秒有效、单次使用、Redis 存储。
+class AuthenticationServiceV1CreateWebSocketTicketRequest {
+  ///
+  /// Behaviors: REQUIRED
+  int? boardId;
+
+  AuthenticationServiceV1CreateWebSocketTicketRequest({
+    this.boardId,
+  });
+
+  factory AuthenticationServiceV1CreateWebSocketTicketRequest.fromJson(Map<String, dynamic> json) {
+    return AuthenticationServiceV1CreateWebSocketTicketRequest(
+      boardId: json['boardId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (boardId != null) json['boardId'] = boardId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'AuthenticationServiceV1CreateWebSocketTicketRequest(boardId: $boardId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is AuthenticationServiceV1CreateWebSocketTicketRequest &&
+      runtimeType == other.runtimeType
+      && boardId == other.boardId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    boardId,
+  ]);
+
+  AuthenticationServiceV1CreateWebSocketTicketRequest copyWith({
+    int? boardId,
+  }) {
+    return AuthenticationServiceV1CreateWebSocketTicketRequest(
+      boardId: boardId ?? this.boardId,
+    );
+  }
+}
+
+class AuthenticationServiceV1CreateWebSocketTicketResponse {
+  String? ticket;
+
+  AuthenticationServiceV1CreateWebSocketTicketResponse({
+    this.ticket,
+  });
+
+  factory AuthenticationServiceV1CreateWebSocketTicketResponse.fromJson(Map<String, dynamic> json) {
+    return AuthenticationServiceV1CreateWebSocketTicketResponse(
+      ticket: json['ticket'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (ticket != null) json['ticket'] = ticket;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'AuthenticationServiceV1CreateWebSocketTicketResponse(ticket: $ticket)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is AuthenticationServiceV1CreateWebSocketTicketResponse &&
+      runtimeType == other.runtimeType
+      && ticket == other.ticket
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    ticket,
+  ]);
+
+  AuthenticationServiceV1CreateWebSocketTicketResponse copyWith({
+    String? ticket,
+  }) {
+    return AuthenticationServiceV1CreateWebSocketTicketResponse(
+      ticket: ticket ?? this.ticket,
+    );
+  }
+}
 
 /// 看板服务
 class BoardServiceClient {

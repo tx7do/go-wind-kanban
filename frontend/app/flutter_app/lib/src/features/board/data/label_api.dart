@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:flutter_app/generated/api/app/service/v1/index.dart' as api;
 import 'package:flutter_app/src/features/board/models/board_models.dart';
 
 /// 看板标签（领域模型，与 DTO 解耦）。
@@ -16,6 +17,13 @@ class KanbanLabel {
     required this.name,
     required this.color,
   });
+
+  factory KanbanLabel.fromDto(api.BoardServiceV1Label d) => KanbanLabel(
+        id: d.id ?? 0,
+        boardId: d.boardId ?? 0,
+        name: d.name ?? '',
+        color: d.color ?? '',
+      );
 
   factory KanbanLabel.fromJson(Map<String, dynamic> j) => KanbanLabel(
         id: (j['id'] as num).toInt(),

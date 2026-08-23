@@ -48,6 +48,87 @@ class _BoardListPageState extends State<BoardListPage> {
     }
   }
 
+  Future<void> _editBoard(
+      BuildContext context, KanbanBoard board,
+      {required bool editName}) async {
+    final nameCtrl = TextEditingController(text: board.name);
+    final descCtrl = TextEditingController(text: board.description ?? '');
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(editName ? '重命名看板' : '编辑描述'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (editName)
+              TextField(
+                  controller: nameCtrl,
+                  autofocus: true,
+                  decoration: const InputDecoration(labelText: '看板名称'))
+            else
+              TextField(
+                  controller: descCtrl,
+                  maxLines: 3,
+                  autofocus: true,
+                  decoration: const InputDecoration(labelText: '描述')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('保存')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      final data = api.BoardServiceV1Board(
+        name: editName ? nameCtrl.text.trim() : board.name,
+        description: editName ? board.description : descCtrl.text.trim(),
+      );
+      await GetIt.instance<api.ApiClient>().boardService.update(
+            api.BoardServiceV1UpdateBoardRequest(
+              id: board.id,
+              data: data,
+              expectedVersion: board.version,
+              updateMask: editName ? 'name' : 'description',
+            ),
+          );
+      _load();
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('更新失败: $e')));
+    }
+  }
+
+  Future<void> _deleteBoard(
+      BuildContext context, KanbanBoard board) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('删除看板'),
+        content: Text('确定删除看板「${board.name}」？此操作不可撤销，列和卡片将一并删除。'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await GetIt.instance<api.ApiClient>().boardService.delete(
+            api.BoardServiceV1DeleteBoardRequest(id: board.id),
+          );
+      _load();
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('删除失败: $e')));
+    }
+  }
+
   Future<void> _createBoard() async {
     final nameCtrl = TextEditingController();
     final descCtrl = TextEditingController();
@@ -107,7 +188,24 @@ class _BoardListPageState extends State<BoardListPage> {
                   leading: const Icon(Icons.view_kanban_outlined),
                   title: Text(b.name),
                   subtitle: b.description?.isNotEmpty == true ? Text(b.description!) : null,
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert),
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(value: 'rename', child: Text('重命名')),
+                      const PopupMenuItem(value: 'editDesc', child: Text('编辑描述')),
+                      const PopupMenuItem(value: 'delete', child: Text('删除看板')),
+                    ],
+                    onSelected: (v) {
+                      switch (v) {
+                        case 'rename':
+                          _editBoard(context, b, editName: true);
+                        case 'editDesc':
+                          _editBoard(context, b, editName: false);
+                        case 'delete':
+                          _deleteBoard(context, b);
+                      }
+                    },
+                  ),
                   onTap: () => context.go('/board/${b.id}'),
                 );
               },
