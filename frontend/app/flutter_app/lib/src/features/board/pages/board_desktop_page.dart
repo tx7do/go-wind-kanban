@@ -247,6 +247,7 @@ class _CardTile extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Container(
           width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
