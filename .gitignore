@@ -154,3 +154,6 @@ bazel-*
 
 # Audit documents (local-only, not tracked)
 docs/AUDIT-*.md
+
+# ZCode local workspace (plans, session state)
+.zcode/
