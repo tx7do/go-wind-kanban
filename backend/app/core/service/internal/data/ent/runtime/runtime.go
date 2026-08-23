@@ -167,6 +167,10 @@ func init() {
 	cardDescVersion := cardFields[3].Descriptor()
 	// card.DefaultVersion holds the default value on creation for the version field.
 	card.DefaultVersion = cardDescVersion.Default.(uint32)
+	// cardDescArchived is the schema descriptor for archived field.
+	cardDescArchived := cardFields[7].Descriptor()
+	// card.DefaultArchived holds the default value on creation for the archived field.
+	card.DefaultArchived = cardDescArchived.Default.(bool)
 	// cardDescID is the schema descriptor for id field.
 	cardDescID := cardMixinFields0[0].Descriptor()
 	// card.IDValidator is a validator for the "id" field. It is called by the builders before save.

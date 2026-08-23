@@ -273,6 +273,60 @@ func (_u *CardUpdate) ClearBoardID() *CardUpdate {
 	return _u
 }
 
+// SetDueDate sets the "due_date" field.
+func (_u *CardUpdate) SetDueDate(v time.Time) *CardUpdate {
+	_u.mutation.SetDueDate(v)
+	return _u
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_u *CardUpdate) SetNillableDueDate(v *time.Time) *CardUpdate {
+	if v != nil {
+		_u.SetDueDate(*v)
+	}
+	return _u
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (_u *CardUpdate) ClearDueDate() *CardUpdate {
+	_u.mutation.ClearDueDate()
+	return _u
+}
+
+// SetArchived sets the "archived" field.
+func (_u *CardUpdate) SetArchived(v bool) *CardUpdate {
+	_u.mutation.SetArchived(v)
+	return _u
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (_u *CardUpdate) SetNillableArchived(v *bool) *CardUpdate {
+	if v != nil {
+		_u.SetArchived(*v)
+	}
+	return _u
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (_u *CardUpdate) SetCoverColor(v string) *CardUpdate {
+	_u.mutation.SetCoverColor(v)
+	return _u
+}
+
+// SetNillableCoverColor sets the "cover_color" field if the given value is not nil.
+func (_u *CardUpdate) SetNillableCoverColor(v *string) *CardUpdate {
+	if v != nil {
+		_u.SetCoverColor(*v)
+	}
+	return _u
+}
+
+// ClearCoverColor clears the value of the "cover_color" field.
+func (_u *CardUpdate) ClearCoverColor() *CardUpdate {
+	_u.mutation.ClearCoverColor()
+	return _u
+}
+
 // SetColumn sets the "column" edge to the Column entity.
 func (_u *CardUpdate) SetColumn(v *Column) *CardUpdate {
 	return _u.SetColumnID(v.ID)
@@ -423,6 +477,21 @@ func (_u *CardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedVersion(); ok {
 		_spec.AddField(card.FieldVersion, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.DueDate(); ok {
+		_spec.SetField(card.FieldDueDate, field.TypeTime, value)
+	}
+	if _u.mutation.DueDateCleared() {
+		_spec.ClearField(card.FieldDueDate, field.TypeTime)
+	}
+	if value, ok := _u.mutation.Archived(); ok {
+		_spec.SetField(card.FieldArchived, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.CoverColor(); ok {
+		_spec.SetField(card.FieldCoverColor, field.TypeString, value)
+	}
+	if _u.mutation.CoverColorCleared() {
+		_spec.ClearField(card.FieldCoverColor, field.TypeString)
 	}
 	if _u.mutation.ColumnCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -746,6 +815,60 @@ func (_u *CardUpdateOne) ClearBoardID() *CardUpdateOne {
 	return _u
 }
 
+// SetDueDate sets the "due_date" field.
+func (_u *CardUpdateOne) SetDueDate(v time.Time) *CardUpdateOne {
+	_u.mutation.SetDueDate(v)
+	return _u
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_u *CardUpdateOne) SetNillableDueDate(v *time.Time) *CardUpdateOne {
+	if v != nil {
+		_u.SetDueDate(*v)
+	}
+	return _u
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (_u *CardUpdateOne) ClearDueDate() *CardUpdateOne {
+	_u.mutation.ClearDueDate()
+	return _u
+}
+
+// SetArchived sets the "archived" field.
+func (_u *CardUpdateOne) SetArchived(v bool) *CardUpdateOne {
+	_u.mutation.SetArchived(v)
+	return _u
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (_u *CardUpdateOne) SetNillableArchived(v *bool) *CardUpdateOne {
+	if v != nil {
+		_u.SetArchived(*v)
+	}
+	return _u
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (_u *CardUpdateOne) SetCoverColor(v string) *CardUpdateOne {
+	_u.mutation.SetCoverColor(v)
+	return _u
+}
+
+// SetNillableCoverColor sets the "cover_color" field if the given value is not nil.
+func (_u *CardUpdateOne) SetNillableCoverColor(v *string) *CardUpdateOne {
+	if v != nil {
+		_u.SetCoverColor(*v)
+	}
+	return _u
+}
+
+// ClearCoverColor clears the value of the "cover_color" field.
+func (_u *CardUpdateOne) ClearCoverColor() *CardUpdateOne {
+	_u.mutation.ClearCoverColor()
+	return _u
+}
+
 // SetColumn sets the "column" edge to the Column entity.
 func (_u *CardUpdateOne) SetColumn(v *Column) *CardUpdateOne {
 	return _u.SetColumnID(v.ID)
@@ -926,6 +1049,21 @@ func (_u *CardUpdateOne) sqlSave(ctx context.Context) (_node *Card, err error) {
 	}
 	if value, ok := _u.mutation.AddedVersion(); ok {
 		_spec.AddField(card.FieldVersion, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.DueDate(); ok {
+		_spec.SetField(card.FieldDueDate, field.TypeTime, value)
+	}
+	if _u.mutation.DueDateCleared() {
+		_spec.ClearField(card.FieldDueDate, field.TypeTime)
+	}
+	if value, ok := _u.mutation.Archived(); ok {
+		_spec.SetField(card.FieldArchived, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.CoverColor(); ok {
+		_spec.SetField(card.FieldCoverColor, field.TypeString, value)
+	}
+	if _u.mutation.CoverColorCleared() {
+		_spec.ClearField(card.FieldCoverColor, field.TypeString)
 	}
 	if _u.mutation.ColumnCleared() {
 		edge := &sqlgraph.EdgeSpec{

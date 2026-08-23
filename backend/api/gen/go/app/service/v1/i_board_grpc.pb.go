@@ -29,6 +29,7 @@ const (
 	BoardService_Delete_FullMethodName           = "/app.service.v1.BoardService/Delete"
 	BoardService_Move_FullMethodName             = "/app.service.v1.BoardService/Move"
 	BoardService_GetBoardSnapshot_FullMethodName = "/app.service.v1.BoardService/GetBoardSnapshot"
+	BoardService_SyncBoard_FullMethodName        = "/app.service.v1.BoardService/SyncBoard"
 )
 
 // BoardServiceClient is the client API for BoardService service.
@@ -51,6 +52,8 @@ type BoardServiceClient interface {
 	Move(ctx context.Context, in *v11.MoveBoardRequest, opts ...grpc.CallOption) (*v11.Board, error)
 	// 获取看板完整快照（看板 + 全部列 + 全部卡片，客户端首屏加载与离线缓存入口）
 	GetBoardSnapshot(ctx context.Context, in *v11.GetBoardSnapshotRequest, opts ...grpc.CallOption) (*v11.BoardSnapshot, error)
+	// 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+	SyncBoard(ctx context.Context, in *v11.SyncBoardRequest, opts ...grpc.CallOption) (*v11.SyncBoardResponse, error)
 }
 
 type boardServiceClient struct {
@@ -131,6 +134,16 @@ func (c *boardServiceClient) GetBoardSnapshot(ctx context.Context, in *v11.GetBo
 	return out, nil
 }
 
+func (c *boardServiceClient) SyncBoard(ctx context.Context, in *v11.SyncBoardRequest, opts ...grpc.CallOption) (*v11.SyncBoardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SyncBoardResponse)
+	err := c.cc.Invoke(ctx, BoardService_SyncBoard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BoardServiceServer is the server API for BoardService service.
 // All implementations must embed UnimplementedBoardServiceServer
 // for forward compatibility.
@@ -151,6 +164,8 @@ type BoardServiceServer interface {
 	Move(context.Context, *v11.MoveBoardRequest) (*v11.Board, error)
 	// 获取看板完整快照（看板 + 全部列 + 全部卡片，客户端首屏加载与离线缓存入口）
 	GetBoardSnapshot(context.Context, *v11.GetBoardSnapshotRequest) (*v11.BoardSnapshot, error)
+	// 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+	SyncBoard(context.Context, *v11.SyncBoardRequest) (*v11.SyncBoardResponse, error)
 	mustEmbedUnimplementedBoardServiceServer()
 }
 
@@ -181,6 +196,9 @@ func (UnimplementedBoardServiceServer) Move(context.Context, *v11.MoveBoardReque
 }
 func (UnimplementedBoardServiceServer) GetBoardSnapshot(context.Context, *v11.GetBoardSnapshotRequest) (*v11.BoardSnapshot, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBoardSnapshot not implemented")
+}
+func (UnimplementedBoardServiceServer) SyncBoard(context.Context, *v11.SyncBoardRequest) (*v11.SyncBoardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncBoard not implemented")
 }
 func (UnimplementedBoardServiceServer) mustEmbedUnimplementedBoardServiceServer() {}
 func (UnimplementedBoardServiceServer) testEmbeddedByValue()                      {}
@@ -329,6 +347,24 @@ func _BoardService_GetBoardSnapshot_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BoardService_SyncBoard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.SyncBoardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BoardServiceServer).SyncBoard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BoardService_SyncBoard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BoardServiceServer).SyncBoard(ctx, req.(*v11.SyncBoardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BoardService_ServiceDesc is the grpc.ServiceDesc for BoardService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -363,6 +399,10 @@ var BoardService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBoardSnapshot",
 			Handler:    _BoardService_GetBoardSnapshot_Handler,
+		},
+		{
+			MethodName: "SyncBoard",
+			Handler:    _BoardService_SyncBoard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

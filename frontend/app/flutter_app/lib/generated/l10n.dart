@@ -469,6 +469,16 @@ class S {
     return Intl.message('返回首页', name: 'backToHome', desc: '', args: []);
   }
 
+  /// `租户编码`
+  String get tenantCode {
+    return Intl.message('租户编码', name: 'tenantCode', desc: '', args: []);
+  }
+
+  /// `请输入租户编码`
+  String get tenantCodeHint {
+    return Intl.message('请输入租户编码', name: 'tenantCodeHint', desc: '', args: []);
+  }
+
   /// `用户名`
   String get username {
     return Intl.message('用户名', name: 'username', desc: '', args: []);
@@ -527,6 +537,11 @@ class S {
   /// `确定`
   String get confirm {
     return Intl.message('确定', name: 'confirm', desc: '', args: []);
+  }
+
+  /// `用户 ID`
+  String get userID {
+    return Intl.message('用户 ID', name: 'userID', desc: '', args: []);
   }
 
   /// `该功能即将上线，敬请期待`
@@ -882,6 +897,246 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `看板`
+  String get boards {
+    return Intl.message('看板', name: 'boards', desc: '', args: []);
+  }
+
+  /// `看板（离线）`
+  String get boardsOffline {
+    return Intl.message('看板（离线）', name: 'boardsOffline', desc: '', args: []);
+  }
+
+  /// `看板名称`
+  String get boardName {
+    return Intl.message('看板名称', name: 'boardName', desc: '', args: []);
+  }
+
+  /// `看板暂无列`
+  String get boardNoColumns {
+    return Intl.message('看板暂无列', name: 'boardNoColumns', desc: '', args: []);
+  }
+
+  /// `卡片标题`
+  String get cardTitle {
+    return Intl.message('卡片标题', name: 'cardTitle', desc: '', args: []);
+  }
+
+  /// `归档`
+  String get archived {
+    return Intl.message('归档', name: 'archived', desc: '', args: []);
+  }
+
+  /// `清除`
+  String get clear {
+    return Intl.message('清除', name: 'clear', desc: '', args: []);
+  }
+
+  /// `封面色`
+  String get coverColor {
+    return Intl.message('封面色', name: 'coverColor', desc: '', args: []);
+  }
+
+  /// `截止日期`
+  String get dueDate {
+    return Intl.message('截止日期', name: 'dueDate', desc: '', args: []);
+  }
+
+  /// `选择日期`
+  String get selectDate {
+    return Intl.message('选择日期', name: 'selectDate', desc: '', args: []);
+  }
+
+  /// `颜色`
+  String get color {
+    return Intl.message('颜色', name: 'color', desc: '', args: []);
+  }
+
+  /// `颜色（如 red/blue/#hex）`
+  String get colorHint {
+    return Intl.message(
+      '颜色（如 red/blue/#hex）',
+      name: 'colorHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `列名称`
+  String get columnName {
+    return Intl.message('列名称', name: 'columnName', desc: '', args: []);
+  }
+
+  /// `创建`
+  String get create {
+    return Intl.message('创建', name: 'create', desc: '', args: []);
+  }
+
+  /// `创建失败`
+  String get createFailed {
+    return Intl.message('创建失败', name: 'createFailed', desc: '', args: []);
+  }
+
+  /// `删除`
+  String get delete {
+    return Intl.message('删除', name: 'delete', desc: '', args: []);
+  }
+
+  /// `删除看板`
+  String get deleteBoard {
+    return Intl.message('删除看板', name: 'deleteBoard', desc: '', args: []);
+  }
+
+  /// `确定删除此看板？此操作不可撤销。`
+  String get deleteBoardConfirm {
+    return Intl.message(
+      '确定删除此看板？此操作不可撤销。',
+      name: 'deleteBoardConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `删除列`
+  String get deleteColumn {
+    return Intl.message('删除列', name: 'deleteColumn', desc: '', args: []);
+  }
+
+  /// `确定删除此列及其下所有卡片？此操作不可撤销。`
+  String get deleteColumnConfirm {
+    return Intl.message(
+      '确定删除此列及其下所有卡片？此操作不可撤销。',
+      name: 'deleteColumnConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `删除失败`
+  String get deleteFailed {
+    return Intl.message('删除失败', name: 'deleteFailed', desc: '', args: []);
+  }
+
+  /// `删除标签`
+  String get deleteLabel {
+    return Intl.message('删除标签', name: 'deleteLabel', desc: '', args: []);
+  }
+
+  /// `确定删除此标签？此操作会移除所有卡片上的该标签关联。`
+  String get deleteLabelConfirm {
+    return Intl.message(
+      '确定删除此标签？此操作会移除所有卡片上的该标签关联。',
+      name: 'deleteLabelConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `描述`
+  String get description {
+    return Intl.message('描述', name: 'description', desc: '', args: []);
+  }
+
+  /// `描述（可选）`
+  String get descriptionOptional {
+    return Intl.message(
+      '描述（可选）',
+      name: 'descriptionOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `编辑卡片`
+  String get editCard {
+    return Intl.message('编辑卡片', name: 'editCard', desc: '', args: []);
+  }
+
+  /// `编辑描述`
+  String get editDescription {
+    return Intl.message('编辑描述', name: 'editDescription', desc: '', args: []);
+  }
+
+  /// `标签管理`
+  String get labelManagement {
+    return Intl.message('标签管理', name: 'labelManagement', desc: '', args: []);
+  }
+
+  /// `标签名称`
+  String get labelName {
+    return Intl.message('标签名称', name: 'labelName', desc: '', args: []);
+  }
+
+  /// `标签`
+  String get labels {
+    return Intl.message('标签', name: 'labels', desc: '', args: []);
+  }
+
+  /// `新建看板`
+  String get newBoard {
+    return Intl.message('新建看板', name: 'newBoard', desc: '', args: []);
+  }
+
+  /// `新建卡片`
+  String get newCard {
+    return Intl.message('新建卡片', name: 'newCard', desc: '', args: []);
+  }
+
+  /// `新建列`
+  String get newColumn {
+    return Intl.message('新建列', name: 'newColumn', desc: '', args: []);
+  }
+
+  /// `暂无看板`
+  String get noBoards {
+    return Intl.message('暂无看板', name: 'noBoards', desc: '', args: []);
+  }
+
+  /// `暂无标签`
+  String get noLabels {
+    return Intl.message('暂无标签', name: 'noLabels', desc: '', args: []);
+  }
+
+  /// `离线`
+  String get offline {
+    return Intl.message('离线', name: 'offline', desc: '', args: []);
+  }
+
+  /// `待同步`
+  String get pendingSync {
+    return Intl.message('待同步', name: 'pendingSync', desc: '', args: []);
+  }
+
+  /// `重命名`
+  String get rename {
+    return Intl.message('重命名', name: 'rename', desc: '', args: []);
+  }
+
+  /// `重命名看板`
+  String get renameBoard {
+    return Intl.message('重命名看板', name: 'renameBoard', desc: '', args: []);
+  }
+
+  /// `重命名列`
+  String get renameColumn {
+    return Intl.message('重命名列', name: 'renameColumn', desc: '', args: []);
+  }
+
+  /// `保存`
+  String get save {
+    return Intl.message('保存', name: 'save', desc: '', args: []);
+  }
+
+  /// `目标列`
+  String get targetColumn {
+    return Intl.message('目标列', name: 'targetColumn', desc: '', args: []);
+  }
+
+  /// `更新失败`
+  String get updateFailed {
+    return Intl.message('更新失败', name: 'updateFailed', desc: '', args: []);
   }
 }
 

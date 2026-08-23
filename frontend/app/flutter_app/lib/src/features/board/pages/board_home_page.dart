@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:flutter_app/src/core/constants/router_paths.dart';
+import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/features/board/data/board_cache.dart';
 import 'package:flutter_app/src/features/board/logic/board_controller.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
 import 'package:flutter_app/src/features/board/pages/board_desktop_page.dart';
 import 'package:flutter_app/src/features/board/pages/board_mobile_page.dart';
 import 'package:flutter_app/src/features/board/pages/label_manager_drawer.dart';
+import 'package:flutter_app/generated/l10n.dart';
 
 /// 看板主页：响应式分派。
 ///
@@ -49,16 +53,30 @@ class _BoardHomePageState extends State<BoardHomePage> {
       value: _controller,
       child: Scaffold(
         appBar: AppBar(
+          // 窄屏无 Shell 顶栏，需在此提供返回看板列表的入口；
+          // 宽屏由 WebShellLayout 顶栏承担，此处留空。
+          leading: ResponsiveUtils.isMobile(context)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                  onPressed: () => context.go(AppRoutePath.initial),
+                )
+              : null,
           title: BlocBuilder<BoardController, KanbanBoardState?>(
             buildWhen: (a, b) => a?.board.name != b?.board.name,
-            builder: (context, state) => Text(state?.board.name ?? ''),
+            builder: (context, state) {
+              final name = state?.board.name ?? '';
+              // 文本内容变化时强制重建 RenderParagraph，避开 TextPainter
+              // _rebuildParagraphForPaint 就地重建导致的 debugSize!=size 断言。
+              return Text(name, key: ValueKey<String>(name));
+            },
           ),
           actions: [
             // 标签管理入口
             Builder(
               builder: (scaffoldCtx) => IconButton(
                 icon: const Icon(Icons.label_outline),
-                tooltip: '标签管理',
+                tooltip: S.of(context).labelManagement,
                 onPressed: () => Scaffold.of(scaffoldCtx).openEndDrawer(),
               ),
             ),
@@ -72,8 +90,8 @@ class _BoardHomePageState extends State<BoardHomePage> {
                   child: Chip(
                     avatar: const Icon(Icons.cloud_off, size: 16),
                     label: Text(c.isOffline
-                        ? '离线'
-                        : '待同步 ${c.pendingCount}'),
+                        ? S.of(context).offline
+                        : S.of(context).pendingSync),
                   ),
                 );
               },
@@ -91,11 +109,11 @@ class _BoardHomePageState extends State<BoardHomePage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('看板暂无列'),
+                    Text(S.of(context).boardNoColumns),
                     const SizedBox(height: 16),
                     FilledButton.icon(
                       icon: const Icon(Icons.add),
-                      label: const Text('新建列'),
+                      label: Text(S.of(context).newColumn),
                       onPressed: () => _promptCreateColumn(context),
                     ),
                   ],
@@ -118,7 +136,7 @@ class _BoardHomePageState extends State<BoardHomePage> {
             if (state.columns.isEmpty) {
               return FloatingActionButton.extended(
                 icon: const Icon(Icons.add),
-                label: const Text('新建列'),
+                label: Text(S.of(context).newColumn),
                 onPressed: () => _promptCreateColumn(context),
               );
             }
@@ -126,14 +144,16 @@ class _BoardHomePageState extends State<BoardHomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 FloatingActionButton.extended(
+                  heroTag: 'board_fab_new_column',
                   icon: const Icon(Icons.view_column),
-                  label: const Text('新建列'),
+                  label: Text(S.of(context).newColumn),
                   onPressed: () => _promptCreateColumn(context),
                 ),
                 const SizedBox(width: 12),
                 FloatingActionButton.extended(
+                  heroTag: 'board_fab_new_card',
                   icon: const Icon(Icons.add),
-                  label: const Text('新建卡片'),
+                  label: Text(S.of(context).newCard),
                   onPressed: () => _promptCreateCard(context),
                 ),
               ],
@@ -145,19 +165,20 @@ class _BoardHomePageState extends State<BoardHomePage> {
   }
 
   Future<void> _promptCreateColumn(BuildContext context) async {
+    final loc = S.of(context);
     final nameCtrl = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('新建列'),
+        title: Text(loc.newColumn),
         content: TextField(
           controller: nameCtrl,
           autofocus: true,
-          decoration: const InputDecoration(labelText: '列名称'),
+          decoration: InputDecoration(labelText: loc.columnName),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('创建')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(loc.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(loc.create)),
         ],
       ),
     );
@@ -171,6 +192,7 @@ class _BoardHomePageState extends State<BoardHomePage> {
     final state = _controller.state;
     if (state == null) return;
 
+    final loc = S.of(context);
     final nameCtrl = TextEditingController();
     var columnId = state.columns.first.id;
 
@@ -178,19 +200,19 @@ class _BoardHomePageState extends State<BoardHomePage> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialog) => AlertDialog(
-          title: const Text('新建卡片'),
+          title: Text(loc.newCard),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameCtrl,
                 autofocus: true,
-                decoration: const InputDecoration(labelText: '卡片标题'),
+                decoration: InputDecoration(labelText: loc.cardTitle),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
                 value: columnId,
-                decoration: const InputDecoration(labelText: '目标列'),
+                decoration: InputDecoration(labelText: loc.targetColumn),
                 items: state.columns
                     .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
                     .toList(),
@@ -199,10 +221,10 @@ class _BoardHomePageState extends State<BoardHomePage> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(loc.cancel)),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('创建'),
+              child: Text(loc.create),
             ),
           ],
         ),

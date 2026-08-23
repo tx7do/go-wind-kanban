@@ -172,6 +172,9 @@ var schemaGraph = func() *sqlgraph.Schema {
 			card.FieldVersion:     {Type: field.TypeUint32, Column: card.FieldVersion},
 			card.FieldColumnID:    {Type: field.TypeUint32, Column: card.FieldColumnID},
 			card.FieldBoardID:     {Type: field.TypeUint32, Column: card.FieldBoardID},
+			card.FieldDueDate:     {Type: field.TypeTime, Column: card.FieldDueDate},
+			card.FieldArchived:    {Type: field.TypeBool, Column: card.FieldArchived},
+			card.FieldCoverColor:  {Type: field.TypeString, Column: card.FieldCoverColor},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -2008,6 +2011,21 @@ func (f *CardFilter) WhereColumnID(p entql.Uint32P) {
 // WhereBoardID applies the entql uint32 predicate on the board_id field.
 func (f *CardFilter) WhereBoardID(p entql.Uint32P) {
 	f.Where(p.Field(card.FieldBoardID))
+}
+
+// WhereDueDate applies the entql time.Time predicate on the due_date field.
+func (f *CardFilter) WhereDueDate(p entql.TimeP) {
+	f.Where(p.Field(card.FieldDueDate))
+}
+
+// WhereArchived applies the entql bool predicate on the archived field.
+func (f *CardFilter) WhereArchived(p entql.BoolP) {
+	f.Where(p.Field(card.FieldArchived))
+}
+
+// WhereCoverColor applies the entql string predicate on the cover_color field.
+func (f *CardFilter) WhereCoverColor(p entql.StringP) {
+	f.Where(p.Field(card.FieldCoverColor))
 }
 
 // WhereHasColumn applies a predicate to check if query has an edge column.

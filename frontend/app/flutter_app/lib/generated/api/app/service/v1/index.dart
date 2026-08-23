@@ -671,6 +671,20 @@ class BoardServiceClient {
     ), headers: headers);
     return BoardServiceV1BoardSnapshot.fromJson(result as Map<String, dynamic>);
   }
+
+  /// 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+  Future<BoardServiceV1SyncBoardResponse> syncBoard(BoardServiceV1SyncBoardRequest request, {Map<String, String>? headers}) async {
+    if (request.boardId == null) {
+      throw ArgumentError('missing required field request.board_id');
+    }
+    final path = '/app/v1/boards/${request.boardId}:sync';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'BoardService',
+      method: 'SyncBoard',
+    ), headers: headers);
+    return BoardServiceV1SyncBoardResponse.fromJson(result as Map<String, dynamic>);
+  }
 }
 
 /// ------------------------------
@@ -1916,10 +1930,12 @@ class BoardServiceV1Column {
 
 /// 看板卡片
 class BoardServiceV1Card {
+  bool? archived;
   int? boardId;
   ///
   /// Behaviors: REQUIRED
   int? columnId;
+  String? coverColor;
   String? createdAt;
   int? createdBy;
   String? deletedAt;
@@ -1927,6 +1943,7 @@ class BoardServiceV1Card {
   ///
   /// Behaviors: OPTIONAL
   String? description;
+  String? dueDate;
   int? id;
   ///
   /// Behaviors: REQUIRED
@@ -1938,13 +1955,16 @@ class BoardServiceV1Card {
   int? version;
 
   BoardServiceV1Card({
+    this.archived,
     this.boardId,
     this.columnId,
+    this.coverColor,
     this.createdAt,
     this.createdBy,
     this.deletedAt,
     this.deletedBy,
     this.description,
+    this.dueDate,
     this.id,
     this.name,
     this.rank,
@@ -1956,13 +1976,16 @@ class BoardServiceV1Card {
 
   factory BoardServiceV1Card.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1Card(
+      archived: json['archived'] as bool?,
       boardId: json['boardId'] as int?,
       columnId: json['columnId'] as int?,
+      coverColor: json['coverColor'] as String?,
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       deletedAt: json['deletedAt'] as String?,
       deletedBy: json['deletedBy'] as int?,
       description: json['description'] as String?,
+      dueDate: json['dueDate'] as String?,
       id: json['id'] as int?,
       name: json['name'] as String?,
       rank: json['rank'] as String?,
@@ -1975,13 +1998,16 @@ class BoardServiceV1Card {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+    if (archived != null) json['archived'] = archived;
     if (boardId != null) json['boardId'] = boardId;
     if (columnId != null) json['columnId'] = columnId;
+    if (coverColor != null) json['coverColor'] = coverColor;
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
     if (deletedBy != null) json['deletedBy'] = deletedBy;
     if (description != null) json['description'] = description;
+    if (dueDate != null) json['dueDate'] = dueDate;
     if (id != null) json['id'] = id;
     if (name != null) json['name'] = name;
     if (rank != null) json['rank'] = rank;
@@ -1994,7 +2020,7 @@ class BoardServiceV1Card {
 
   @override
   String toString() {
-    return 'BoardServiceV1Card(boardId: $boardId, columnId: $columnId, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, description: $description, id: $id, name: $name, rank: $rank, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy, version: $version)';
+    return 'BoardServiceV1Card(archived: $archived, boardId: $boardId, columnId: $columnId, coverColor: $coverColor, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, description: $description, dueDate: $dueDate, id: $id, name: $name, rank: $rank, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy, version: $version)';
   }
 
   @override
@@ -2002,13 +2028,16 @@ class BoardServiceV1Card {
     identical(this, other) ||
     other is BoardServiceV1Card &&
       runtimeType == other.runtimeType
+      && archived == other.archived
       && boardId == other.boardId
       && columnId == other.columnId
+      && coverColor == other.coverColor
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && deletedAt == other.deletedAt
       && deletedBy == other.deletedBy
       && description == other.description
+      && dueDate == other.dueDate
       && id == other.id
       && name == other.name
       && rank == other.rank
@@ -2020,13 +2049,16 @@ class BoardServiceV1Card {
 
   @override
   int get hashCode => Object.hashAll([
+    archived,
     boardId,
     columnId,
+    coverColor,
     createdAt,
     createdBy,
     deletedAt,
     deletedBy,
     description,
+    dueDate,
     id,
     name,
     rank,
@@ -2037,13 +2069,16 @@ class BoardServiceV1Card {
   ]);
 
   BoardServiceV1Card copyWith({
+    bool? archived,
     int? boardId,
     int? columnId,
+    String? coverColor,
     String? createdAt,
     int? createdBy,
     String? deletedAt,
     int? deletedBy,
     String? description,
+    String? dueDate,
     int? id,
     String? name,
     String? rank,
@@ -2053,13 +2088,16 @@ class BoardServiceV1Card {
     int? version,
   }) {
     return BoardServiceV1Card(
+      archived: archived ?? this.archived,
       boardId: boardId ?? this.boardId,
       columnId: columnId ?? this.columnId,
+      coverColor: coverColor ?? this.coverColor,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       deletedAt: deletedAt ?? this.deletedAt,
       deletedBy: deletedBy ?? this.deletedBy,
       description: description ?? this.description,
+      dueDate: dueDate ?? this.dueDate,
       id: id ?? this.id,
       name: name ?? this.name,
       rank: rank ?? this.rank,
@@ -2067,6 +2105,213 @@ class BoardServiceV1Card {
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
+    );
+  }
+}
+
+/// 差量同步 - 请求
+class BoardServiceV1SyncBoardRequest {
+  ///
+  /// Behaviors: REQUIRED
+  int? boardId;
+  int? knownBoardVersion;
+  List<BoardServiceV1VersionEntry>? knownCardVersions;
+  List<BoardServiceV1VersionEntry>? knownColumnVersions;
+
+  BoardServiceV1SyncBoardRequest({
+    this.boardId,
+    this.knownBoardVersion,
+    this.knownCardVersions,
+    this.knownColumnVersions,
+  });
+
+  factory BoardServiceV1SyncBoardRequest.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1SyncBoardRequest(
+      boardId: json['boardId'] as int?,
+      knownBoardVersion: json['knownBoardVersion'] as int?,
+      knownCardVersions: (json['knownCardVersions'] as List<dynamic>?)?.map((e) => BoardServiceV1VersionEntry.fromJson(e as Map<String, dynamic>)).toList(),
+      knownColumnVersions: (json['knownColumnVersions'] as List<dynamic>?)?.map((e) => BoardServiceV1VersionEntry.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (boardId != null) json['boardId'] = boardId;
+    if (knownBoardVersion != null) json['knownBoardVersion'] = knownBoardVersion;
+    if (knownCardVersions != null) json['knownCardVersions'] = knownCardVersions!.map((e) => e.toJson()).toList();
+    if (knownColumnVersions != null) json['knownColumnVersions'] = knownColumnVersions!.map((e) => e.toJson()).toList();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1SyncBoardRequest(boardId: $boardId, knownBoardVersion: $knownBoardVersion, knownCardVersions: $knownCardVersions, knownColumnVersions: $knownColumnVersions)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1SyncBoardRequest &&
+      runtimeType == other.runtimeType
+      && boardId == other.boardId
+      && knownBoardVersion == other.knownBoardVersion
+      && knownCardVersions == other.knownCardVersions
+      && knownColumnVersions == other.knownColumnVersions
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    boardId,
+    knownBoardVersion,
+    knownCardVersions,
+    knownColumnVersions,
+  ]);
+
+  BoardServiceV1SyncBoardRequest copyWith({
+    int? boardId,
+    int? knownBoardVersion,
+    List<BoardServiceV1VersionEntry>? knownCardVersions,
+    List<BoardServiceV1VersionEntry>? knownColumnVersions,
+  }) {
+    return BoardServiceV1SyncBoardRequest(
+      boardId: boardId ?? this.boardId,
+      knownBoardVersion: knownBoardVersion ?? this.knownBoardVersion,
+      knownCardVersions: knownCardVersions ?? this.knownCardVersions,
+      knownColumnVersions: knownColumnVersions ?? this.knownColumnVersions,
+    );
+  }
+}
+
+/// 版本条目（差量同步用；以消息替代 map 以兼容各端代码生成器）
+class BoardServiceV1VersionEntry {
+  int? id;
+  int? version;
+
+  BoardServiceV1VersionEntry({
+    this.id,
+    this.version,
+  });
+
+  factory BoardServiceV1VersionEntry.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1VersionEntry(
+      id: json['id'] as int?,
+      version: json['version'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (version != null) json['version'] = version;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1VersionEntry(id: $id, version: $version)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1VersionEntry &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && version == other.version
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    version,
+  ]);
+
+  BoardServiceV1VersionEntry copyWith({
+    int? id,
+    int? version,
+  }) {
+    return BoardServiceV1VersionEntry(
+      id: id ?? this.id,
+      version: version ?? this.version,
+    );
+  }
+}
+
+/// 差量同步 - 回应
+class BoardServiceV1SyncBoardResponse {
+  BoardServiceV1Board? board;
+  List<int>? deletedCardIds;
+  List<int>? deletedColumnIds;
+  List<BoardServiceV1Card>? upsertedCards;
+  List<BoardServiceV1Column>? upsertedColumns;
+
+  BoardServiceV1SyncBoardResponse({
+    this.board,
+    this.deletedCardIds,
+    this.deletedColumnIds,
+    this.upsertedCards,
+    this.upsertedColumns,
+  });
+
+  factory BoardServiceV1SyncBoardResponse.fromJson(Map<String, dynamic> json) {
+    return BoardServiceV1SyncBoardResponse(
+      board: json['board'] != null ? BoardServiceV1Board.fromJson(json['board'] as Map<String, dynamic>) : null,
+      deletedCardIds: (json['deletedCardIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      deletedColumnIds: (json['deletedColumnIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      upsertedCards: (json['upsertedCards'] as List<dynamic>?)?.map((e) => BoardServiceV1Card.fromJson(e as Map<String, dynamic>)).toList(),
+      upsertedColumns: (json['upsertedColumns'] as List<dynamic>?)?.map((e) => BoardServiceV1Column.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (board != null) json['board'] = board!.toJson();
+    if (deletedCardIds != null) json['deletedCardIds'] = deletedCardIds;
+    if (deletedColumnIds != null) json['deletedColumnIds'] = deletedColumnIds;
+    if (upsertedCards != null) json['upsertedCards'] = upsertedCards!.map((e) => e.toJson()).toList();
+    if (upsertedColumns != null) json['upsertedColumns'] = upsertedColumns!.map((e) => e.toJson()).toList();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'BoardServiceV1SyncBoardResponse(board: $board, deletedCardIds: $deletedCardIds, deletedColumnIds: $deletedColumnIds, upsertedCards: $upsertedCards, upsertedColumns: $upsertedColumns)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is BoardServiceV1SyncBoardResponse &&
+      runtimeType == other.runtimeType
+      && board == other.board
+      && deletedCardIds == other.deletedCardIds
+      && deletedColumnIds == other.deletedColumnIds
+      && upsertedCards == other.upsertedCards
+      && upsertedColumns == other.upsertedColumns
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    board,
+    deletedCardIds,
+    deletedColumnIds,
+    upsertedCards,
+    upsertedColumns,
+  ]);
+
+  BoardServiceV1SyncBoardResponse copyWith({
+    BoardServiceV1Board? board,
+    List<int>? deletedCardIds,
+    List<int>? deletedColumnIds,
+    List<BoardServiceV1Card>? upsertedCards,
+    List<BoardServiceV1Column>? upsertedColumns,
+  }) {
+    return BoardServiceV1SyncBoardResponse(
+      board: board ?? this.board,
+      deletedCardIds: deletedCardIds ?? this.deletedCardIds,
+      deletedColumnIds: deletedColumnIds ?? this.deletedColumnIds,
+      upsertedCards: upsertedCards ?? this.upsertedCards,
+      upsertedColumns: upsertedColumns ?? this.upsertedColumns,
     );
   }
 }

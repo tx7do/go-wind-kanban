@@ -206,6 +206,48 @@ func (_c *CardCreate) SetNillableBoardID(v *uint32) *CardCreate {
 	return _c
 }
 
+// SetDueDate sets the "due_date" field.
+func (_c *CardCreate) SetDueDate(v time.Time) *CardCreate {
+	_c.mutation.SetDueDate(v)
+	return _c
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_c *CardCreate) SetNillableDueDate(v *time.Time) *CardCreate {
+	if v != nil {
+		_c.SetDueDate(*v)
+	}
+	return _c
+}
+
+// SetArchived sets the "archived" field.
+func (_c *CardCreate) SetArchived(v bool) *CardCreate {
+	_c.mutation.SetArchived(v)
+	return _c
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (_c *CardCreate) SetNillableArchived(v *bool) *CardCreate {
+	if v != nil {
+		_c.SetArchived(*v)
+	}
+	return _c
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (_c *CardCreate) SetCoverColor(v string) *CardCreate {
+	_c.mutation.SetCoverColor(v)
+	return _c
+}
+
+// SetNillableCoverColor sets the "cover_color" field if the given value is not nil.
+func (_c *CardCreate) SetNillableCoverColor(v *string) *CardCreate {
+	if v != nil {
+		_c.SetCoverColor(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CardCreate) SetID(v uint32) *CardCreate {
 	_c.mutation.SetID(v)
@@ -267,6 +309,10 @@ func (_c *CardCreate) defaults() error {
 		v := card.DefaultVersion
 		_c.mutation.SetVersion(v)
 	}
+	if _, ok := _c.mutation.Archived(); !ok {
+		v := card.DefaultArchived
+		_c.mutation.SetArchived(v)
+	}
 	return nil
 }
 
@@ -279,6 +325,9 @@ func (_c *CardCreate) check() error {
 	}
 	if _, ok := _c.mutation.Version(); !ok {
 		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "Card.version"`)}
+	}
+	if _, ok := _c.mutation.Archived(); !ok {
+		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Card.archived"`)}
 	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := card.IDValidator(v); err != nil {
@@ -361,6 +410,18 @@ func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Version(); ok {
 		_spec.SetField(card.FieldVersion, field.TypeUint32, value)
 		_node.Version = value
+	}
+	if value, ok := _c.mutation.DueDate(); ok {
+		_spec.SetField(card.FieldDueDate, field.TypeTime, value)
+		_node.DueDate = &value
+	}
+	if value, ok := _c.mutation.Archived(); ok {
+		_spec.SetField(card.FieldArchived, field.TypeBool, value)
+		_node.Archived = value
+	}
+	if value, ok := _c.mutation.CoverColor(); ok {
+		_spec.SetField(card.FieldCoverColor, field.TypeString, value)
+		_node.CoverColor = &value
 	}
 	if nodes := _c.mutation.ColumnIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -661,6 +722,54 @@ func (u *CardUpsert) UpdateBoardID() *CardUpsert {
 // ClearBoardID clears the value of the "board_id" field.
 func (u *CardUpsert) ClearBoardID() *CardUpsert {
 	u.SetNull(card.FieldBoardID)
+	return u
+}
+
+// SetDueDate sets the "due_date" field.
+func (u *CardUpsert) SetDueDate(v time.Time) *CardUpsert {
+	u.Set(card.FieldDueDate, v)
+	return u
+}
+
+// UpdateDueDate sets the "due_date" field to the value that was provided on create.
+func (u *CardUpsert) UpdateDueDate() *CardUpsert {
+	u.SetExcluded(card.FieldDueDate)
+	return u
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (u *CardUpsert) ClearDueDate() *CardUpsert {
+	u.SetNull(card.FieldDueDate)
+	return u
+}
+
+// SetArchived sets the "archived" field.
+func (u *CardUpsert) SetArchived(v bool) *CardUpsert {
+	u.Set(card.FieldArchived, v)
+	return u
+}
+
+// UpdateArchived sets the "archived" field to the value that was provided on create.
+func (u *CardUpsert) UpdateArchived() *CardUpsert {
+	u.SetExcluded(card.FieldArchived)
+	return u
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (u *CardUpsert) SetCoverColor(v string) *CardUpsert {
+	u.Set(card.FieldCoverColor, v)
+	return u
+}
+
+// UpdateCoverColor sets the "cover_color" field to the value that was provided on create.
+func (u *CardUpsert) UpdateCoverColor() *CardUpsert {
+	u.SetExcluded(card.FieldCoverColor)
+	return u
+}
+
+// ClearCoverColor clears the value of the "cover_color" field.
+func (u *CardUpsert) ClearCoverColor() *CardUpsert {
+	u.SetNull(card.FieldCoverColor)
 	return u
 }
 
@@ -967,6 +1076,62 @@ func (u *CardUpsertOne) UpdateBoardID() *CardUpsertOne {
 func (u *CardUpsertOne) ClearBoardID() *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.ClearBoardID()
+	})
+}
+
+// SetDueDate sets the "due_date" field.
+func (u *CardUpsertOne) SetDueDate(v time.Time) *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.SetDueDate(v)
+	})
+}
+
+// UpdateDueDate sets the "due_date" field to the value that was provided on create.
+func (u *CardUpsertOne) UpdateDueDate() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateDueDate()
+	})
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (u *CardUpsertOne) ClearDueDate() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearDueDate()
+	})
+}
+
+// SetArchived sets the "archived" field.
+func (u *CardUpsertOne) SetArchived(v bool) *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.SetArchived(v)
+	})
+}
+
+// UpdateArchived sets the "archived" field to the value that was provided on create.
+func (u *CardUpsertOne) UpdateArchived() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateArchived()
+	})
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (u *CardUpsertOne) SetCoverColor(v string) *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.SetCoverColor(v)
+	})
+}
+
+// UpdateCoverColor sets the "cover_color" field to the value that was provided on create.
+func (u *CardUpsertOne) UpdateCoverColor() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateCoverColor()
+	})
+}
+
+// ClearCoverColor clears the value of the "cover_color" field.
+func (u *CardUpsertOne) ClearCoverColor() *CardUpsertOne {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearCoverColor()
 	})
 }
 
@@ -1439,6 +1604,62 @@ func (u *CardUpsertBulk) UpdateBoardID() *CardUpsertBulk {
 func (u *CardUpsertBulk) ClearBoardID() *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.ClearBoardID()
+	})
+}
+
+// SetDueDate sets the "due_date" field.
+func (u *CardUpsertBulk) SetDueDate(v time.Time) *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.SetDueDate(v)
+	})
+}
+
+// UpdateDueDate sets the "due_date" field to the value that was provided on create.
+func (u *CardUpsertBulk) UpdateDueDate() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateDueDate()
+	})
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (u *CardUpsertBulk) ClearDueDate() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearDueDate()
+	})
+}
+
+// SetArchived sets the "archived" field.
+func (u *CardUpsertBulk) SetArchived(v bool) *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.SetArchived(v)
+	})
+}
+
+// UpdateArchived sets the "archived" field to the value that was provided on create.
+func (u *CardUpsertBulk) UpdateArchived() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateArchived()
+	})
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (u *CardUpsertBulk) SetCoverColor(v string) *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.SetCoverColor(v)
+	})
+}
+
+// UpdateCoverColor sets the "cover_color" field to the value that was provided on create.
+func (u *CardUpsertBulk) UpdateCoverColor() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.UpdateCoverColor()
+	})
+}
+
+// ClearCoverColor clears the value of the "cover_color" field.
+func (u *CardUpsertBulk) ClearCoverColor() *CardUpsertBulk {
+	return u.Update(func(s *CardUpsert) {
+		s.ClearCoverColor()
 	})
 }
 

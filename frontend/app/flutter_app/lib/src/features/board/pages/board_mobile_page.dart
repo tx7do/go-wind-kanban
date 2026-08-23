@@ -5,7 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_app/src/features/board/data/label_api.dart';
 import 'package:flutter_app/src/features/board/logic/board_controller.dart';
 import 'package:flutter_app/src/features/board/pages/card_edit_dialog.dart';
+import 'package:flutter_app/src/features/board/pages/card_metadata_strip.dart';
+import 'package:flutter_app/src/features/board/pages/card_label_strip.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
+import 'package:flutter_app/generated/l10n.dart';
 
 /// 手机/窄屏看板：TabBarView 单列分页 + 长按激活拖拽（ReorderableListView）。
 class BoardMobilePage extends StatefulWidget {
@@ -16,9 +19,16 @@ class BoardMobilePage extends StatefulWidget {
 }
 
 class _BoardMobilePageState extends State<BoardMobilePage>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
+    with TickerProviderStateMixin {
+  // build 会无条件读取 _tabController，0 列的空看板也必须有一个已初始化的控制器。
+  late TabController _tabController;
   int _columnCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 0, vsync: this);
+  }
 
   @override
   void dispose() {
@@ -120,18 +130,44 @@ class _ColumnList extends StatelessWidget {
             return Container(
               key: ValueKey('card_${card.id}'),
               margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                title: Text(card.name, maxLines: 2, overflow: TextOverflow.ellipsis),
-                subtitle: card.description?.isNotEmpty == true
-                    ? Text(card.description!, maxLines: 1, overflow: TextOverflow.ellipsis)
-                    : null,
-                trailing: ReorderableDragStartListener(
-                  index: index,
-                  child: const Icon(Icons.drag_handle),
-                ),
-                onTap: () => _editCard(context, card),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CardMetadataStrip(card: card),
+                  CardLabelStrip(labels: resolveCardLabels(state, card.id)),
+                  GestureDetector(
+                    onTap: () => _editCard(context, card),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(card.name, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                if (card.description?.isNotEmpty == true) ...[
+                                  const SizedBox(height: 4),
+                                  Text(card.description!, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                ],
+                              ],
+                            ),
+                          ),
+                          ReorderableDragStartListener(
+                            index: index,
+                            child: const Icon(Icons.drag_handle),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -153,6 +189,8 @@ class _ColumnList extends StatelessWidget {
       builder: (ctx) => CardEditDialog(
         card: card,
         boardLabels: boardState.labels,
+        initialSelectedLabelIds:
+            boardState.cardLabelAssociations[card.id]?.toSet() ?? <int>{},
       ),
     );
 
@@ -173,6 +211,19 @@ class _ColumnList extends StatelessWidget {
       try {
         await LabelApi().setCardLabels(card.id, result.labelIds!);
       } catch (_) {}
+    }
+    if (result.setDueDate != null) {
+      await bc.setCardDueDate(card.id, result.setDueDate);
+    } else if (result.clearDueDate) {
+      await bc.setCardDueDate(card.id, null);
+    }
+    if (result.setArchived != null) {
+      await bc.setCardArchived(card.id, result.setArchived!);
+    }
+    if (result.setCoverColor != null) {
+      await bc.setCardCoverColor(card.id, result.setCoverColor);
+    } else if (result.clearCoverColor) {
+      await bc.setCardCoverColor(card.id, null);
     }
   }
 
@@ -207,6 +258,7 @@ class _MobileColumnHeader extends StatelessWidget {
   }
 
   void _showColumnOptions(BuildContext context, KanbanColumn col) {
+    final loc = S.of(context);
     showModalBottomSheet(
       context: context,
       builder: (sheetCtx) => SafeArea(
@@ -215,7 +267,7 @@ class _MobileColumnHeader extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.edit),
-              title: const Text('重命名列'),
+              title: Text(loc.renameColumn),
               onTap: () {
                 Navigator.pop(sheetCtx);
                 _renameColumn(context, col);
@@ -223,7 +275,7 @@ class _MobileColumnHeader extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('删除列', style: TextStyle(color: Colors.red)),
+              title: Text(loc.deleteColumn, style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(sheetCtx);
                 _confirmDeleteColumn(context, col);
@@ -236,14 +288,15 @@ class _MobileColumnHeader extends StatelessWidget {
   }
 
   void _renameColumn(BuildContext context, KanbanColumn col) {
+    final loc = S.of(context);
     final ctrl = TextEditingController(text: col.name);
     showDialog<void>(
       context: context,
       builder: (dlgCtx) => AlertDialog(
-        title: const Text('重命名列'),
-        content: TextField(controller: ctrl, autofocus: true, decoration: const InputDecoration(labelText: '列名称')),
+        title: Text(loc.renameColumn),
+        content: TextField(controller: ctrl, autofocus: true, decoration: InputDecoration(labelText: loc.columnName)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dlgCtx), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(dlgCtx), child: Text(loc.cancel)),
           FilledButton(
             onPressed: () {
               final name = ctrl.text.trim();
@@ -252,7 +305,7 @@ class _MobileColumnHeader extends StatelessWidget {
                 context.read<BoardController>().renameColumn(col.id, name);
               }
             },
-            child: const Text('保存'),
+            child: Text(loc.save),
           ),
         ],
       ),
@@ -260,17 +313,18 @@ class _MobileColumnHeader extends StatelessWidget {
   }
 
   void _confirmDeleteColumn(BuildContext context, KanbanColumn col) {
+    final loc = S.of(context);
     showDialog<bool>(
       context: context,
       builder: (dlgCtx) => AlertDialog(
-        title: const Text('删除列'),
-        content: Text('确定删除「${col.name}」及其下所有卡片？此操作不可撤销。'),
+        title: Text(loc.deleteColumn),
+        content: Text(loc.deleteColumnConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dlgCtx, false), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(dlgCtx, false), child: Text(loc.cancel)),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(dlgCtx, true),
-            child: const Text('删除'),
+            child: Text(loc.delete),
           ),
         ],
       ),

@@ -84,6 +84,47 @@ func (m *Card) validate(all bool) error {
 		// no validation rules for BoardId
 	}
 
+	if m.DueDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetDueDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CardValidationError{
+						field:  "DueDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CardValidationError{
+						field:  "DueDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDueDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CardValidationError{
+					field:  "DueDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Archived != nil {
+		// no validation rules for Archived
+	}
+
+	if m.CoverColor != nil {
+		// no validation rules for CoverColor
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}

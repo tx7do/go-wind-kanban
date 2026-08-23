@@ -7,6 +7,9 @@ import 'package:flutter_app/src/features/board/data/label_api.dart';
 import 'package:flutter_app/src/features/board/logic/board_controller.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
 import 'package:flutter_app/src/features/board/pages/card_edit_dialog.dart';
+import 'package:flutter_app/src/features/board/pages/card_metadata_strip.dart';
+import 'package:flutter_app/src/features/board/pages/card_label_strip.dart';
+import 'package:flutter_app/generated/l10n.dart';
 
 /// 桌面/宽屏看板：AppFlowyBoard 横向多列 + 鼠标流畅拖拽 + 吸附动画。
 ///
@@ -52,11 +55,13 @@ class _BoardDesktopPageState extends State<BoardDesktopPage> {
     );
     final grouped = state.cardsByColumn;
     for (final col in state.columns) {
-      ctrl.addGroup(_AfColumnData(
-        column: col,
+      ctrl.addGroup(AppFlowyGroupData<_AfColumnData>(
+        id: col.id.toString(),
+        name: col.name,
+        customData: _AfColumnData(column: col),
         items: (grouped[col.id] ?? [])
             .map((c) => _AfCardItem(card: c))
-            .toList(growable: false),
+            .toList(),
       ));
     }
     return ctrl;
@@ -77,29 +82,30 @@ class _BoardDesktopPageState extends State<BoardDesktopPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BoardController, KanbanBoardState?>(
-      listenWhen: (prev, next) =>
-          next != null && _fingerprint(prev ?? next) != _fingerprint(next),
-      listener: (context, state) {
-        if (state == null) return;
+    return BlocBuilder<BoardController, KanbanBoardState?>(
+      builder: (context, state) {
+        if (state == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final fp = _fingerprint(state);
         if (_loadedBoardId != state.board.id || _afController == null || fp != _loadedFingerprint) {
           _afController?.dispose();
           _afController = _buildController(context, state);
           _loadedBoardId = state.board.id;
           _loadedFingerprint = fp;
-          setState(() {});
         }
-      },
-      builder: (context, state) {
-        if (state == null || _afController == null) {
+        if (_afController == null) {
           return const Center(child: CircularProgressIndicator());
         }
         return AppFlowyBoard(
           controller: _afController!,
           footerBuilder: (context, column) => const SizedBox(height: 8),
           headerBuilder: (context, column) => _ColumnHeader(column: column),
-          cardBuilder: (context, column, item) => _CardTile(item: item as _AfCardItem),
+          cardBuilder: (context, column, item) => _CardTile(
+              key: ValueKey(item.id),
+              item: item as _AfCardItem,
+              boardState: state,
+              boardController: context.read<BoardController>()),
           groupConstraints: const BoxConstraints(maxWidth: 260),
         );
       },
@@ -144,6 +150,7 @@ class _ColumnHeader extends StatelessWidget {
   }
 
   void _showColumnOptions(BuildContext context, KanbanColumn col) {
+    final loc = S.of(context);
     showModalBottomSheet(
       context: context,
       builder: (sheetCtx) => SafeArea(
@@ -152,7 +159,7 @@ class _ColumnHeader extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.edit),
-              title: const Text('重命名列'),
+              title: Text(loc.renameColumn),
               onTap: () {
                 Navigator.pop(sheetCtx);
                 _renameColumn(context, col);
@@ -160,7 +167,7 @@ class _ColumnHeader extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text('删除列', style: TextStyle(color: Colors.red)),
+              title: Text(loc.deleteColumn, style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(sheetCtx);
                 _confirmDeleteColumn(context, col);
@@ -173,17 +180,18 @@ class _ColumnHeader extends StatelessWidget {
   }
 
   void _confirmDeleteColumn(BuildContext context, KanbanColumn col) {
+    final loc = S.of(context);
     showDialog<bool>(
       context: context,
       builder: (dlgCtx) => AlertDialog(
-        title: const Text('删除列'),
-        content: Text('确定删除「${col.name}」及其下所有卡片？此操作不可撤销。'),
+        title: Text(loc.deleteColumn),
+        content: Text(loc.deleteColumnConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dlgCtx, false), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(dlgCtx, false), child: Text(loc.cancel)),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(dlgCtx, true),
-            child: const Text('删除'),
+            child: Text(loc.delete),
           ),
         ],
       ),
@@ -195,14 +203,15 @@ class _ColumnHeader extends StatelessWidget {
   }
 
   void _renameColumn(BuildContext context, KanbanColumn col) {
+    final loc = S.of(context);
     final ctrl = TextEditingController(text: col.name);
     showDialog<void>(
       context: context,
       builder: (dlgCtx) => AlertDialog(
-        title: const Text('重命名列'),
-        content: TextField(controller: ctrl, autofocus: true, decoration: const InputDecoration(labelText: '列名称')),
+        title: Text(loc.renameColumn),
+        content: TextField(controller: ctrl, autofocus: true, decoration: InputDecoration(labelText: loc.columnName)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dlgCtx), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(dlgCtx), child: Text(loc.cancel)),
           FilledButton(
             onPressed: () {
               final name = ctrl.text.trim();
@@ -211,7 +220,7 @@ class _ColumnHeader extends StatelessWidget {
                 context.read<BoardController>().renameColumn(col.id, name);
               }
             },
-            child: const Text('保存'),
+            child: Text(loc.save),
           ),
         ],
       ),
@@ -221,19 +230,25 @@ class _ColumnHeader extends StatelessWidget {
 
 class _CardTile extends StatelessWidget {
   final _AfCardItem item;
+  final KanbanBoardState boardState;
+  final BoardController boardController;
 
-  const _CardTile({required this.item});
+  const _CardTile(
+      {super.key,
+      required this.item,
+      required this.boardState,
+      required this.boardController});
 
   @override
   Widget build(BuildContext context) {
-    final boardState = context.read<BoardController>().state;
     return GestureDetector(
-      onTap: () => _openEdit(context, item.card, boardState),
+      onTap: () => _openEdit(context, item.card, boardState, boardController),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
@@ -241,6 +256,9 @@ class _CardTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              CardMetadataStrip(card: item.card),
+              CardLabelStrip(
+                  labels: resolveCardLabels(boardState, item.card.id)),
               Text(
                 item.card.name,
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -263,14 +281,17 @@ class _CardTile extends StatelessWidget {
     );
   }
 
-  void _openEdit(BuildContext context, KanbanCard card, KanbanBoardState? boardState) {
-    if (boardState == null) return;
+  void _openEdit(BuildContext context, KanbanCard card, KanbanBoardState boardState, BoardController boardController) {
     showDialog<CardEditResult>(
       context: context,
-      builder: (ctx) => CardEditDialog(card: card, boardLabels: boardState.labels),
+      builder: (ctx) => CardEditDialog(
+          card: card,
+          boardLabels: boardState.labels,
+          initialSelectedLabelIds:
+              boardState.cardLabelAssociations[card.id]?.toSet() ?? <int>{}),
     ).then((result) async {
       if (result == null) return;
-      final bc = context.read<BoardController>();
+      final bc = boardController;
       if (result.delete) {
         await bc.deleteCard(card.id);
         return;
@@ -286,6 +307,19 @@ class _CardTile extends StatelessWidget {
           await LabelApi().setCardLabels(card.id, result.labelIds!);
         } catch (_) {}
       }
+      if (result.setDueDate != null) {
+        await bc.setCardDueDate(card.id, result.setDueDate);
+      } else if (result.clearDueDate) {
+        await bc.setCardDueDate(card.id, null);
+      }
+      if (result.setArchived != null) {
+        await bc.setCardArchived(card.id, result.setArchived!);
+      }
+      if (result.setCoverColor != null) {
+        await bc.setCardCoverColor(card.id, result.setCoverColor);
+      } else if (result.clearCoverColor) {
+        await bc.setCardCoverColor(card.id, null);
+      }
     });
   }
 }
@@ -299,9 +333,8 @@ class _AfCardItem extends AppFlowyGroupItem {
   String get id => card.id.toString();
 }
 
-class _AfColumnData extends AppFlowyGroupData {
+class _AfColumnData {
   final KanbanColumn column;
 
-  _AfColumnData({required this.column, required List<_AfCardItem> items})
-      : super(id: column.id.toString(), name: column.name, items: items);
+  _AfColumnData({required this.column});
 }

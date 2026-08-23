@@ -5517,6 +5517,9 @@ type CardMutation struct {
 	rank          *string
 	version       *uint32
 	addversion    *int32
+	due_date      *time.Time
+	archived      *bool
+	cover_color   *string
 	clearedFields map[string]struct{}
 	column        *uint32
 	clearedcolumn bool
@@ -6359,6 +6362,140 @@ func (m *CardMutation) ResetBoardID() {
 	delete(m.clearedFields, card.FieldBoardID)
 }
 
+// SetDueDate sets the "due_date" field.
+func (m *CardMutation) SetDueDate(t time.Time) {
+	m.due_date = &t
+}
+
+// DueDate returns the value of the "due_date" field in the mutation.
+func (m *CardMutation) DueDate() (r time.Time, exists bool) {
+	v := m.due_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDueDate returns the old "due_date" field's value of the Card entity.
+// If the Card object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardMutation) OldDueDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDueDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDueDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDueDate: %w", err)
+	}
+	return oldValue.DueDate, nil
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (m *CardMutation) ClearDueDate() {
+	m.due_date = nil
+	m.clearedFields[card.FieldDueDate] = struct{}{}
+}
+
+// DueDateCleared returns if the "due_date" field was cleared in this mutation.
+func (m *CardMutation) DueDateCleared() bool {
+	_, ok := m.clearedFields[card.FieldDueDate]
+	return ok
+}
+
+// ResetDueDate resets all changes to the "due_date" field.
+func (m *CardMutation) ResetDueDate() {
+	m.due_date = nil
+	delete(m.clearedFields, card.FieldDueDate)
+}
+
+// SetArchived sets the "archived" field.
+func (m *CardMutation) SetArchived(b bool) {
+	m.archived = &b
+}
+
+// Archived returns the value of the "archived" field in the mutation.
+func (m *CardMutation) Archived() (r bool, exists bool) {
+	v := m.archived
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldArchived returns the old "archived" field's value of the Card entity.
+// If the Card object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardMutation) OldArchived(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldArchived is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldArchived requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldArchived: %w", err)
+	}
+	return oldValue.Archived, nil
+}
+
+// ResetArchived resets all changes to the "archived" field.
+func (m *CardMutation) ResetArchived() {
+	m.archived = nil
+}
+
+// SetCoverColor sets the "cover_color" field.
+func (m *CardMutation) SetCoverColor(s string) {
+	m.cover_color = &s
+}
+
+// CoverColor returns the value of the "cover_color" field in the mutation.
+func (m *CardMutation) CoverColor() (r string, exists bool) {
+	v := m.cover_color
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoverColor returns the old "cover_color" field's value of the Card entity.
+// If the Card object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CardMutation) OldCoverColor(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoverColor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoverColor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoverColor: %w", err)
+	}
+	return oldValue.CoverColor, nil
+}
+
+// ClearCoverColor clears the value of the "cover_color" field.
+func (m *CardMutation) ClearCoverColor() {
+	m.cover_color = nil
+	m.clearedFields[card.FieldCoverColor] = struct{}{}
+}
+
+// CoverColorCleared returns if the "cover_color" field was cleared in this mutation.
+func (m *CardMutation) CoverColorCleared() bool {
+	_, ok := m.clearedFields[card.FieldCoverColor]
+	return ok
+}
+
+// ResetCoverColor resets all changes to the "cover_color" field.
+func (m *CardMutation) ResetCoverColor() {
+	m.cover_color = nil
+	delete(m.clearedFields, card.FieldCoverColor)
+}
+
 // ClearColumn clears the "column" edge to the Column entity.
 func (m *CardMutation) ClearColumn() {
 	m.clearedcolumn = true
@@ -6447,7 +6584,7 @@ func (m *CardMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CardMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, card.FieldCreatedAt)
 	}
@@ -6487,6 +6624,15 @@ func (m *CardMutation) Fields() []string {
 	if m.board != nil {
 		fields = append(fields, card.FieldBoardID)
 	}
+	if m.due_date != nil {
+		fields = append(fields, card.FieldDueDate)
+	}
+	if m.archived != nil {
+		fields = append(fields, card.FieldArchived)
+	}
+	if m.cover_color != nil {
+		fields = append(fields, card.FieldCoverColor)
+	}
 	return fields
 }
 
@@ -6521,6 +6667,12 @@ func (m *CardMutation) Field(name string) (ent.Value, bool) {
 		return m.ColumnID()
 	case card.FieldBoardID:
 		return m.BoardID()
+	case card.FieldDueDate:
+		return m.DueDate()
+	case card.FieldArchived:
+		return m.Archived()
+	case card.FieldCoverColor:
+		return m.CoverColor()
 	}
 	return nil, false
 }
@@ -6556,6 +6708,12 @@ func (m *CardMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldColumnID(ctx)
 	case card.FieldBoardID:
 		return m.OldBoardID(ctx)
+	case card.FieldDueDate:
+		return m.OldDueDate(ctx)
+	case card.FieldArchived:
+		return m.OldArchived(ctx)
+	case card.FieldCoverColor:
+		return m.OldCoverColor(ctx)
 	}
 	return nil, fmt.Errorf("unknown Card field %s", name)
 }
@@ -6655,6 +6813,27 @@ func (m *CardMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBoardID(v)
+		return nil
+	case card.FieldDueDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDueDate(v)
+		return nil
+	case card.FieldArchived:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetArchived(v)
+		return nil
+	case card.FieldCoverColor:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoverColor(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Card field %s", name)
@@ -6785,6 +6964,12 @@ func (m *CardMutation) ClearedFields() []string {
 	if m.FieldCleared(card.FieldBoardID) {
 		fields = append(fields, card.FieldBoardID)
 	}
+	if m.FieldCleared(card.FieldDueDate) {
+		fields = append(fields, card.FieldDueDate)
+	}
+	if m.FieldCleared(card.FieldCoverColor) {
+		fields = append(fields, card.FieldCoverColor)
+	}
 	return fields
 }
 
@@ -6835,6 +7020,12 @@ func (m *CardMutation) ClearField(name string) error {
 	case card.FieldBoardID:
 		m.ClearBoardID()
 		return nil
+	case card.FieldDueDate:
+		m.ClearDueDate()
+		return nil
+	case card.FieldCoverColor:
+		m.ClearCoverColor()
+		return nil
 	}
 	return fmt.Errorf("unknown Card nullable field %s", name)
 }
@@ -6881,6 +7072,15 @@ func (m *CardMutation) ResetField(name string) error {
 		return nil
 	case card.FieldBoardID:
 		m.ResetBoardID()
+		return nil
+	case card.FieldDueDate:
+		m.ResetDueDate()
+		return nil
+	case card.FieldArchived:
+		m.ResetArchived()
+		return nil
+	case card.FieldCoverColor:
+		m.ResetCoverColor()
 		return nil
 	}
 	return fmt.Errorf("unknown Card field %s", name)

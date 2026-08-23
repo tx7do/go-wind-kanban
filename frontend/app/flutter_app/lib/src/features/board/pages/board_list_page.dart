@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart' as api;
 import 'package:flutter_app/src/features/board/data/board_cache.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
+import 'package:flutter_app/generated/l10n.dart';
 
 /// 看板列表页：在线拉取看板列表，断网回落到本地缓存列表。
 class BoardListPage extends StatefulWidget {
@@ -51,12 +52,13 @@ class _BoardListPageState extends State<BoardListPage> {
   Future<void> _editBoard(
       BuildContext context, KanbanBoard board,
       {required bool editName}) async {
+    final loc = S.of(context);
     final nameCtrl = TextEditingController(text: board.name);
     final descCtrl = TextEditingController(text: board.description ?? '');
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(editName ? '重命名看板' : '编辑描述'),
+        title: Text(editName ? loc.renameBoard : loc.editDescription),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -64,18 +66,18 @@ class _BoardListPageState extends State<BoardListPage> {
               TextField(
                   controller: nameCtrl,
                   autofocus: true,
-                  decoration: const InputDecoration(labelText: '看板名称'))
+                  decoration: InputDecoration(labelText: loc.boardName))
             else
               TextField(
                   controller: descCtrl,
                   maxLines: 3,
                   autofocus: true,
-                  decoration: const InputDecoration(labelText: '描述')),
+                  decoration: InputDecoration(labelText: loc.description)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('保存')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(loc.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(loc.save)),
         ],
       ),
     );
@@ -96,23 +98,24 @@ class _BoardListPageState extends State<BoardListPage> {
       _load();
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('更新失败: $e')));
+          .showSnackBar(SnackBar(content: Text(loc.updateFailed)));
     }
   }
 
   Future<void> _deleteBoard(
       BuildContext context, KanbanBoard board) async {
+    final loc = S.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除看板'),
-        content: Text('确定删除看板「${board.name}」？此操作不可撤销，列和卡片将一并删除。'),
+        title: Text(loc.deleteBoard),
+        content: Text(loc.deleteBoardConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(loc.cancel)),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('删除'),
+            child: Text(loc.delete),
           ),
         ],
       ),
@@ -125,28 +128,29 @@ class _BoardListPageState extends State<BoardListPage> {
       _load();
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('删除失败: $e')));
+          .showSnackBar(SnackBar(content: Text(loc.deleteFailed)));
     }
   }
 
   Future<void> _createBoard() async {
+    final loc = S.of(context);
     final nameCtrl = TextEditingController();
     final descCtrl = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('新建看板'),
+        title: Text(loc.newBoard),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameCtrl, autofocus: true, decoration: const InputDecoration(labelText: '看板名称')),
+            TextField(controller: nameCtrl, autofocus: true, decoration: InputDecoration(labelText: loc.boardName)),
             const SizedBox(height: 12),
-            TextField(controller: descCtrl, decoration: const InputDecoration(labelText: '描述（可选）')),
+            TextField(controller: descCtrl, decoration: InputDecoration(labelText: loc.descriptionOptional)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('创建')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(loc.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(loc.create)),
         ],
       ),
     );
@@ -162,22 +166,23 @@ class _BoardListPageState extends State<BoardListPage> {
       );
       _load();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('创建失败: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.createFailed)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = S.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_offline ? '看板（离线）' : '看板'),
+        title: Text(_offline ? loc.boardsOffline : loc.boards),
         actions: [
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh)),
         ],
       ),
       body: _boards.isEmpty
           ? Center(
-              child: Text(_error ?? '暂无看板'),
+              child: Text(_error ?? loc.noBoards),
             )
           : ListView.separated(
               itemCount: _boards.length,
@@ -191,9 +196,9 @@ class _BoardListPageState extends State<BoardListPage> {
                   trailing: PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
                     itemBuilder: (_) => [
-                      const PopupMenuItem(value: 'rename', child: Text('重命名')),
-                      const PopupMenuItem(value: 'editDesc', child: Text('编辑描述')),
-                      const PopupMenuItem(value: 'delete', child: Text('删除看板')),
+                      PopupMenuItem(value: 'rename', child: Text(loc.rename)),
+                      PopupMenuItem(value: 'editDesc', child: Text(loc.editDescription)),
+                      PopupMenuItem(value: 'delete', child: Text(loc.deleteBoard)),
                     ],
                     onSelected: (v) {
                       switch (v) {
@@ -214,7 +219,7 @@ class _BoardListPageState extends State<BoardListPage> {
           ? null
           : FloatingActionButton.extended(
               icon: const Icon(Icons.add),
-              label: const Text('新建看板'),
+              label: Text(loc.newBoard),
               onPressed: _createBoard,
             ),
     );

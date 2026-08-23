@@ -74,6 +74,21 @@ message Card {
     (gnostic.openapi.v3.property) = {description: "所属看板ID（冗余自列，供看板级查询，服务端维护）"}
   ]; // 所属看板ID（冗余自列，供看板级查询，服务端维护）
 
+  optional google.protobuf.Timestamp due_date = 8 [
+    json_name = "dueDate",
+    (gnostic.openapi.v3.property) = {description: "卡片截止日期，可选"}
+  ]; // 卡片截止日期，可选
+
+  optional bool archived = 9 [
+    json_name = "archived",
+    (gnostic.openapi.v3.property) = {description: "归档标记，归档卡保留可见但默认收起"}
+  ]; // 归档标记，归档卡保留可见但默认收起
+
+  optional string cover_color = 10 [
+    json_name = "coverColor",
+    (gnostic.openapi.v3.property) = {description: "卡片封面纯色标识，取命名色集合"}
+  ]; // 卡片封面纯色标识，取命名色集合
+
   optional uint32 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}

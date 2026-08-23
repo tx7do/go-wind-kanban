@@ -5674,6 +5674,16 @@ components:
                     type: integer
                     description: 所属看板ID（冗余自列，供看板级查询，服务端维护）
                     format: uint32
+                dueDate:
+                    type: string
+                    description: 卡片截止日期，可选
+                    format: date-time
+                archived:
+                    type: boolean
+                    description: 归档标记，归档卡保留可见但默认收起
+                coverColor:
+                    type: string
+                    description: 卡片封面纯色标识，取命名色集合
                 tenantId:
                     type: integer
                     description: 租户ID，0代表系统全局

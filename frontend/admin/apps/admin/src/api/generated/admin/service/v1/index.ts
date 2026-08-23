@@ -1436,10 +1436,12 @@ export type boardservicev1_Column = {
 
 // 看板卡片
 export type boardservicev1_Card = {
+  archived?: boolean;
   boardId?: number;
   //
   // Behaviors: REQUIRED
   columnId?: number;
+  coverColor?: string;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   deletedAt?: wellKnownTimestamp;
@@ -1447,6 +1449,7 @@ export type boardservicev1_Card = {
   //
   // Behaviors: OPTIONAL
   description?: string;
+  dueDate?: wellKnownTimestamp;
   id?: number;
   //
   // Behaviors: REQUIRED

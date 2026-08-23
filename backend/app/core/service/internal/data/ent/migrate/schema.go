@@ -210,6 +210,9 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "卡片描述"},
 		{Name: "rank", Type: field.TypeString, Nullable: true, Comment: "列内排序权重，Lexorank 字典序字符串，服务端维护"},
 		{Name: "version", Type: field.TypeUint32, Comment: "乐观锁版本号，每次更新自增", Default: 1},
+		{Name: "due_date", Type: field.TypeTime, Nullable: true, Comment: "卡片截止日期，可选"},
+		{Name: "archived", Type: field.TypeBool, Comment: "归档标记，归档卡保留可见但默认收起", Default: false},
+		{Name: "cover_color", Type: field.TypeString, Nullable: true, Comment: "卡片封面纯色标识，取命名色集合"},
 		{Name: "board_id", Type: field.TypeUint32, Nullable: true, Comment: "所属看板ID，冗余自列，供看板级查询，服务端维护"},
 		{Name: "column_id", Type: field.TypeUint32, Nullable: true, Comment: "所属列ID"},
 	}
@@ -222,13 +225,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "sys_kanban_cards_sys_kanban_boards_cards",
-				Columns:    []*schema.Column{SysKanbanCardsColumns[12]},
+				Columns:    []*schema.Column{SysKanbanCardsColumns[15]},
 				RefColumns: []*schema.Column{SysKanbanBoardsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "sys_kanban_cards_sys_kanban_columns_cards",
-				Columns:    []*schema.Column{SysKanbanCardsColumns[13]},
+				Columns:    []*schema.Column{SysKanbanCardsColumns[16]},
 				RefColumns: []*schema.Column{SysKanbanColumnsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -237,12 +240,12 @@ var (
 			{
 				Name:    "idx_sys_kanban_cards_column_rank",
 				Unique:  false,
-				Columns: []*schema.Column{SysKanbanCardsColumns[13], SysKanbanCardsColumns[10]},
+				Columns: []*schema.Column{SysKanbanCardsColumns[16], SysKanbanCardsColumns[10]},
 			},
 			{
 				Name:    "idx_sys_kanban_cards_board_column_rank",
 				Unique:  false,
-				Columns: []*schema.Column{SysKanbanCardsColumns[12], SysKanbanCardsColumns[13], SysKanbanCardsColumns[10]},
+				Columns: []*schema.Column{SysKanbanCardsColumns[15], SysKanbanCardsColumns[16], SysKanbanCardsColumns[10]},
 			},
 		},
 	}

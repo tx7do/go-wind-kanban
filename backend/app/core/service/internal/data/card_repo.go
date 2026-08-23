@@ -182,12 +182,18 @@ func (r *CardRepo) Create(ctx context.Context, req *boardV1.CreateCardRequest) (
 		SetNillableTenantID(req.Data.TenantId).
 		SetNillableName(req.Data.Name).
 		SetNillableDescription(req.Data.Description).
+		SetArchived(req.Data.GetArchived()).
+		SetNillableCoverColor(req.Data.CoverColor).
 		SetRank(newRank).
 		SetVersion(1).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now()).
 		SetColumnID(parentColumn.ID).
 		SetBoardID(parentBoardID)
+
+	if req.Data.DueDate != nil {
+		builder.SetDueDate(req.Data.DueDate.AsTime())
+	}
 
 	t, err := builder.Save(ctx)
 	if err != nil {
@@ -231,7 +237,15 @@ func (r *CardRepo) Update(ctx context.Context, req *boardV1.UpdateCardRequest) (
 			builder.
 				SetNillableName(req.Data.Name).
 				SetNillableDescription(req.Data.Description).
+				SetNillableCoverColor(req.Data.CoverColor).
 				SetUpdatedAt(time.Now())
+
+			if req.Data.DueDate != nil {
+				builder.SetDueDate(req.Data.DueDate.AsTime())
+			}
+			if req.Data.Archived != nil {
+				builder.SetArchived(*req.Data.Archived)
+			}
 
 			if hasUser {
 				builder.SetUpdatedBy(callerUserID)

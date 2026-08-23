@@ -39,6 +39,12 @@ const (
 	FieldColumnID = "column_id"
 	// FieldBoardID holds the string denoting the board_id field in the database.
 	FieldBoardID = "board_id"
+	// FieldDueDate holds the string denoting the due_date field in the database.
+	FieldDueDate = "due_date"
+	// FieldArchived holds the string denoting the archived field in the database.
+	FieldArchived = "archived"
+	// FieldCoverColor holds the string denoting the cover_color field in the database.
+	FieldCoverColor = "cover_color"
 	// EdgeColumn holds the string denoting the column edge name in mutations.
 	EdgeColumn = "column"
 	// EdgeBoard holds the string denoting the board edge name in mutations.
@@ -77,6 +83,9 @@ var Columns = []string{
 	FieldVersion,
 	FieldColumnID,
 	FieldBoardID,
+	FieldDueDate,
+	FieldArchived,
+	FieldCoverColor,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,6 +112,8 @@ var (
 	NameValidator func(string) error
 	// DefaultVersion holds the default value on creation for the "version" field.
 	DefaultVersion uint32
+	// DefaultArchived holds the default value on creation for the "archived" field.
+	DefaultArchived bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -178,6 +189,21 @@ func ByColumnID(opts ...sql.OrderTermOption) OrderOption {
 // ByBoardID orders the results by the board_id field.
 func ByBoardID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBoardID, opts...).ToFunc()
+}
+
+// ByDueDate orders the results by the due_date field.
+func ByDueDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDueDate, opts...).ToFunc()
+}
+
+// ByArchived orders the results by the archived field.
+func ByArchived(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldArchived, opts...).ToFunc()
+}
+
+// ByCoverColor orders the results by the cover_color field.
+func ByCoverColor(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCoverColor, opts...).ToFunc()
 }
 
 // ByColumnField orders the results by column field.

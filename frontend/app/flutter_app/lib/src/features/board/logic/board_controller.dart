@@ -75,6 +75,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
         board: cur.board,
         columns: cur.columns,
         cards: cur.cards,
+        cardLabelAssociations: cur.cardLabelAssociations,
         labels: labels,
       ));
     } on DioException catch (_) {
@@ -116,11 +117,22 @@ class BoardController extends Cubit<KanbanBoardState?> {
         try {
           final labels = await LabelApi().listByBoard(boardId);
           final cur = state;
-          if (cur != null && labels.isNotEmpty) {
+          if (cur != null) {
+            // 拉取每张卡片的标签关联（N+1，待后端加看板级快照端点优化）。
+            final assoc = <int, List<int>>{};
+            for (final c in cur.cards) {
+              try {
+                final ids = (await LabelApi().getCardLabels(c.id)).map((l) => l.id).toList();
+                if (ids.isNotEmpty) assoc[c.id] = ids;
+              } catch (_) {
+                // 单卡关联拉取失败跳过，不阻断整体
+              }
+            }
             emit(KanbanBoardState(
               board: cur.board,
               columns: cur.columns,
               cards: cur.cards,
+              cardLabelAssociations: assoc,
               labels: labels,
             ));
           }
@@ -188,6 +200,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
       board: prev.board,
       columns: prev.columns.map((c) => c.id == columnId ? c.copyWith(name: name) : c).toList(),
       cards: prev.cards,
+      cardLabelAssociations: prev.cardLabelAssociations,
       labels: prev.labels,
     ));
 
@@ -235,6 +248,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
       board: prev.board,
       columns: prev.columns.where((c) => c.id != columnId).toList(),
       cards: prev.cards.where((c) => c.columnId != columnId).toList(),
+      cardLabelAssociations: prev.cardLabelAssociations,
       labels: prev.labels,
     ));
     try {
@@ -366,6 +380,101 @@ class BoardController extends Cubit<KanbanBoardState?> {
     }
   }
 
+  /// 设置卡片截止日期（在线路径，乐观更新）。
+  /// 传 null 表示清除截止日期。服务端 nil-path 经 applyUpdateOneNilFieldMask 显式 SetNull。
+  Future<bool> setCardDueDate(int cardId, DateTime? dueDate) async {
+    final prev = state;
+    if (prev == null) return false;
+    final card = prev.cards.where((c) => c.id == cardId).firstOrNull;
+    if (card == null) return false;
+
+    emit(_mapCards(prev, (c) =>
+        c.id == cardId ? (dueDate == null ? c.clearDueDate() : c.copyWith(dueDate: dueDate)) : c));
+
+    if (_offline) {
+      return false;
+    }
+    try {
+      await _api.cardService.update(api.BoardServiceV1UpdateCardRequest(
+        id: cardId,
+        data: api.BoardServiceV1Card(
+            dueDate: dueDate == null ? null : dueDate.toIso8601String()),
+        updateMask: 'due_date',
+        expectedVersion: card.version,
+      ));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+        return false;
+      }
+      emit(prev);
+      return false;
+    }
+  }
+
+  /// 设置卡片归档标记（在线路径，乐观更新）。
+  Future<bool> setCardArchived(int cardId, bool archived) async {
+    final prev = state;
+    if (prev == null) return false;
+    final card = prev.cards.where((c) => c.id == cardId).firstOrNull;
+    if (card == null) return false;
+
+    emit(_mapCards(prev, (c) => c.id == cardId ? c.copyWith(archived: archived) : c));
+
+    if (_offline) {
+      return false;
+    }
+    try {
+      await _api.cardService.update(api.BoardServiceV1UpdateCardRequest(
+        id: cardId,
+        data: api.BoardServiceV1Card(archived: archived),
+        updateMask: 'archived',
+        expectedVersion: card.version,
+      ));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+        return false;
+      }
+      emit(prev);
+      return false;
+    }
+  }
+
+  /// 设置卡片封面色（在线路径，乐观更新）。
+  /// 传 null 表示清除封面色。
+  Future<bool> setCardCoverColor(int cardId, String? color) async {
+    final prev = state;
+    if (prev == null) return false;
+    final card = prev.cards.where((c) => c.id == cardId).firstOrNull;
+    if (card == null) return false;
+
+    emit(_mapCards(prev, (c) =>
+        c.id == cardId ? (color == null ? c.clearCoverColor() : c.copyWith(coverColor: color)) : c));
+
+    if (_offline) {
+      return false;
+    }
+    try {
+      await _api.cardService.update(api.BoardServiceV1UpdateCardRequest(
+        id: cardId,
+        data: api.BoardServiceV1Card(coverColor: color),
+        updateMask: 'cover_color',
+        expectedVersion: card.version,
+      ));
+      return true;
+    } on DioException catch (e) {
+      if (_isConnectionError(e)) {
+        _offline = true;
+        return false;
+      }
+      emit(prev);
+      return false;
+    }
+  }
+
   /// 在指定列尾部建卡。
   Future<bool> createCard(int columnId, String name) async {
     final cur = state;
@@ -384,6 +493,8 @@ class BoardController extends Cubit<KanbanBoardState?> {
         board: cur.board,
         columns: cur.columns,
         cards: [...cur.cards, temp],
+        cardLabelAssociations: cur.cardLabelAssociations,
+        labels: cur.labels,
       ));
       await _pending.enqueue(PendingOps.createCardOp(columnId: columnId, name: name, tempId: tempId));
       return true;
@@ -412,6 +523,8 @@ class BoardController extends Cubit<KanbanBoardState?> {
       board: prev.board,
       columns: prev.columns,
       cards: prev.cards.where((c) => c.id != cardId).toList(),
+      cardLabelAssociations: prev.cardLabelAssociations,
+      labels: prev.labels,
     ));
 
     if (_offline) {
@@ -481,13 +594,14 @@ class BoardController extends Cubit<KanbanBoardState?> {
 
   // ===== WS 事件维护 =====
 
-  void applyEvent(BoardEvent ev) {
+  Future<void> applyEvent(BoardEvent ev) async {
     final cur = state;
     if (cur == null || ev.boardId != cur.board.id) return;
     final board = cur.board;
     final columns = cur.columns;
     final cards = cur.cards;
     final labels = cur.labels;
+    final labelAssoc = cur.cardLabelAssociations;
 
     switch (ev.type) {
       case BoardEvent.cardCreated:
@@ -496,10 +610,12 @@ class BoardController extends Cubit<KanbanBoardState?> {
         if (ev.card != null) _upsertCardDto(ev.card!);
       case BoardEvent.cardDeleted:
         if (ev.card != null) {
+          final removedId = ev.card!.id;
           emit(KanbanBoardState(
             board: board,
             columns: columns,
-            cards: cards.where((c) => c.id != ev.card!.id).toList(),
+            cards: cards.where((c) => c.id != removedId).toList(),
+            cardLabelAssociations: Map.from(labelAssoc)..remove(removedId),
             labels: labels,
           ));
         }
@@ -509,19 +625,47 @@ class BoardController extends Cubit<KanbanBoardState?> {
         if (ev.label != null) {
           final label = KanbanLabel.fromDto(ev.label!);
           final rest = labels.where((l) => l.id != label.id).toList()..add(label);
-          emit(KanbanBoardState(board: board, columns: columns, cards: cards, labels: rest));
+          emit(KanbanBoardState(board: board, columns: columns, cards: cards, cardLabelAssociations: labelAssoc, labels: rest));
         }
       case BoardEvent.labelDeleted:
         if (ev.label != null) {
+          final removedLabelId = ev.label!.id;
+          // 标签定义删除后，所有卡片上的该标签关联也一并清除。
+          final cleanedAssoc = <int, List<int>>{};
+          labelAssoc.forEach((cid, lids) {
+            cleanedAssoc[cid] = lids.where((l) => l != removedLabelId).toList();
+          });
           emit(KanbanBoardState(
             board: board,
             columns: columns,
             cards: cards,
-            labels: labels.where((l) => l.id != ev.label!.id).toList(),
+            cardLabelAssociations: cleanedAssoc,
+            labels: labels.where((l) => l.id != removedLabelId).toList(),
           ));
         }
-      // 卡片标签关联变更：关联状态在编辑时按需拉取，board state 无需维护。
+      // 卡片标签关联变更：重新拉取该卡片的标签集合并更新关联映射。
       case BoardEvent.cardLabelsChanged:
+        if (ev.card != null) {
+          final cardId = ev.card!.id;
+          if (cardId == null) break;
+          List<int> freshIds;
+          try {
+            freshIds = (await LabelApi().getCardLabels(cardId))
+                .map((l) => l.id)
+                .toList();
+          } catch (_) {
+            break;
+          }
+          final nextAssoc = Map<int, List<int>>.from(labelAssoc);
+          nextAssoc[cardId] = freshIds;
+          emit(KanbanBoardState(
+            board: board,
+            columns: columns,
+            cards: cards,
+            cardLabelAssociations: nextAssoc,
+            labels: labels,
+          ));
+        }
         break;
       case BoardEvent.columnCreated:
       case BoardEvent.columnUpdated:
@@ -530,14 +674,25 @@ class BoardController extends Cubit<KanbanBoardState?> {
           final col = KanbanColumn.fromDto(ev.column!);
           final rest = columns.where((c) => c.id != col.id).toList()..add(col);
           rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-          emit(KanbanBoardState(board: board, columns: rest, cards: cards, labels: labels));
+          emit(KanbanBoardState(board: board, columns: rest, cards: cards, cardLabelAssociations: labelAssoc, labels: labels));
         }
       case BoardEvent.columnDeleted:
         if (ev.column != null) {
+          final removedColId = ev.column!.id;
+          // 列删除连带清理其下卡片的标签关联。
+          final keptCardIds = cards
+              .where((c) => c.columnId != removedColId)
+              .map((c) => c.id)
+              .toSet();
+          final cleanedAssoc = <int, List<int>>{};
+          labelAssoc.forEach((cid, lids) {
+            if (keptCardIds.contains(cid)) cleanedAssoc[cid] = lids;
+          });
           emit(KanbanBoardState(
             board: board,
-            columns: columns.where((c) => c.id != ev.column!.id).toList(),
-            cards: cards.where((c) => c.columnId != ev.column!.id).toList(),
+            columns: columns.where((c) => c.id != removedColId).toList(),
+            cards: cards.where((c) => c.columnId != removedColId).toList(),
+            cardLabelAssociations: cleanedAssoc,
             labels: labels,
           ));
         }
@@ -548,6 +703,7 @@ class BoardController extends Cubit<KanbanBoardState?> {
             board: KanbanBoard.fromDto(ev.board!),
             columns: columns,
             cards: cards,
+            cardLabelAssociations: labelAssoc,
             labels: labels,
           ));
         }
@@ -598,7 +754,14 @@ void _onConnection(bool up) {
     final liveColIds = columns.map((c) => c.id).toSet();
     cards = cards.where((c) => liveColIds.contains(c.columnId)).toList();
 
-    return KanbanBoardState(board: board, columns: columns, cards: cards, labels: base.labels);
+    // 标签关联映射仅保留存活卡片的条目。
+    final liveCardIds = cards.map((c) => c.id).toSet();
+    final prunedAssoc = <int, List<int>>{};
+    base.cardLabelAssociations.forEach((cid, lids) {
+      if (liveCardIds.contains(cid)) prunedAssoc[cid] = lids;
+    });
+
+    return KanbanBoardState(board: board, columns: columns, cards: cards, cardLabelAssociations: prunedAssoc, labels: base.labels);
   }
 
   // ===== 内部工具 =====
@@ -609,7 +772,7 @@ void _onConnection(bool up) {
     final card = KanbanCard.fromDto(dto);
     final rest = state.cards.where((c) => c.id != card.id).toList()..add(card);
     rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-    emit(KanbanBoardState(board: state.board, columns: state.columns, cards: rest, labels: state.labels));
+    emit(KanbanBoardState(board: state.board, columns: state.columns, cards: rest, cardLabelAssociations: state.cardLabelAssociations, labels: state.labels));
   }
 
   void _upsertColumnDto(api.BoardServiceV1Column dto) {
@@ -618,11 +781,11 @@ void _onConnection(bool up) {
     final col = KanbanColumn.fromDto(dto);
     final rest = state.columns.where((c) => c.id != col.id).toList()..add(col);
     rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-    emit(KanbanBoardState(board: state.board, columns: rest, cards: state.cards, labels: state.labels));
+    emit(KanbanBoardState(board: state.board, columns: rest, cards: state.cards, cardLabelAssociations: state.cardLabelAssociations, labels: state.labels));
   }
 
   KanbanBoardState _mapCards(KanbanBoardState s, KanbanCard Function(KanbanCard) f) {
-    return KanbanBoardState(board: s.board, columns: s.columns, cards: s.cards.map(f).toList(), labels: s.labels);
+    return KanbanBoardState(board: s.board, columns: s.columns, cards: s.cards.map(f).toList(), cardLabelAssociations: s.cardLabelAssociations, labels: s.labels);
   }
 
   KanbanBoardState _applyLocalMove(KanbanBoardState s, KanbanCard card, int toColumnId, int toIndex) {
@@ -639,7 +802,7 @@ void _onConnection(bool up) {
 
     final rest = s.cards.where((c) => c.id != card.id).toList()..add(withRank);
     rest.sort((a, b) => (a.rank ?? '').compareTo(b.rank ?? ''));
-    return KanbanBoardState(board: s.board, columns: s.columns, cards: rest, labels: s.labels);
+    return KanbanBoardState(board: s.board, columns: s.columns, cards: rest, cardLabelAssociations: s.cardLabelAssociations, labels: s.labels);
   }
 
   /// 客户端侧 base-36 中点（展示用；服务端为权威）。

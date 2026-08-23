@@ -30,20 +30,23 @@ const (
 // 看板卡片
 type Card struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                  // 卡片ID
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                               // 卡片标题
-	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`                 // 卡片描述/正文
-	Rank          *string                `protobuf:"bytes,4,opt,name=rank,proto3,oneof" json:"rank,omitempty"`                               // 列内排序权重（Lexorank 字典序字符串，服务端维护）
-	Version       *uint32                `protobuf:"varint,5,opt,name=version,proto3,oneof" json:"version,omitempty"`                        // 乐观锁版本号，每次更新自增（离线同步冲突检测用）
-	ColumnId      *uint32                `protobuf:"varint,6,opt,name=column_id,json=columnId,proto3,oneof" json:"column_id,omitempty"`      // 所属列ID
-	BoardId       *uint32                `protobuf:"varint,7,opt,name=board_id,json=boardId,proto3,oneof" json:"board_id,omitempty"`         // 所属看板ID（冗余自列，供看板级查询，服务端维护）
-	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`     // 租户ID，0代表系统全局
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
-	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                   // 卡片ID
+	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                // 卡片标题
+	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`                  // 卡片描述/正文
+	Rank          *string                `protobuf:"bytes,4,opt,name=rank,proto3,oneof" json:"rank,omitempty"`                                // 列内排序权重（Lexorank 字典序字符串，服务端维护）
+	Version       *uint32                `protobuf:"varint,5,opt,name=version,proto3,oneof" json:"version,omitempty"`                         // 乐观锁版本号，每次更新自增（离线同步冲突检测用）
+	ColumnId      *uint32                `protobuf:"varint,6,opt,name=column_id,json=columnId,proto3,oneof" json:"column_id,omitempty"`       // 所属列ID
+	BoardId       *uint32                `protobuf:"varint,7,opt,name=board_id,json=boardId,proto3,oneof" json:"board_id,omitempty"`          // 所属看板ID（冗余自列，供看板级查询，服务端维护）
+	DueDate       *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=due_date,json=dueDate,proto3,oneof" json:"due_date,omitempty"`           // 卡片截止日期，可选
+	Archived      *bool                  `protobuf:"varint,9,opt,name=archived,proto3,oneof" json:"archived,omitempty"`                       // 归档标记，归档卡保留可见但默认收起
+	CoverColor    *string                `protobuf:"bytes,10,opt,name=cover_color,json=coverColor,proto3,oneof" json:"cover_color,omitempty"` // 卡片封面纯色标识，取命名色集合
+	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`      // 租户ID，0代表系统全局
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`  // 创建者用户ID
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`  // 更新者用户ID
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`  // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`   // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`   // 更新时间
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`   // 删除时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -125,6 +128,27 @@ func (x *Card) GetBoardId() uint32 {
 		return *x.BoardId
 	}
 	return 0
+}
+
+func (x *Card) GetDueDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DueDate
+	}
+	return nil
+}
+
+func (x *Card) GetArchived() bool {
+	if x != nil && x.Archived != nil {
+		return *x.Archived
+	}
+	return false
+}
+
+func (x *Card) GetCoverColor() string {
+	if x != nil && x.CoverColor != nil {
+		return *x.CoverColor
+	}
+	return ""
 }
 
 func (x *Card) GetTenantId() uint32 {
@@ -604,7 +628,7 @@ var File_board_service_v1_card_proto protoreflect.FileDescriptor
 
 const file_board_service_v1_card_proto_rawDesc = "" +
 	"\n" +
-	"\x1bboard/service/v1/card.proto\x12\x10board.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd2\t\n" +
+	"\x1bboard/service/v1/card.proto\x12\x10board.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x92\f\n" +
 	"\x04Card\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b卡片IDH\x00R\x02id\x88\x01\x01\x12.\n" +
 	"\x04name\x18\x02 \x01(\tB\x15\xe0A\x02\xbaG\x0f\x92\x02\f卡片标题H\x01R\x04name\x88\x01\x01\x12C\n" +
@@ -612,21 +636,26 @@ const file_board_service_v1_card_proto_rawDesc = "" +
 	"\x04rank\x18\x04 \x01(\tBK\xbaGH\x92\x02E列内排序权重（Lexorank 字典序字符串，服务端维护）H\x03R\x04rank\x88\x01\x01\x12m\n" +
 	"\aversion\x18\x05 \x01(\rBN\xbaGK\x92\x02H乐观锁版本号，每次更新自增（离线同步冲突检测用）H\x04R\aversion\x88\x01\x01\x126\n" +
 	"\tcolumn_id\x18\x06 \x01(\rB\x14\xe0A\x02\xbaG\x0e\x92\x02\v所属列IDH\x05R\bcolumnId\x88\x01\x01\x12m\n" +
-	"\bboard_id\x18\a \x01(\rBM\xbaGJ\x92\x02G所属看板ID（冗余自列，供看板级查询，服务端维护）H\x06R\aboardId\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\aR\btenantId\x88\x01\x01\x12;\n" +
+	"\bboard_id\x18\a \x01(\rBM\xbaGJ\x92\x02G所属看板ID（冗余自列，供看板级查询，服务端维护）H\x06R\aboardId\x88\x01\x01\x12]\n" +
+	"\bdue_date\x18\b \x01(\v2\x1a.google.protobuf.TimestampB!\xbaG\x1e\x92\x02\x1b卡片截止日期，可选H\aR\adueDate\x88\x01\x01\x12Z\n" +
+	"\barchived\x18\t \x01(\bB9\xbaG6\x92\x023归档标记，归档卡保留可见但默认收起H\bR\barchived\x88\x01\x01\x12Y\n" +
+	"\vcover_color\x18\n" +
+	" \x01(\tB3\xbaG0\x92\x02-卡片封面纯色标识，取命名色集合H\tR\n" +
+	"coverColor\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\n" +
+	"R\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
-	"R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\rR\tdeletedAt\x88\x01\x01B\x05\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\a\n" +
@@ -635,7 +664,10 @@ const file_board_service_v1_card_proto_rawDesc = "" +
 	"\b_versionB\f\n" +
 	"\n" +
 	"_column_idB\v\n" +
-	"\t_board_idB\f\n" +
+	"\t_board_idB\v\n" +
+	"\t_due_dateB\v\n" +
+	"\t_archivedB\x0e\n" +
+	"\f_cover_colorB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +
@@ -717,31 +749,32 @@ var file_board_service_v1_card_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),         // 10: google.protobuf.Empty
 }
 var file_board_service_v1_card_proto_depIdxs = []int32{
-	7,  // 0: board.service.v1.Card.created_at:type_name -> google.protobuf.Timestamp
-	7,  // 1: board.service.v1.Card.updated_at:type_name -> google.protobuf.Timestamp
-	7,  // 2: board.service.v1.Card.deleted_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: board.service.v1.ListCardResponse.items:type_name -> board.service.v1.Card
-	8,  // 4: board.service.v1.GetCardRequest.view_mask:type_name -> google.protobuf.FieldMask
-	0,  // 5: board.service.v1.CreateCardRequest.data:type_name -> board.service.v1.Card
-	0,  // 6: board.service.v1.UpdateCardRequest.data:type_name -> board.service.v1.Card
-	8,  // 7: board.service.v1.UpdateCardRequest.update_mask:type_name -> google.protobuf.FieldMask
-	9,  // 8: board.service.v1.CardService.List:input_type -> pagination.PagingRequest
-	2,  // 9: board.service.v1.CardService.Get:input_type -> board.service.v1.GetCardRequest
-	3,  // 10: board.service.v1.CardService.Create:input_type -> board.service.v1.CreateCardRequest
-	4,  // 11: board.service.v1.CardService.Update:input_type -> board.service.v1.UpdateCardRequest
-	5,  // 12: board.service.v1.CardService.Delete:input_type -> board.service.v1.DeleteCardRequest
-	6,  // 13: board.service.v1.CardService.Move:input_type -> board.service.v1.MoveCardRequest
-	1,  // 14: board.service.v1.CardService.List:output_type -> board.service.v1.ListCardResponse
-	0,  // 15: board.service.v1.CardService.Get:output_type -> board.service.v1.Card
-	0,  // 16: board.service.v1.CardService.Create:output_type -> board.service.v1.Card
-	0,  // 17: board.service.v1.CardService.Update:output_type -> board.service.v1.Card
-	10, // 18: board.service.v1.CardService.Delete:output_type -> google.protobuf.Empty
-	0,  // 19: board.service.v1.CardService.Move:output_type -> board.service.v1.Card
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	7,  // 0: board.service.v1.Card.due_date:type_name -> google.protobuf.Timestamp
+	7,  // 1: board.service.v1.Card.created_at:type_name -> google.protobuf.Timestamp
+	7,  // 2: board.service.v1.Card.updated_at:type_name -> google.protobuf.Timestamp
+	7,  // 3: board.service.v1.Card.deleted_at:type_name -> google.protobuf.Timestamp
+	0,  // 4: board.service.v1.ListCardResponse.items:type_name -> board.service.v1.Card
+	8,  // 5: board.service.v1.GetCardRequest.view_mask:type_name -> google.protobuf.FieldMask
+	0,  // 6: board.service.v1.CreateCardRequest.data:type_name -> board.service.v1.Card
+	0,  // 7: board.service.v1.UpdateCardRequest.data:type_name -> board.service.v1.Card
+	8,  // 8: board.service.v1.UpdateCardRequest.update_mask:type_name -> google.protobuf.FieldMask
+	9,  // 9: board.service.v1.CardService.List:input_type -> pagination.PagingRequest
+	2,  // 10: board.service.v1.CardService.Get:input_type -> board.service.v1.GetCardRequest
+	3,  // 11: board.service.v1.CardService.Create:input_type -> board.service.v1.CreateCardRequest
+	4,  // 12: board.service.v1.CardService.Update:input_type -> board.service.v1.UpdateCardRequest
+	5,  // 13: board.service.v1.CardService.Delete:input_type -> board.service.v1.DeleteCardRequest
+	6,  // 14: board.service.v1.CardService.Move:input_type -> board.service.v1.MoveCardRequest
+	1,  // 15: board.service.v1.CardService.List:output_type -> board.service.v1.ListCardResponse
+	0,  // 16: board.service.v1.CardService.Get:output_type -> board.service.v1.Card
+	0,  // 17: board.service.v1.CardService.Create:output_type -> board.service.v1.Card
+	0,  // 18: board.service.v1.CardService.Update:output_type -> board.service.v1.Card
+	10, // 19: board.service.v1.CardService.Delete:output_type -> google.protobuf.Empty
+	0,  // 20: board.service.v1.CardService.Move:output_type -> board.service.v1.Card
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_board_service_v1_card_proto_init() }

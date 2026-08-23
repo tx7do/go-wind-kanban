@@ -62,4 +62,12 @@ service BoardService {
       get: "/app/v1/boards/{board_id}/snapshot"
     };
   }
+
+  // 差量同步（客户端上报已知版本，仅返回变化实体与删除 ID）
+  rpc SyncBoard (board.service.v1.SyncBoardRequest) returns (board.service.v1.SyncBoardResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/boards/{board_id}:sync"
+      body: "*"
+    };
+  }
 }

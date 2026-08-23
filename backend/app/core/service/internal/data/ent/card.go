@@ -46,6 +46,12 @@ type Card struct {
 	ColumnID uint32 `json:"column_id,omitempty"`
 	// 所属看板ID，冗余自列，供看板级查询，服务端维护
 	BoardID uint32 `json:"board_id,omitempty"`
+	// 卡片截止日期，可选
+	DueDate *time.Time `json:"due_date,omitempty"`
+	// 归档标记，归档卡保留可见但默认收起
+	Archived bool `json:"archived,omitempty"`
+	// 卡片封面纯色标识，取命名色集合
+	CoverColor *string `json:"cover_color,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CardQuery when eager-loading is set.
 	Edges        CardEdges `json:"edges"`
@@ -90,11 +96,13 @@ func (*Card) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case card.FieldArchived:
+			values[i] = new(sql.NullBool)
 		case card.FieldID, card.FieldCreatedBy, card.FieldUpdatedBy, card.FieldDeletedBy, card.FieldTenantID, card.FieldVersion, card.FieldColumnID, card.FieldBoardID:
 			values[i] = new(sql.NullInt64)
-		case card.FieldName, card.FieldDescription, card.FieldRank:
+		case card.FieldName, card.FieldDescription, card.FieldRank, card.FieldCoverColor:
 			values[i] = new(sql.NullString)
-		case card.FieldCreatedAt, card.FieldUpdatedAt, card.FieldDeletedAt:
+		case card.FieldCreatedAt, card.FieldUpdatedAt, card.FieldDeletedAt, card.FieldDueDate:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -205,6 +213,26 @@ func (_m *Card) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.BoardID = uint32(value.Int64)
 			}
+		case card.FieldDueDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field due_date", values[i])
+			} else if value.Valid {
+				_m.DueDate = new(time.Time)
+				*_m.DueDate = value.Time
+			}
+		case card.FieldArchived:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field archived", values[i])
+			} else if value.Valid {
+				_m.Archived = value.Bool
+			}
+		case card.FieldCoverColor:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cover_color", values[i])
+			} else if value.Valid {
+				_m.CoverColor = new(string)
+				*_m.CoverColor = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -309,6 +337,19 @@ func (_m *Card) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("board_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.BoardID))
+	builder.WriteString(", ")
+	if v := _m.DueDate; v != nil {
+		builder.WriteString("due_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("archived=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Archived))
+	builder.WriteString(", ")
+	if v := _m.CoverColor; v != nil {
+		builder.WriteString("cover_color=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -120,6 +120,21 @@ func BoardID(v uint32) predicate.Card {
 	return predicate.Card(sql.FieldEQ(FieldBoardID, v))
 }
 
+// DueDate applies equality check predicate on the "due_date" field. It's identical to DueDateEQ.
+func DueDate(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldDueDate, v))
+}
+
+// Archived applies equality check predicate on the "archived" field. It's identical to ArchivedEQ.
+func Archived(v bool) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldArchived, v))
+}
+
+// CoverColor applies equality check predicate on the "cover_color" field. It's identical to CoverColorEQ.
+func CoverColor(v string) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldCoverColor, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Card {
 	return predicate.Card(sql.FieldEQ(FieldCreatedAt, v))
@@ -793,6 +808,141 @@ func BoardIDIsNil() predicate.Card {
 // BoardIDNotNil applies the NotNil predicate on the "board_id" field.
 func BoardIDNotNil() predicate.Card {
 	return predicate.Card(sql.FieldNotNull(FieldBoardID))
+}
+
+// DueDateEQ applies the EQ predicate on the "due_date" field.
+func DueDateEQ(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldDueDate, v))
+}
+
+// DueDateNEQ applies the NEQ predicate on the "due_date" field.
+func DueDateNEQ(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldNEQ(FieldDueDate, v))
+}
+
+// DueDateIn applies the In predicate on the "due_date" field.
+func DueDateIn(vs ...time.Time) predicate.Card {
+	return predicate.Card(sql.FieldIn(FieldDueDate, vs...))
+}
+
+// DueDateNotIn applies the NotIn predicate on the "due_date" field.
+func DueDateNotIn(vs ...time.Time) predicate.Card {
+	return predicate.Card(sql.FieldNotIn(FieldDueDate, vs...))
+}
+
+// DueDateGT applies the GT predicate on the "due_date" field.
+func DueDateGT(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldGT(FieldDueDate, v))
+}
+
+// DueDateGTE applies the GTE predicate on the "due_date" field.
+func DueDateGTE(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldGTE(FieldDueDate, v))
+}
+
+// DueDateLT applies the LT predicate on the "due_date" field.
+func DueDateLT(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldLT(FieldDueDate, v))
+}
+
+// DueDateLTE applies the LTE predicate on the "due_date" field.
+func DueDateLTE(v time.Time) predicate.Card {
+	return predicate.Card(sql.FieldLTE(FieldDueDate, v))
+}
+
+// DueDateIsNil applies the IsNil predicate on the "due_date" field.
+func DueDateIsNil() predicate.Card {
+	return predicate.Card(sql.FieldIsNull(FieldDueDate))
+}
+
+// DueDateNotNil applies the NotNil predicate on the "due_date" field.
+func DueDateNotNil() predicate.Card {
+	return predicate.Card(sql.FieldNotNull(FieldDueDate))
+}
+
+// ArchivedEQ applies the EQ predicate on the "archived" field.
+func ArchivedEQ(v bool) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldArchived, v))
+}
+
+// ArchivedNEQ applies the NEQ predicate on the "archived" field.
+func ArchivedNEQ(v bool) predicate.Card {
+	return predicate.Card(sql.FieldNEQ(FieldArchived, v))
+}
+
+// CoverColorEQ applies the EQ predicate on the "cover_color" field.
+func CoverColorEQ(v string) predicate.Card {
+	return predicate.Card(sql.FieldEQ(FieldCoverColor, v))
+}
+
+// CoverColorNEQ applies the NEQ predicate on the "cover_color" field.
+func CoverColorNEQ(v string) predicate.Card {
+	return predicate.Card(sql.FieldNEQ(FieldCoverColor, v))
+}
+
+// CoverColorIn applies the In predicate on the "cover_color" field.
+func CoverColorIn(vs ...string) predicate.Card {
+	return predicate.Card(sql.FieldIn(FieldCoverColor, vs...))
+}
+
+// CoverColorNotIn applies the NotIn predicate on the "cover_color" field.
+func CoverColorNotIn(vs ...string) predicate.Card {
+	return predicate.Card(sql.FieldNotIn(FieldCoverColor, vs...))
+}
+
+// CoverColorGT applies the GT predicate on the "cover_color" field.
+func CoverColorGT(v string) predicate.Card {
+	return predicate.Card(sql.FieldGT(FieldCoverColor, v))
+}
+
+// CoverColorGTE applies the GTE predicate on the "cover_color" field.
+func CoverColorGTE(v string) predicate.Card {
+	return predicate.Card(sql.FieldGTE(FieldCoverColor, v))
+}
+
+// CoverColorLT applies the LT predicate on the "cover_color" field.
+func CoverColorLT(v string) predicate.Card {
+	return predicate.Card(sql.FieldLT(FieldCoverColor, v))
+}
+
+// CoverColorLTE applies the LTE predicate on the "cover_color" field.
+func CoverColorLTE(v string) predicate.Card {
+	return predicate.Card(sql.FieldLTE(FieldCoverColor, v))
+}
+
+// CoverColorContains applies the Contains predicate on the "cover_color" field.
+func CoverColorContains(v string) predicate.Card {
+	return predicate.Card(sql.FieldContains(FieldCoverColor, v))
+}
+
+// CoverColorHasPrefix applies the HasPrefix predicate on the "cover_color" field.
+func CoverColorHasPrefix(v string) predicate.Card {
+	return predicate.Card(sql.FieldHasPrefix(FieldCoverColor, v))
+}
+
+// CoverColorHasSuffix applies the HasSuffix predicate on the "cover_color" field.
+func CoverColorHasSuffix(v string) predicate.Card {
+	return predicate.Card(sql.FieldHasSuffix(FieldCoverColor, v))
+}
+
+// CoverColorIsNil applies the IsNil predicate on the "cover_color" field.
+func CoverColorIsNil() predicate.Card {
+	return predicate.Card(sql.FieldIsNull(FieldCoverColor))
+}
+
+// CoverColorNotNil applies the NotNil predicate on the "cover_color" field.
+func CoverColorNotNil() predicate.Card {
+	return predicate.Card(sql.FieldNotNull(FieldCoverColor))
+}
+
+// CoverColorEqualFold applies the EqualFold predicate on the "cover_color" field.
+func CoverColorEqualFold(v string) predicate.Card {
+	return predicate.Card(sql.FieldEqualFold(FieldCoverColor, v))
+}
+
+// CoverColorContainsFold applies the ContainsFold predicate on the "cover_color" field.
+func CoverColorContainsFold(v string) predicate.Card {
+	return predicate.Card(sql.FieldContainsFold(FieldCoverColor, v))
 }
 
 // HasColumn applies the HasEdge predicate on the "column" edge.

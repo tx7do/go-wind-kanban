@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_app/src/core/utils/color_utils.dart';
 import 'package:flutter_app/src/features/board/data/label_api.dart';
 import 'package:flutter_app/src/features/board/logic/board_controller.dart';
 import 'package:flutter_app/src/features/board/models/board_models.dart';
+import 'package:flutter_app/generated/l10n.dart';
 
 /// 看板标签管理抽屉。
 ///
@@ -41,42 +43,45 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
   }
 
   Future<void> _create() async {
-    final name = await _prompt('标签名称', '');
+    final loc = S.of(context);
+    final name = await _prompt(loc.labelName, '');
     if (name == null || name.isEmpty) return;
-    final color = await _prompt('颜色（如 red/blue/#hex）', 'gray');
+    final color = await _prompt(loc.colorHint, 'gray');
     if (color == null) return;
     try {
       await _api.create(widget.boardId, name, color);
       await _load();
       await context.read<BoardController>().refreshLabels();
     } catch (e) {
-      _toast('创建失败: $e');
+      _toast(loc.createFailed);
     }
   }
 
   Future<void> _edit(KanbanLabel label) async {
-    final name = await _prompt('标签名称', label.name);
+    final loc = S.of(context);
+    final name = await _prompt(loc.labelName, label.name);
     if (name == null) return;
-    final color = await _prompt('颜色', label.color);
+    final color = await _prompt(loc.color, label.color);
     if (color == null) return;
     try {
       await _api.update(label.id, name, color);
       await _load();
       await context.read<BoardController>().refreshLabels();
     } catch (e) {
-      _toast('更新失败: $e');
+      _toast(loc.updateFailed);
     }
   }
 
   Future<void> _delete(KanbanLabel label) async {
+    final loc = S.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除标签'),
-        content: Text('确定删除标签「${label.name}」？此操作会移除所有卡片上的该标签关联。'),
+        title: Text(loc.deleteLabel),
+        content: Text(loc.deleteLabelConfirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('删除')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(loc.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(loc.delete)),
         ],
       ),
     );
@@ -86,11 +91,12 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
       await _load();
       await context.read<BoardController>().refreshLabels();
     } catch (e) {
-      _toast('删除失败: $e');
+      _toast(loc.deleteFailed);
     }
   }
 
   Future<String?> _prompt(String label, String initial) {
+    final loc = S.of(context);
     final ctrl = TextEditingController(text: initial);
     return showDialog<String>(
       context: context,
@@ -98,8 +104,8 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
         title: Text(label),
         content: TextField(controller: ctrl, autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text), child: const Text('确定')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(loc.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text), child: Text(loc.confirm)),
         ],
       ),
     );
@@ -111,12 +117,13 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = S.of(context);
     return Drawer(
       width: 320,
       child: Column(
         children: [
           AppBar(
-            title: const Text('标签管理'),
+            title: Text(loc.labelManagement),
             actions: [
               IconButton(onPressed: _create, icon: const Icon(Icons.add)),
               IconButton(onPressed: _load, icon: const Icon(Icons.refresh)),
@@ -125,7 +132,7 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
           if (_loading)
             const Expanded(child: Center(child: CircularProgressIndicator()))
           else if (_labels.isEmpty)
-            const Expanded(child: Center(child: Text('暂无标签')))
+            Expanded(child: Center(child: Text(loc.noLabels)))
           else
             Expanded(
               child: ListView.builder(
@@ -137,7 +144,7 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: _parseColor(label.color),
+                        color: parseNamedColor(label.color),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -162,36 +169,5 @@ class _LabelManagerDrawerState extends State<LabelManagerDrawer> {
         ],
       ),
     );
-  }
-
-  /// 将颜色字符串解析为 Color（支持命名色与 #hex）。
-  Color _parseColor(String s) {
-    const named = {
-      'red': 0xFFEF4444,
-      'orange': 0xFFF97316,
-      'amber': 0xFFF59E0B,
-      'yellow': 0xFFEAB308,
-      'lime': 0xFF84CC16,
-      'green': 0xFF22C55E,
-      'emerald': 0xFF10B981,
-      'teal': 0xFF14B8A6,
-      'cyan': 0xFF06B6D4,
-      'sky': 0xFF0EA5E9,
-      'blue': 0xFF3B82F6,
-      'indigo': 0xFF6366F1,
-      'violet': 0xFF8B5CF6,
-      'purple': 0xFFA855F7,
-      'fuchsia': 0xFFD946EF,
-      'pink': 0xFFEC4899,
-      'rose': 0xFFF43F5E,
-      'gray': 0xFF6B7280,
-      'slate': 0xFF64748B,
-    };
-    if (named.containsKey(s)) return Color(named[s]!);
-    if (s.startsWith('#') && s.length == 7) {
-      final hex = int.tryParse(s.substring(1), radix: 16);
-      if (hex != null) return Color(0xFF000000 | hex);
-    }
-    return const Color(0xFF6B7280);
   }
 }

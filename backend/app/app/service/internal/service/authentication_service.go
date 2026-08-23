@@ -83,3 +83,8 @@ func (s *AuthenticationService) RefreshToken(ctx context.Context, req *authentic
 
 	return s.authenticationServiceClient.RefreshToken(ctx, req)
 }
+
+// CreateWebSocketTicket 创建 WebSocket 一次性 ticket
+func (s *AuthenticationService) CreateWebSocketTicket(ctx context.Context, req *authenticationV1.CreateWebSocketTicketRequest) (*authenticationV1.CreateWebSocketTicketResponse, error) {
+	return s.authenticationServiceClient.CreateWebSocketTicket(ctx, req)
+}

@@ -105,9 +105,12 @@ class AuthenticationService extends AuthService {
           grant_type: AuthenticationServiceV1GrantType.password,
           username: params.username,
           password: encryptedPassword,
-          tenant_code: params.tenantCode,
           client_type: params.clientType,
         );
+        final tenantCode = params.tenantCode?.trim();
+        if (tenantCode != null && tenantCode.isNotEmpty) {
+          request.tenant_code = tenantCode;
+        }
         final response = await _api.login(request);
         // 确保 token 被保存到缓存
         await doLoginSuccess(response);
@@ -177,13 +180,13 @@ class AuthenticationService extends AuthService {
 class LoginParams {
   final String username;
   final String password;
-  final String tenantCode;
+  final String? tenantCode;
   final AuthenticationServiceV1ClientType clientType;
 
   const LoginParams({
     required this.username,
     required this.password,
-    required this.tenantCode,
+    this.tenantCode,
     required this.clientType,
   });
 }

@@ -117,6 +117,9 @@ class KanbanCard {
   final String? description;
   final String? rank;
   final int version;
+  final DateTime? dueDate;
+  final bool archived;
+  final String? coverColor;
 
   const KanbanCard({
     required this.id,
@@ -126,6 +129,9 @@ class KanbanCard {
     this.description,
     this.rank,
     this.version = 1,
+    this.dueDate,
+    this.archived = false,
+    this.coverColor,
   });
 
   factory KanbanCard.fromDto(api.BoardServiceV1Card d) => KanbanCard(
@@ -136,6 +142,9 @@ class KanbanCard {
         description: d.description,
         rank: d.rank,
         version: d.version ?? 1,
+        dueDate: d.dueDate == null ? null : DateTime.tryParse(d.dueDate!),
+        archived: d.archived ?? false,
+        coverColor: d.coverColor,
       );
 
   KanbanCard copyWith({
@@ -145,6 +154,9 @@ class KanbanCard {
     String? description,
     String? rank,
     int? version,
+    DateTime? dueDate,
+    bool? archived,
+    String? coverColor,
   }) =>
       KanbanCard(
         id: id,
@@ -154,6 +166,9 @@ class KanbanCard {
         description: description ?? this.description,
         rank: rank ?? this.rank,
         version: version ?? this.version,
+        dueDate: dueDate ?? this.dueDate,
+        archived: archived ?? this.archived,
+        coverColor: coverColor ?? this.coverColor,
       );
 
   Map<String, dynamic> toJson() => {
@@ -164,6 +179,9 @@ class KanbanCard {
         'description': description,
         'rank': rank,
         'version': version,
+        'dueDate': dueDate?.toIso8601String(),
+        'archived': archived,
+        'coverColor': coverColor,
       };
 
   factory KanbanCard.fromJson(Map<String, dynamic> j) => KanbanCard(
@@ -174,6 +192,38 @@ class KanbanCard {
         description: j['description'] as String?,
         rank: j['rank'] as String?,
         version: (j['version'] as num?)?.toInt() ?? 1,
+        dueDate: j['dueDate'] == null ? null : DateTime.tryParse(j['dueDate'] as String),
+        archived: (j['archived'] as bool?) ?? false,
+        coverColor: j['coverColor'] as String?,
+      );
+
+  /// 清除可清除的可空字段（dueDate/coverColor）。
+  /// copyWith 的 `??` 语义无法区分"传 null 清除"与"不传保持"，
+  /// 故提供显式清除方法。
+  KanbanCard clearDueDate() => KanbanCard(
+        id: id,
+        columnId: columnId,
+        boardId: boardId,
+        name: name,
+        description: description,
+        rank: rank,
+        version: version,
+        dueDate: null,
+        archived: archived,
+        coverColor: coverColor,
+      );
+
+  KanbanCard clearCoverColor() => KanbanCard(
+        id: id,
+        columnId: columnId,
+        boardId: boardId,
+        name: name,
+        description: description,
+        rank: rank,
+        version: version,
+        dueDate: dueDate,
+        archived: archived,
+        coverColor: null,
       );
 }
 
@@ -182,14 +232,14 @@ class KanbanBoardState {
   final KanbanBoard board;
   final List<KanbanColumn> columns;
   final List<KanbanCard> cards;
-  final List<int> cardLabelIds;
+  final Map<int, List<int>> cardLabelAssociations;
   final List<KanbanLabel> labels;
 
   const KanbanBoardState({
     required this.board,
     required this.columns,
     required this.cards,
-    this.cardLabelIds = const [],
+    this.cardLabelAssociations = const {},
     this.labels = const [],
   });
 
@@ -232,20 +282,35 @@ class KanbanBoardState {
         'columns': columns.map((c) => c.toJson()).toList(),
         'cards': cards.map((c) => c.toJson()).toList(),
         'labels': labels.map((l) => l.toJson()).toList(),
+        'cardLabelAssociations': cardLabelAssociations.map(
+            (k, v) => MapEntry(k.toString(), v),
+          ),
       };
 
-  factory KanbanBoardState.fromJson(Map<String, dynamic> j) => KanbanBoardState(
-        board: KanbanBoard.fromJson((j['board'] as Map).cast<String, dynamic>()),
-        columns: ((j['columns'] as List?) ?? [])
-            .map((e) => KanbanColumn.fromJson((e as Map).cast<String, dynamic>()))
-            .toList(),
-        cards: ((j['cards'] as List?) ?? [])
-            .map((e) => KanbanCard.fromJson((e as Map).cast<String, dynamic>()))
-            .toList(),
-        labels: ((j['labels'] as List?) ?? [])
-            .map((e) => KanbanLabel.fromJson((e as Map).cast<String, dynamic>()))
-            .toList(),
-      );
+  factory KanbanBoardState.fromJson(Map<String, dynamic> j) {
+    final assocRaw = j['cardLabelAssociations'] as Map?;
+    final assoc = <int, List<int>>{};
+    if (assocRaw != null) {
+      assocRaw.forEach((k, v) {
+        final cid = int.tryParse(k.toString());
+        if (cid == null || v is! List) return;
+        assoc[cid] = v.map((e) => (e as num).toInt()).toList();
+      });
+    }
+    return KanbanBoardState(
+      board: KanbanBoard.fromJson((j['board'] as Map).cast<String, dynamic>()),
+      columns: ((j['columns'] as List?) ?? [])
+          .map((e) => KanbanColumn.fromJson((e as Map).cast<String, dynamic>()))
+          .toList(),
+      cards: ((j['cards'] as List?) ?? [])
+          .map((e) => KanbanCard.fromJson((e as Map).cast<String, dynamic>()))
+          .toList(),
+      labels: ((j['labels'] as List?) ?? [])
+          .map((e) => KanbanLabel.fromJson((e as Map).cast<String, dynamic>()))
+          .toList(),
+      cardLabelAssociations: assoc,
+    );
+  }
 }
 
 /// 实时变更事件（服务端 protojson camelCase）。

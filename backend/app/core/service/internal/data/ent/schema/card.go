@@ -58,6 +58,20 @@ func (Card) Fields() []ent.Field {
 		field.Uint32("board_id").
 			Comment("所属看板ID，冗余自列，供看板级查询，服务端维护").
 			Optional(),
+
+		field.Time("due_date").
+			Comment("卡片截止日期，可选").
+			Optional().
+			Nillable(),
+
+		field.Bool("archived").
+			Comment("归档标记，归档卡保留可见但默认收起").
+			Default(false),
+
+		field.String("cover_color").
+			Comment("卡片封面纯色标识，取命名色集合").
+			Optional().
+			Nillable(),
 	}
 }
 

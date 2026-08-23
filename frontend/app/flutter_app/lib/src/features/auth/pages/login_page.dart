@@ -42,7 +42,9 @@ class _LoginPageState extends State<LoginPage> {
         LoginParams(
           username: _usernameController.text.trim(),
           password: _passwordController.text,
-          tenantCode: _tenantCodeController.text.trim(),
+          tenantCode: _tenantCodeController.text.trim().isEmpty
+              ? null
+              : _tenantCodeController.text.trim(),
           clientType: AuthenticationServiceV1ClientType.app,
         ),
       );
@@ -168,6 +170,25 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           SizedBox(height: isMobile ? 32.h : 40),
 
+                          // Tenant Code
+                          TextFormField(
+                            controller: _tenantCodeController,
+                            decoration: InputDecoration(
+                              labelText: loc.tenantCode,
+                              hintText: loc.tenantCodeHint,
+                              prefixIcon: const Icon(Icons.business_outlined),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  isMobile ? 12.r : 14,
+                                ),
+                              ),
+                            ),
+                            validator: (value) {
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: isMobile ? 16.h : 18),
+
                           // Username
                           TextFormField(
                             controller: _usernameController,
@@ -184,28 +205,6 @@ class _LoginPageState extends State<LoginPage> {
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return loc.usernameHint;
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: isMobile ? 16.h : 18),
-
-                          // Tenant Code
-                          TextFormField(
-                            controller: _tenantCodeController,
-                            decoration: InputDecoration(
-                              labelText: '租户编码',
-                              hintText: '请输入租户编码',
-                              prefixIcon: const Icon(Icons.business_outlined),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  isMobile ? 12.r : 14,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return '请输入租户编码';
                               }
                               return null;
                             },

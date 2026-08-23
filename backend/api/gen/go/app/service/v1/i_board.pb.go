@@ -29,7 +29,7 @@ var File_app_service_v1_i_board_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_board_proto_rawDesc = "" +
 	"\n" +
-	"\x1capp/service/v1/i_board.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cboard/service/v1/board.proto2\xf7\x05\n" +
+	"\x1capp/service/v1/i_board.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cboard/service/v1/board.proto2\xf8\x06\n" +
 	"\fBoardService\x12^\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.board.service.v1.ListBoardResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/app/v1/boards\x12^\n" +
 	"\x03Get\x12!.board.service.v1.GetBoardRequest\x1a\x17.board.service.v1.Board\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/app/v1/boards/{id}\x12b\n" +
@@ -37,7 +37,8 @@ const file_app_service_v1_i_board_proto_rawDesc = "" +
 	"\x06Update\x12$.board.service.v1.UpdateBoardRequest\x1a\x17.board.service.v1.Board\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\x1a\x13/app/v1/boards/{id}\x12c\n" +
 	"\x06Delete\x12$.board.service.v1.DeleteBoardRequest\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/app/v1/boards/{id}\x12h\n" +
 	"\x04Move\x12\".board.service.v1.MoveBoardRequest\x1a\x17.board.service.v1.Board\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/app/v1/boards/{id}:move\x12\x8a\x01\n" +
-	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/boards/{board_id}/snapshotB\xaf\x01\n" +
+	"\x10GetBoardSnapshot\x12).board.service.v1.GetBoardSnapshotRequest\x1a\x1f.board.service.v1.BoardSnapshot\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/boards/{board_id}/snapshot\x12\x7f\n" +
+	"\tSyncBoard\x12\".board.service.v1.SyncBoardRequest\x1a#.board.service.v1.SyncBoardResponse\")\x82\xd3\xe4\x93\x02#:\x01*\"\x1e/app/v1/boards/{board_id}:syncB\xaf\x01\n" +
 	"\x12com.app.service.v1B\vIBoardProtoP\x01Z2go-wind-kanban/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_board_proto_goTypes = []any{
@@ -48,10 +49,12 @@ var file_app_service_v1_i_board_proto_goTypes = []any{
 	(*v11.DeleteBoardRequest)(nil),      // 4: board.service.v1.DeleteBoardRequest
 	(*v11.MoveBoardRequest)(nil),        // 5: board.service.v1.MoveBoardRequest
 	(*v11.GetBoardSnapshotRequest)(nil), // 6: board.service.v1.GetBoardSnapshotRequest
-	(*v11.ListBoardResponse)(nil),       // 7: board.service.v1.ListBoardResponse
-	(*v11.Board)(nil),                   // 8: board.service.v1.Board
-	(*emptypb.Empty)(nil),               // 9: google.protobuf.Empty
-	(*v11.BoardSnapshot)(nil),           // 10: board.service.v1.BoardSnapshot
+	(*v11.SyncBoardRequest)(nil),        // 7: board.service.v1.SyncBoardRequest
+	(*v11.ListBoardResponse)(nil),       // 8: board.service.v1.ListBoardResponse
+	(*v11.Board)(nil),                   // 9: board.service.v1.Board
+	(*emptypb.Empty)(nil),               // 10: google.protobuf.Empty
+	(*v11.BoardSnapshot)(nil),           // 11: board.service.v1.BoardSnapshot
+	(*v11.SyncBoardResponse)(nil),       // 12: board.service.v1.SyncBoardResponse
 }
 var file_app_service_v1_i_board_proto_depIdxs = []int32{
 	0,  // 0: app.service.v1.BoardService.List:input_type -> pagination.PagingRequest
@@ -61,15 +64,17 @@ var file_app_service_v1_i_board_proto_depIdxs = []int32{
 	4,  // 4: app.service.v1.BoardService.Delete:input_type -> board.service.v1.DeleteBoardRequest
 	5,  // 5: app.service.v1.BoardService.Move:input_type -> board.service.v1.MoveBoardRequest
 	6,  // 6: app.service.v1.BoardService.GetBoardSnapshot:input_type -> board.service.v1.GetBoardSnapshotRequest
-	7,  // 7: app.service.v1.BoardService.List:output_type -> board.service.v1.ListBoardResponse
-	8,  // 8: app.service.v1.BoardService.Get:output_type -> board.service.v1.Board
-	8,  // 9: app.service.v1.BoardService.Create:output_type -> board.service.v1.Board
-	8,  // 10: app.service.v1.BoardService.Update:output_type -> board.service.v1.Board
-	9,  // 11: app.service.v1.BoardService.Delete:output_type -> google.protobuf.Empty
-	8,  // 12: app.service.v1.BoardService.Move:output_type -> board.service.v1.Board
-	10, // 13: app.service.v1.BoardService.GetBoardSnapshot:output_type -> board.service.v1.BoardSnapshot
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
+	7,  // 7: app.service.v1.BoardService.SyncBoard:input_type -> board.service.v1.SyncBoardRequest
+	8,  // 8: app.service.v1.BoardService.List:output_type -> board.service.v1.ListBoardResponse
+	9,  // 9: app.service.v1.BoardService.Get:output_type -> board.service.v1.Board
+	9,  // 10: app.service.v1.BoardService.Create:output_type -> board.service.v1.Board
+	9,  // 11: app.service.v1.BoardService.Update:output_type -> board.service.v1.Board
+	10, // 12: app.service.v1.BoardService.Delete:output_type -> google.protobuf.Empty
+	9,  // 13: app.service.v1.BoardService.Move:output_type -> board.service.v1.Board
+	11, // 14: app.service.v1.BoardService.GetBoardSnapshot:output_type -> board.service.v1.BoardSnapshot
+	12, // 15: app.service.v1.BoardService.SyncBoard:output_type -> board.service.v1.SyncBoardResponse
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

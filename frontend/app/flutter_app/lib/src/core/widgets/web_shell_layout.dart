@@ -75,7 +75,9 @@ class _WebShellLayoutState extends State<WebShellLayout> {
               return MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: OutlinedButton(
-                  onPressed: () => context.go(AppRoutePath.login),
+                  onPressed: () => context.go(
+                    hasLogin ? AppRoutePath.profile : AppRoutePath.login,
+                  ),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
