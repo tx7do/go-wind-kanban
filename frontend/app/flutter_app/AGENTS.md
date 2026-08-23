@@ -4,7 +4,7 @@
 
 ## 项目概览
 
-基于 **Flutter** 的全平台 CMS 内容展示前端，一套 Dart 代码编译为 iOS / Android / Web / macOS / Windows / Linux。
+基于 **Flutter** 的全平台 Kanban 协作前端，一套 Dart 代码编译为 iOS / Android / Web / macOS / Windows / Linux。
 
 **核心技术栈**：Flutter 3.x (Dart 3.12+) + flutter_bloc/Cubit（状态管理）+ GoRouter（路由）+ GetIt（IoC）+ Dio + Retrofit（HTTP）+ swagger_parser（API 生成）+ cached_query（缓存）+ flutter_screenutil（响应式）+ flutter_intl（i18n）+ flutter_widget_from_html/flutter_markdown（内容渲染）+ Material 3
 
@@ -18,7 +18,7 @@
 lib/
 ├── main.dart                    # 入口（init + MultiBlocProvider）
 ├── src/
-│   ├── app.dart                 # CMSApp（ScreenUtilInit + MaterialApp.router）
+│   ├── app.dart                 # KanbanApp（ScreenUtilInit + MaterialApp.router）
 │   ├── init.dart                # 应用初始化（环境变量、传输层、仓库）
 │   ├── app_router/              # GoRouter 路由配置 + 路由名称常量
 │   ├── core/                    # 核心基础设施
@@ -33,10 +33,11 @@ lib/
 │   │   └── widgets/             #   responsive_layout / web_shell_layout / 底部导航栏
 │   └── features/                # ★ Feature-First 业务模块
 │       ├── auth/                #   pages/ + services/
-│       └── cms/
-│           ├── pages/           #   home/explore/post_detail/post_list/category_list/tag_feed/search/profile/bookmarks/settings/...
-│           ├── services/        #   post/category/tag/comment/navigation_service
-│           └── widgets/         #   post_card/featured_carousel/content_viewer/tag_chip
+│       └── board/               #   Kanban 看板域
+│           ├── data/            #   board_cache / label_api / realtime_client / sync_api
+│           ├── logic/           #   board_controller（看板状态 + 实时同步）
+│           ├── models/          #   board_models（列 / 卡片 / 标签）
+│           └── pages/           #   board_home / board_list / board_desktop / board_mobile / card_edit_dialog / label_manager_drawer
 ├── generated/                   # [自动生成] l10n.dart + api/ + intl/
 └── l10n/                        # i18n ARB 文件（intl_zh_CN.arb / intl_en_US.arb）
 ```
@@ -63,8 +64,9 @@ ResponsiveUtils.postGridColumns(ctx)     // 网格列数（1/2/3）
 ### 三层 API 架构
 
 ```
-lib/generated/api/               # [自动生成] swagger_parser 产出（RestClient + 各 ServiceClient + models）
-lib/src/features/cms/services/   # [服务封装] 继承 BaseService，封装业务 + Query/Mutation
+lib/generated/api/                    # [自动生成] swagger_parser 产出（RestClient + 各 ServiceClient + models）
+lib/src/features/board/data/          # [服务封装] board_cache / label_api / realtime_client / sync_api
+lib/src/features/board/logic/         # [业务控制] board_controller（看板状态 + 实时同步）
 ```
 
 ```dart
@@ -154,8 +156,8 @@ flutter test                                 # 测试
 **环境变量**（`.dev.env` Debug / `.env` Release，通过 flutter_dotenv 加载）：
 
 ```env
-API_BASE_URL="https://api.cms.gowind.cloud"
-SSE_URL="https://sse.cms.gowind.cloud/events"
+API_BASE_URL="https://api.kanban.gowind.cloud"
+SSE_URL="https://sse.kanban.gowind.cloud/events"
 CONNECTION_TIMEOUT=3000
 RECEIVE_TIMEOUT=3000
 AES_KEY="f51d66a73d8a0927"
@@ -165,8 +167,8 @@ AES_KEY="f51d66a73d8a0927"
 
 ```
 - [ ] Step 1: 生成 API 客户端（更新 OpenAPI 后 dart run build_runner build --delete-conflicting-outputs）
-- [ ] Step 2: 封装服务层（lib/src/features/cms/services/product_service.dart，继承 BaseService）
-- [ ] Step 3: 创建页面（lib/src/features/cms/pages/product/product_page.dart，StatefulWidget + ResponsiveLayout）
+- [ ] Step 2: 封装服务层（lib/src/features/board/data/product_service.dart，继承 BaseService）
+- [ ] Step 3: 创建页面（lib/src/features/board/pages/product/product_page.dart，StatefulWidget + ResponsiveLayout）
 - [ ] Step 4: 注册路由（app_router.dart 的 ShellRoute.routes + route_names.dart + router_paths.dart）
 - [ ] Step 5: 添加导航入口（WebShellLayout 或 AppBottomNavBar）
 ```

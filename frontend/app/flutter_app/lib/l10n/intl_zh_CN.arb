@@ -1,5 +1,5 @@
 {
-  "appName": "GoWind CMS",
+  "appName": "GoWind Kanban",
 
   "@@locale": "zh_CN",
 
@@ -154,11 +154,11 @@
   "confirm": "确定",
   "featureNotAvailable": "该功能即将上线，敬请期待",
   "welcomeBack": "欢迎回来",
-  "footerText": "© 2026 GoWind CMS  ·  Powered by Flutter",
+  "footerText": "© 2026 GoWind Kanban  ·  Powered by Flutter",
 
-  "aboutSubtitle": "一个基于 Go 和 Flutter 构建的现代化内容管理系统",
-  "aboutFeature1Title": "内容管理",
-  "aboutFeature1Desc": "使用直观且强大的编辑器创建、编辑和发布内容",
+  "aboutSubtitle": "一个基于 Go 和 Flutter 构建的现代化看板系统",
+  "aboutFeature1Title": "看板协作",
+  "aboutFeature1Desc": "通过直观的界面管理看板、列与卡片",
   "aboutFeature2Title": "多语言支持",
   "aboutFeature2Desc": "内置国际化能力，轻松服务全球受众",
   "aboutFeature3Title": "跨平台",

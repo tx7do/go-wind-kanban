@@ -1,4 +1,4 @@
-# GoWind CMS管理系统前端
+# GoWind Kanban管理系统前端
 
 ## 安装使用
 

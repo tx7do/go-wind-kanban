@@ -36,7 +36,7 @@ async function refreshProfile() {
   }
 }
 
-// 媒体上传域已随 CMS 域移除；头像上传暂不可用，待看板附件功能一并设计后恢复。
+// 媒体上传域已移除；头像上传暂不可用，待看板附件功能一并设计后恢复。
 function handleUploadAvatar(option: any) {
   const { onError } = option;
   onError?.(new Error('avatar upload is unavailable'));

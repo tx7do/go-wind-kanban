@@ -46,9 +46,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("关于"),
     "aboutFeature1Desc": MessageLookupByLibrary.simpleMessage(
-      "使用直观且强大的编辑器创建、编辑和发布内容",
+      "通过直观的界面管理看板、列与卡片",
     ),
-    "aboutFeature1Title": MessageLookupByLibrary.simpleMessage("内容管理"),
+    "aboutFeature1Title": MessageLookupByLibrary.simpleMessage("看板协作"),
     "aboutFeature2Desc": MessageLookupByLibrary.simpleMessage(
       "内置国际化能力，轻松服务全球受众",
     ),
@@ -58,12 +58,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "aboutFeature3Title": MessageLookupByLibrary.simpleMessage("跨平台"),
     "aboutSubtitle": MessageLookupByLibrary.simpleMessage(
-      "一个基于 Go 和 Flutter 构建的现代化内容管理系统",
+      "一个基于 Go 和 Flutter 构建的现代化看板系统",
     ),
     "aboutTechStack": MessageLookupByLibrary.simpleMessage("技术栈"),
     "allLoaded": MessageLookupByLibrary.simpleMessage("— 已加载全部 —"),
     "allPosts": MessageLookupByLibrary.simpleMessage("全部文章"),
-    "appName": MessageLookupByLibrary.simpleMessage("GoWind CMS"),
+    "appName": MessageLookupByLibrary.simpleMessage("GoWind Kanban"),
     "appearance": MessageLookupByLibrary.simpleMessage("外观设置"),
     "backToHome": MessageLookupByLibrary.simpleMessage("返回首页"),
     "bookmarkHint": MessageLookupByLibrary.simpleMessage("浏览文章时点击收藏按钮即可保存"),
@@ -110,7 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "featureNotAvailable": MessageLookupByLibrary.simpleMessage("该功能即将上线，敬请期待"),
     "followSystem": MessageLookupByLibrary.simpleMessage("跟随系统"),
     "footerText": MessageLookupByLibrary.simpleMessage(
-      "© 2026 GoWind CMS  ·  Powered by Flutter",
+      "© 2026 GoWind Kanban  ·  Powered by Flutter",
     ),
     "guestUser": MessageLookupByLibrary.simpleMessage("访客用户"),
     "home": MessageLookupByLibrary.simpleMessage("首页"),

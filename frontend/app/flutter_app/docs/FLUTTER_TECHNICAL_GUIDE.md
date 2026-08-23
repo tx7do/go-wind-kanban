@@ -1,4 +1,4 @@
-# 基于 Flutter 的 Headless CMS 全平台前端架构：技术解析与二次开发导引
+# 基于 Flutter 的 Kanban 全平台前端架构：技术解析与二次开发导引
 
 > 本文面向希望基于此项目进行二次开发的 Flutter 工程师，从技术栈选型、核心架构设计、关键模块实现到二开实践路径，提供一份完整的技术地图。
 
@@ -6,7 +6,7 @@
 
 ## 一、技术栈总览
 
-本项目是一个 **Flutter 全平台** CMS 内容展示前端，一套 Dart 代码同时编译为 iOS、Android、Web、macOS、Windows 等多端应用：
+本项目是一个 **Flutter 全平台** Kanban 协作前端，一套 Dart 代码同时编译为 iOS、Android、Web、macOS、Windows 等多端应用：
 
 | 层面       | 技术                       | 版本               | 用途                      |
 |----------|--------------------------|------------------|-------------------------|
@@ -60,8 +60,8 @@ flutter build windows      # → build/windows/ (Windows App)
 **环境配置**（`.dev.env` / `.env`）：
 
 ```env
-API_BASE_URL="https://api.cms.gowind.cloud"    # 后端 API 地址
-SSE_URL="https://sse.cms.gowind.cloud/events"   # SSE 推送地址
+API_BASE_URL="https://api.kanban.gowind.cloud"    # 后端 API 地址
+SSE_URL="https://sse.kanban.gowind.cloud/events"   # SSE 推送地址
 CONNECTION_TIMEOUT=3000                          # 连接超时（毫秒）
 RECEIVE_TIMEOUT=3000                             # 接收超时（毫秒）
 AES_KEY="f51d66a73d8a0927"                       # AES 加密密钥
@@ -137,7 +137,7 @@ lib/generated/api/           # [自动生成] swagger_parser 产出
 ├── models/                  #   所有请求/响应模型
 └── ...
 
-lib/src/features/cms/services/ # [服务封装] 业务逻辑、错误处理、Query/Mutation
+lib/src/features/board/data/      # [服务封装] 业务逻辑、错误处理、Query/Mutation
 ├── post_service.dart        #   文章服务
 ├── category_service.dart    #   分类服务
 ├── tag_service.dart         #   标签服务
@@ -251,7 +251,7 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [BlocProvider(create: (_) => AppThemeCubit())],
-      child: const CMSApp(),
+      child: const KanbanApp(),
     ),
   );
 }
@@ -484,7 +484,7 @@ final footerItems = getFlatNavItems(navigations, NavigationLocation.footer);
 lib/
 ├── main.dart                    # 程序入口（init + MultiBlocProvider）
 ├── src/
-│   ├── app.dart                 # CMSApp（ScreenUtilInit + MaterialApp.router）
+│   ├── app.dart                 # KanbanApp（ScreenUtilInit + MaterialApp.router）
 │   ├── init.dart                # 应用初始化（环境变量、传输层、仓库）
 │   ├── init_thirdparty_plugins.dart # 第三方插件初始化
 │   ├── app_router/
@@ -539,34 +539,23 @@ lib/
 │       │   │   └── login_page.dart    #   登录页
 │       │   └── services/
 │       │       └── authentication_service.dart # 认证服务
-│       └── cms/
-│           ├── pages/                 # CMS 页面
-│           │   ├── home/              #   首页（Web 三栏 + Mobile 单栏）
-│           │   ├── explore/           #   发现/分类页
-│           │   ├── post_detail/       #   文章详情页
-│           │   ├── post_list/         #   文章列表页
-│           │   ├── category_list/     #   分类列表页
-│           │   ├── tag_feed/          #   标签文章页
-│           │   ├── tag_list/          #   标签列表页
-│           │   ├── search/            #   搜索页
-│           │   ├── profile/           #   个人中心
-│           │   ├── bookmarks/         #   收藏页
-│           │   ├── settings/          #   设置页
-│           │   ├── my_comments/       #   我的评论
-│           │   ├── about/             #   关于页
-│           │   └── legal/             #   法律/信息页
-│           ├── services/              # CMS 服务层
-│           │   ├── post_service.dart  #   文章服务
-│           │   ├── category_service.dart # 分类服务
-│           │   ├── tag_service.dart    #   标签服务
-│           │   ├── comment_service.dart # 评论服务
-│           │   └── navigation_service.dart # 导航服务
-│           └── widgets/               # CMS 共享组件
-│               ├── post_card.dart     #   文章卡片
-│               ├── featured_carousel.dart # 轮播图
-│               ├── content_viewer.dart #  内容渲染器
-│               ├── tag_chip.dart      #   标签芯片
-│               └── tag_cloud.dart     #   标签云
+│       └── board/                    # Kanban 看板域
+│           ├── data/                 # 数据层
+│           │   ├── board_cache.dart  #   看板缓存
+│           │   ├── label_api.dart    #   标签 API
+│           │   ├── realtime_client.dart # 实时推送客户端（SSE）
+│           │   └── sync_api.dart     #   看板同步 API
+│           ├── logic/
+│           │   └── board_controller.dart # 看板状态控制器（实时同步）
+│           ├── models/
+│           │   └── board_models.dart  # 看板数据模型（列 / 卡片 / 标签）
+│           └── pages/                # Kanban 页面
+│               ├── board_list_page.dart   # 看板列表页
+│               ├── board_home_page.dart   # 看板主页（响应式入口）
+│               ├── board_desktop_page.dart# 看板桌面端布局
+│               ├── board_mobile_page.dart # 看板移动端布局
+│               ├── card_edit_dialog.dart  # 卡片编辑对话框
+│               └── label_manager_drawer.dart # 标签管理抽屉
 ├── generated/                        # [自动生成]
 │   ├── l10n.dart                     #   国际化 S 类
 │   ├── api/                          #   API 客户端 + 模型
@@ -614,8 +603,8 @@ flutter test
 **环境变量配置**（`.dev.env`）：
 
 ```env
-API_BASE_URL="https://api.cms.gowind.cloud"
-SSE_URL="https://sse.cms.gowind.cloud/events"
+API_BASE_URL="https://api.kanban.gowind.cloud"
+SSE_URL="https://sse.kanban.gowind.cloud/events"
 CONNECTION_TIMEOUT=3000
 RECEIVE_TIMEOUT=3000
 AES_KEY="f51d66a73d8a0927"
@@ -639,7 +628,7 @@ dart run build_runner build --delete-conflicting-outputs
 
 **Step 2 — 封装服务层**
 
-创建 `lib/src/features/cms/services/product_service.dart`：
+创建 `lib/src/features/board/data/product_service.dart`：
 
 ```dart
 class ProductService extends BaseService {
@@ -660,7 +649,7 @@ class ProductService extends BaseService {
 
 **Step 3 — 创建页面**
 
-创建 `lib/src/features/cms/pages/product/product_page.dart`：
+创建 `lib/src/features/board/pages/product/product_page.dart`：
 
 ```dart
 class ProductPage extends StatefulWidget {
@@ -779,7 +768,7 @@ flutter build web   # 输出到 build/web/
 ```nginx
 server {
     listen 80;
-    root /var/www/cms;
+    root /var/www/kanban;
     index index.html;
 
     location / {

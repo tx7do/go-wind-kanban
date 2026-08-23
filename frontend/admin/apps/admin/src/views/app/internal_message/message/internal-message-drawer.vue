@@ -209,7 +209,7 @@ function setLoading(loading: boolean) {
   drawerApi.setState({ confirmLoading: loading });
 }
 
-// 媒体上传域已随 CMS 域移除；站内信暂不支持插图，附件能力待看板附件功能一并设计。
+// 媒体上传域已移除；站内信暂不支持插图，附件能力待看板附件功能一并设计。
 function handleUploadImage(_file: File): Promise<string> {
   return Promise.resolve('');
 }

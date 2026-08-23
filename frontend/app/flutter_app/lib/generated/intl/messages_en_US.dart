@@ -46,11 +46,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("About"),
     "aboutFeature1Desc": MessageLookupByLibrary.simpleMessage(
-      "Create, edit and publish content with an intuitive and powerful editor",
+      "Organize work with boards, columns and cards through an intuitive interface",
     ),
-    "aboutFeature1Title": MessageLookupByLibrary.simpleMessage(
-      "Content Management",
-    ),
+    "aboutFeature1Title": MessageLookupByLibrary.simpleMessage("Kanban Boards"),
     "aboutFeature2Desc": MessageLookupByLibrary.simpleMessage(
       "Built-in internationalization to serve a global audience effortlessly",
     ),
@@ -64,12 +62,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Cross-platform",
     ),
     "aboutSubtitle": MessageLookupByLibrary.simpleMessage(
-      "A modern content management system powered by Go and Flutter",
+      "A modern kanban board system powered by Go and Flutter",
     ),
     "aboutTechStack": MessageLookupByLibrary.simpleMessage("Built with"),
     "allLoaded": MessageLookupByLibrary.simpleMessage("— All Loaded —"),
     "allPosts": MessageLookupByLibrary.simpleMessage("All Posts"),
-    "appName": MessageLookupByLibrary.simpleMessage("GoWind CMS"),
+    "appName": MessageLookupByLibrary.simpleMessage("GoWind Kanban"),
     "appearance": MessageLookupByLibrary.simpleMessage("Appearance"),
     "backToHome": MessageLookupByLibrary.simpleMessage("Back to Home"),
     "bookmarkHint": MessageLookupByLibrary.simpleMessage(
@@ -128,7 +126,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "followSystem": MessageLookupByLibrary.simpleMessage("System"),
     "footerText": MessageLookupByLibrary.simpleMessage(
-      "© 2026 GoWind CMS  ·  Powered by Flutter",
+      "© 2026 GoWind Kanban  ·  Powered by Flutter",
     ),
     "guestUser": MessageLookupByLibrary.simpleMessage("Guest"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),

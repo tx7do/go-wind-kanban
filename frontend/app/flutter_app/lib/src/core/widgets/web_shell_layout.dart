@@ -12,7 +12,7 @@ import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 /// 包裹所有 Web 端页面，提供一致的顶部导航栏。
 /// 移动端由 ShellRoute 直接返回 child，不经过此组件。
 ///
-/// CMS 导航域已移除；导航项改为静态配置，
+/// 导航域已移除；导航项改为静态配置，
 /// 服务端驱动的导航随看板产品需求另行设计。
 class WebShellLayout extends StatefulWidget {
   final Widget child;

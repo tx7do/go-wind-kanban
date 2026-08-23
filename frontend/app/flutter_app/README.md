@@ -1,6 +1,6 @@
 # go-wind-kanban Flutter App
 
-A CMS Flutter project.
+A Kanban Flutter project.
 
 ## Flutter 常用命令
 

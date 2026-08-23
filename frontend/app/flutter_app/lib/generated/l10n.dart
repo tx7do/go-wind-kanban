@@ -54,9 +54,9 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `GoWind CMS`
+  /// `GoWind Kanban`
   String get appName {
-    return Intl.message('GoWind CMS', name: 'appName', desc: '', args: []);
+    return Intl.message('GoWind Kanban', name: 'appName', desc: '', args: []);
   }
 
   /// `首页`
@@ -544,35 +544,35 @@ class S {
     return Intl.message('欢迎回来', name: 'welcomeBack', desc: '', args: []);
   }
 
-  /// `© 2026 GoWind CMS  ·  Powered by Flutter`
+  /// `© 2026 GoWind Kanban  ·  Powered by Flutter`
   String get footerText {
     return Intl.message(
-      '© 2026 GoWind CMS  ·  Powered by Flutter',
+      '© 2026 GoWind Kanban  ·  Powered by Flutter',
       name: 'footerText',
       desc: '',
       args: [],
     );
   }
 
-  /// `一个基于 Go 和 Flutter 构建的现代化内容管理系统`
+  /// `一个基于 Go 和 Flutter 构建的现代化看板系统`
   String get aboutSubtitle {
     return Intl.message(
-      '一个基于 Go 和 Flutter 构建的现代化内容管理系统',
+      '一个基于 Go 和 Flutter 构建的现代化看板系统',
       name: 'aboutSubtitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `内容管理`
+  /// `看板协作`
   String get aboutFeature1Title {
-    return Intl.message('内容管理', name: 'aboutFeature1Title', desc: '', args: []);
+    return Intl.message('看板协作', name: 'aboutFeature1Title', desc: '', args: []);
   }
 
-  /// `使用直观且强大的编辑器创建、编辑和发布内容`
+  /// `通过直观的界面管理看板、列与卡片`
   String get aboutFeature1Desc {
     return Intl.message(
-      '使用直观且强大的编辑器创建、编辑和发布内容',
+      '通过直观的界面管理看板、列与卡片',
       name: 'aboutFeature1Desc',
       desc: '',
       args: [],
