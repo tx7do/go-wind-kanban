@@ -1,10 +1,8 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind Kanban｜风行看板" />
+
 # GoWind Kanban｜风行看板
-
-**开箱即用的企业级看板协作平台**
-
-> **让团队协作如风般自由 — GoWind Kanban**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Go Version](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go)](https://go.dev/)

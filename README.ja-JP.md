@@ -1,10 +1,8 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind Kanban｜風行カンバン" />
+
 # GoWind Kanban｜風行カンバン
-
-**そのまま使えるエンタープライズ級カンバン協業プラットフォーム**
-
-> **チーム協業を風のように自由に — GoWind Kanban**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Go Version](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go)](https://go.dev/)

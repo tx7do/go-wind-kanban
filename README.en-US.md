@@ -1,10 +1,8 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind Kanban" />
+
 # GoWind Kanban
-
-**An out-of-the-box enterprise kanban collaboration platform**
-
-> **Let team collaboration flow as freely as the wind — GoWind Kanban**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Go Version](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go)](https://go.dev/)
