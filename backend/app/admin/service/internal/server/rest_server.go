@@ -128,6 +128,8 @@ func NewRestServer(
 	operationAuditLogService *service.OperationAuditLogService,
 	permissionAuditLogService *service.PermissionAuditLogService,
 
+	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -177,6 +179,8 @@ func NewRestServer(
 	adminV1.RegisterInternalMessageServiceHTTPServer(srv, internalMessageService)
 	adminV1.RegisterInternalMessageCategoryServiceHTTPServer(srv, internalMessageCategoryService)
 	adminV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
+
+	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 
 	// 注册文件传输服务，用于处理文件上传下载等功能
 

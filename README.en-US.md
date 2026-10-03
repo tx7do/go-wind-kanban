@@ -30,7 +30,7 @@
 
 <table>
 <tr><th>Layer</th><th>Technology</th></tr>
-<tr><td><strong>Backend framework</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Wire</code> · <code>Protobuf / Buf</code></td></tr>
+<tr><td><strong>Backend framework</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>Ent</code> · <code>PostgreSQL</code></td></tr>
 <tr><td><strong>Middleware</strong></td><td><code>Redis</code> · <code>Etcd</code> (service discovery) · <code>Jaeger</code> (tracing)</td></tr>
 <tr><td><strong>Auth</strong></td><td><code>JWT</code> · <code>RBAC</code></td></tr>

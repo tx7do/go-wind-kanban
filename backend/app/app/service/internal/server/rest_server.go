@@ -96,6 +96,8 @@ func NewRestServer(
 	columnService *service.ColumnService,
 	cardService *service.CardService,
 	labelService *service.LabelService,
+
+	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -115,6 +117,8 @@ func NewRestServer(
 	appV1.RegisterColumnServiceHTTPServer(srv, columnService)
 	appV1.RegisterCardServiceHTTPServer(srv, cardService)
 	appV1.RegisterLabelServiceHTTPServer(srv, labelService)
+
+	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 
 	// 看板实时 WebSocket（原生 handler，不经中间件链；握手内自鉴权）
 	srv.HandleFunc("/app/v1/ws", wsServer.Handler())

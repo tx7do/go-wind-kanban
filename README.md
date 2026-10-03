@@ -30,7 +30,7 @@
 
 <table>
 <tr><th>层级</th><th>技术</th></tr>
-<tr><td><strong>后端框架</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Wire</code> · <code>Protobuf / Buf</code></td></tr>
+<tr><td><strong>后端框架</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>Ent</code> · <code>PostgreSQL</code></td></tr>
 <tr><td><strong>中间件</strong></td><td><code>Redis</code> · <code>Etcd</code>（服务发现） · <code>Jaeger</code>（链路追踪）</td></tr>
 <tr><td><strong>认证授权</strong></td><td><code>JWT</code> · <code>RBAC</code></td></tr>
