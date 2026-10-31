@@ -26,6 +26,13 @@
 
 ---
 
+## Screenshots
+
+| | |
+|:---:|:---:|
+| ![Login](docs/screenshots/login.png) | ![Boards](docs/screenshots/kanban.png) |
+| *Login* | *Board management (boards / lists / tags)* |
+
 ## Tech Stack
 
 <table>

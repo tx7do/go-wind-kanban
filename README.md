@@ -26,6 +26,13 @@
 
 ---
 
+## 界面预览
+
+| | |
+|:---:|:---:|
+| ![登录页](docs/screenshots/login.png) | ![看板管理](docs/screenshots/kanban.png) |
+| *登录页* | *看板管理（看板 / 列 / 标签）* |
+
 ## 技术栈
 
 <table>

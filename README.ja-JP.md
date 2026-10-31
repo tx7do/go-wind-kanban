@@ -26,6 +26,13 @@
 
 ---
 
+## スクリーンショット
+
+| | |
+|:---:|:---:|
+| ![ログイン](docs/screenshots/login.png) | ![ボード管理](docs/screenshots/kanban.png) |
+| *ログイン* | *ボード管理（ボード / リスト / タグ）* |
+
 ## 技術スタック
 
 <table>
