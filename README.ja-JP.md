@@ -31,9 +31,10 @@
 | | |
 |:---:|:---:|
 | ![ログイン](docs/screenshots/login.png) | ![ボード管理](docs/screenshots/kanban.png) |
-| *ログイン* | *ボード管理（ボード / リスト / タグ）* |
+| *ログイン* | *ボード管理（ボード / リスト / カード）* |
 | ![App ボード一覧](docs/screenshots/app-boards.png) | ![App ボード表示](docs/screenshots/app-kanban.png) |
 | *App ボード一覧（Flutter）* | *App ボード表示（未着手/進行中/完了）* |
+
 
 
 ## 技術スタック

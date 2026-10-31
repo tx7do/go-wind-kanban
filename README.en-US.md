@@ -30,10 +30,11 @@
 
 | | |
 |:---:|:---:|
-| ![Login](docs/screenshots/login.png) | ![Boards](docs/screenshots/kanban.png) |
-| *Login* | *Board management (boards / lists / tags)* |
+| ![Login](docs/screenshots/login.png) | ![Board management](docs/screenshots/kanban.png) |
+| *Login* | *Board management (boards / lists / cards)* |
 | ![App board list](docs/screenshots/app-boards.png) | ![App board view](docs/screenshots/app-kanban.png) |
 | *App board list (Flutter)* | *App board view (todo / in progress / done)* |
+
 
 
 ## Tech Stack
