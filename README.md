@@ -32,6 +32,9 @@
 |:---:|:---:|
 | ![登录页](docs/screenshots/login.png) | ![看板管理](docs/screenshots/kanban.png) |
 | *登录页* | *看板管理（看板 / 列 / 标签）* |
+| ![App 看板列表](docs/screenshots/app-boards.png) | ![App 看板视图](docs/screenshots/app-kanban.png) |
+| *App 看板列表（Flutter）* | *App 看板视图（待办/进行中/已完成）* |
+
 
 ## 技术栈
 
