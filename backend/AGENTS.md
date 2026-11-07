@@ -14,7 +14,6 @@
 - **数据库**: PostgreSQL（主）/ MySQL，驱动 pgx/v5
 - **缓存/队列**: Redis（go-redis/v9）、Asynq 异步任务
 - **鉴权**: kratos-authn（JWT HS256）+ kratos-authz（Casbin / OPA）
-- **存储**: MinIO（S3 兼容）
 - **搜索**: ElasticSearch / OpenSearch
 - **服务发现**: etcd
 - **可观测性**: OpenTelemetry + Jaeger
@@ -30,7 +29,7 @@ HTTP/REST 请求
   └─ admin-service  (网关 BFF，REST:6600 / SSE:6601 / gRPC)
        └─ gRPC → core-service  (核心业务 + 数据落点)
                  ├─ ent ORM → PostgreSQL
-                 ├─ Redis / MinIO / ElasticSearch
+                 ├─ Redis / ElasticSearch
                  └─ DTM / Asynq
 
 app-service (前台 BFF，REST:6700) ──gRPC──→ core-service
@@ -485,7 +484,7 @@ func NewRestMiddleware(...) []middleware.Middleware {
 | `make test` / `make cover` | 测试 / 覆盖率 |
 | `make vet` / `make lint` | `go vet` / `golangci-lint run` |
 | `make run` | 在服务目录运行（`go run ./cmd/server -c ./configs`） |
-| `make compose-up-libs` | 仅启动依赖中间件（postgres/redis/minio/etcd/jaeger，不含应用） |
+| `make compose-up-libs` | 仅启动依赖中间件（postgres/redis/etcd/jaeger，不含应用） |
 | `make compose-up` | 全栈 docker compose 编排 |
 | `make all` | `make app`（生成+构建全流程） |
 

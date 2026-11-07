@@ -9,7 +9,6 @@
 ##   - 主应用服务（根据 docker-compose.yml 定义）
 ##   - PostgreSQL 数据库
 ##   - Redis 缓存
-##   - MinIO 对象存储
 ##   - Jaeger 分布式追踪
 ##
 ## Compose 文件：

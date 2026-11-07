@@ -13,7 +13,6 @@ GoWind（风行内容中台）— 企业级无头内容中枢（Headless Content
 - [OpenTelemetry](https://opentelemetry.io/) -- 分布式可观察系统
 - 手写依赖装配（wiring.go，无 DI 框架）
 - [OpenAPI](https://www.openapis.org/) -- RESTful API 文档
-- [MinIO](https://min.io/) -- 对象存储服务器
 - [Redis](https://redis.io/) -- 非关系型数据库
 - [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) -- 关系型数据库
 - [Ent](https://entgo.io/) / [GORM](https://gorm.io/index.html) -- Golang ORM框架

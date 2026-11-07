@@ -30,7 +30,6 @@ Compose 文件路径 (默认: docker-compose.libs.yaml)
 启动的服务（仅依赖）：
   - PostgreSQL 数据库
   - Redis 缓存
-  - MinIO 对象存储
   - Jaeger 分布式追踪
 
 不启动的服务：

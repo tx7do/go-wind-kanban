@@ -185,7 +185,6 @@ HOSTS_SERVICES="postgres mysql redis" \
 - PostgreSQL 数据库
 - Redis 缓存
 - Etcd 服务发现
-- MinIO 对象存储
 - Jaeger 分布式追踪
 
 **使用方式：**
@@ -235,7 +234,6 @@ APP_ROOT=/opt/app ./scripts/docker/full_deploy.sh
 
 - PostgreSQL 数据库
 - Redis 缓存
-- MinIO 对象存储
 - Jaeger 分布式追踪
 
 **不启动：** 主应用服务（应在本地运行）
