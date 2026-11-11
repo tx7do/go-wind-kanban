@@ -71,14 +71,14 @@ func (_u *LabelUpdate) ClearDeletedAt() *LabelUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *LabelUpdate) SetCreatedBy(v uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetCreatedBy(v int64) *LabelUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableCreatedBy(v *uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetNillableCreatedBy(v *int64) *LabelUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -86,7 +86,7 @@ func (_u *LabelUpdate) SetNillableCreatedBy(v *uint32) *LabelUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *LabelUpdate) AddCreatedBy(v int32) *LabelUpdate {
+func (_u *LabelUpdate) AddCreatedBy(v int64) *LabelUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -98,14 +98,14 @@ func (_u *LabelUpdate) ClearCreatedBy() *LabelUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *LabelUpdate) SetUpdatedBy(v uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetUpdatedBy(v int64) *LabelUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableUpdatedBy(v *uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetNillableUpdatedBy(v *int64) *LabelUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -113,7 +113,7 @@ func (_u *LabelUpdate) SetNillableUpdatedBy(v *uint32) *LabelUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *LabelUpdate) AddUpdatedBy(v int32) *LabelUpdate {
+func (_u *LabelUpdate) AddUpdatedBy(v int64) *LabelUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *LabelUpdate) ClearUpdatedBy() *LabelUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *LabelUpdate) SetDeletedBy(v uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetDeletedBy(v int64) *LabelUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableDeletedBy(v *uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetNillableDeletedBy(v *int64) *LabelUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *LabelUpdate) SetNillableDeletedBy(v *uint32) *LabelUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *LabelUpdate) AddDeletedBy(v int32) *LabelUpdate {
+func (_u *LabelUpdate) AddDeletedBy(v int64) *LabelUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -192,13 +192,13 @@ func (_u *LabelUpdate) ClearColor() *LabelUpdate {
 }
 
 // SetBoardID sets the "board_id" field.
-func (_u *LabelUpdate) SetBoardID(v uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetBoardID(v int64) *LabelUpdate {
 	_u.mutation.SetBoardID(v)
 	return _u
 }
 
 // SetNillableBoardID sets the "board_id" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableBoardID(v *uint32) *LabelUpdate {
+func (_u *LabelUpdate) SetNillableBoardID(v *int64) *LabelUpdate {
 	if v != nil {
 		_u.SetBoardID(*v)
 	}
@@ -295,7 +295,7 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -319,34 +319,34 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(label.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(label.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(label.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(label.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(label.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(label.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(label.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(label.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(label.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(label.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(label.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(label.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(label.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(label.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(label.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(label.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(label.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(label.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(label.FieldName, field.TypeString, value)
@@ -374,7 +374,7 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{label.BoardColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -387,7 +387,7 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{label.BoardColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -458,14 +458,14 @@ func (_u *LabelUpdateOne) ClearDeletedAt() *LabelUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *LabelUpdateOne) SetCreatedBy(v uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetCreatedBy(v int64) *LabelUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableCreatedBy(v *uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetNillableCreatedBy(v *int64) *LabelUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -473,7 +473,7 @@ func (_u *LabelUpdateOne) SetNillableCreatedBy(v *uint32) *LabelUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *LabelUpdateOne) AddCreatedBy(v int32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) AddCreatedBy(v int64) *LabelUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -485,14 +485,14 @@ func (_u *LabelUpdateOne) ClearCreatedBy() *LabelUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *LabelUpdateOne) SetUpdatedBy(v uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetUpdatedBy(v int64) *LabelUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableUpdatedBy(v *uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetNillableUpdatedBy(v *int64) *LabelUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -500,7 +500,7 @@ func (_u *LabelUpdateOne) SetNillableUpdatedBy(v *uint32) *LabelUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *LabelUpdateOne) AddUpdatedBy(v int32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) AddUpdatedBy(v int64) *LabelUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -512,14 +512,14 @@ func (_u *LabelUpdateOne) ClearUpdatedBy() *LabelUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *LabelUpdateOne) SetDeletedBy(v uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetDeletedBy(v int64) *LabelUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableDeletedBy(v *uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetNillableDeletedBy(v *int64) *LabelUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -527,7 +527,7 @@ func (_u *LabelUpdateOne) SetNillableDeletedBy(v *uint32) *LabelUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *LabelUpdateOne) AddDeletedBy(v int32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) AddDeletedBy(v int64) *LabelUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -579,13 +579,13 @@ func (_u *LabelUpdateOne) ClearColor() *LabelUpdateOne {
 }
 
 // SetBoardID sets the "board_id" field.
-func (_u *LabelUpdateOne) SetBoardID(v uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetBoardID(v int64) *LabelUpdateOne {
 	_u.mutation.SetBoardID(v)
 	return _u
 }
 
 // SetNillableBoardID sets the "board_id" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableBoardID(v *uint32) *LabelUpdateOne {
+func (_u *LabelUpdateOne) SetNillableBoardID(v *int64) *LabelUpdateOne {
 	if v != nil {
 		_u.SetBoardID(*v)
 	}
@@ -695,7 +695,7 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Label.id" for update`)}
@@ -736,34 +736,34 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		_spec.ClearField(label.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(label.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(label.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(label.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(label.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(label.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(label.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(label.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(label.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(label.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(label.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(label.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(label.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(label.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(label.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(label.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(label.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(label.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(label.FieldName, field.TypeString, value)
@@ -791,7 +791,7 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 			Columns: []string{label.BoardColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -804,7 +804,7 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 			Columns: []string{label.BoardColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

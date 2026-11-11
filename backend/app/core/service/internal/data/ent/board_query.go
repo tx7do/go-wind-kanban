@@ -158,8 +158,8 @@ func (_q *BoardQuery) FirstX(ctx context.Context) *Board {
 
 // FirstID returns the first Board ID from the query.
 // Returns a *NotFoundError when no Board ID was found.
-func (_q *BoardQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *BoardQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -171,7 +171,7 @@ func (_q *BoardQuery) FirstID(ctx context.Context) (id uint32, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *BoardQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *BoardQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -209,8 +209,8 @@ func (_q *BoardQuery) OnlyX(ctx context.Context) *Board {
 // OnlyID is like Only, but returns the only Board ID in the query.
 // Returns a *NotSingularError when more than one Board ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *BoardQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *BoardQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -226,7 +226,7 @@ func (_q *BoardQuery) OnlyID(ctx context.Context) (id uint32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *BoardQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *BoardQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -254,7 +254,7 @@ func (_q *BoardQuery) AllX(ctx context.Context) []*Board {
 }
 
 // IDs executes the query and returns a list of Board IDs.
-func (_q *BoardQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *BoardQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -266,7 +266,7 @@ func (_q *BoardQuery) IDs(ctx context.Context) (ids []uint32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *BoardQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *BoardQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -506,7 +506,7 @@ func (_q *BoardQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Board,
 
 func (_q *BoardQuery) loadColumns(ctx context.Context, query *ColumnQuery, nodes []*Board, init func(*Board), assign func(*Board, *Column)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint32]*Board)
+	nodeids := make(map[int64]*Board)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -536,7 +536,7 @@ func (_q *BoardQuery) loadColumns(ctx context.Context, query *ColumnQuery, nodes
 }
 func (_q *BoardQuery) loadCards(ctx context.Context, query *CardQuery, nodes []*Board, init func(*Board), assign func(*Board, *Card)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint32]*Board)
+	nodeids := make(map[int64]*Board)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -566,7 +566,7 @@ func (_q *BoardQuery) loadCards(ctx context.Context, query *CardQuery, nodes []*
 }
 func (_q *BoardQuery) loadLabels(ctx context.Context, query *LabelQuery, nodes []*Board, init func(*Board), assign func(*Board, *Label)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint32]*Board)
+	nodeids := make(map[int64]*Board)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -608,7 +608,7 @@ func (_q *BoardQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *BoardQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(board.Table, board.Columns, sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(board.Table, board.Columns, sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

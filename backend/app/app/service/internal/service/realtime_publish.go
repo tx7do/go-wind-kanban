@@ -52,7 +52,7 @@ func publishCardEntity(ctx context.Context, hub *broadcast.Hub, typ boardV1.Boar
 }
 
 // publishBoardDeleted 发布删除事件（仅携带 id 的占位实体）。
-func publishBoardDeleted(ctx context.Context, hub *broadcast.Hub, boardID uint32) {
+func publishBoardDeleted(ctx context.Context, hub *broadcast.Hub, boardID int64) {
 	if hub == nil {
 		return
 	}
@@ -64,7 +64,7 @@ func publishBoardDeleted(ctx context.Context, hub *broadcast.Hub, boardID uint32
 	})
 }
 
-func publishColumnDeleted(ctx context.Context, hub *broadcast.Hub, boardID, columnID uint32) {
+func publishColumnDeleted(ctx context.Context, hub *broadcast.Hub, boardID, columnID int64) {
 	if hub == nil {
 		return
 	}
@@ -79,7 +79,7 @@ func publishColumnDeleted(ctx context.Context, hub *broadcast.Hub, boardID, colu
 	})
 }
 
-func publishCardDeleted(ctx context.Context, hub *broadcast.Hub, boardID, cardID uint32) {
+func publishCardDeleted(ctx context.Context, hub *broadcast.Hub, boardID, cardID int64) {
 	if hub == nil {
 		return
 	}
@@ -116,7 +116,7 @@ func publishLabelEntity(ctx context.Context, hub *broadcast.Hub, typ boardV1.Boa
 }
 
 // publishLabelDeleted 发布标签删除事件。
-func publishLabelDeleted(ctx context.Context, hub *broadcast.Hub, boardID, labelID uint32) {
+func publishLabelDeleted(ctx context.Context, hub *broadcast.Hub, boardID, labelID int64) {
 	if hub == nil {
 		return
 	}

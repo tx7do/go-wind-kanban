@@ -117,7 +117,7 @@ func (r *ColumnRepo) List(ctx context.Context, req *paginationV1.PagingRequest) 
 	}, nil
 }
 
-func (r *ColumnRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ColumnRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Column.Query().
 		Where(column.IDEQ(id)).
 		Exist(ctx)
@@ -251,7 +251,7 @@ func (r *ColumnRepo) Update(ctx context.Context, req *boardV1.UpdateColumnReques
 	return result, err
 }
 
-func (r *ColumnRepo) bumpVersion(ctx context.Context, id uint32, tid uint32, hasTenant bool) error {
+func (r *ColumnRepo) bumpVersion(ctx context.Context, id int64, tid int64, hasTenant bool) error {
 	builder := r.entClient.Client().Column.UpdateOneID(id)
 	builder.Where(column.IDEQ(id))
 	if hasTenant {
@@ -409,7 +409,7 @@ func (r *ColumnRepo) resolveAnchorRanks(allCols []*ent.Column, moverIdx int, req
 	return low, high, true
 }
 
-func (r *ColumnRepo) rebalanceColumns(ctx context.Context, allCols []*ent.Column, moverIdx int, req *boardV1.MoveColumnRequest, tid uint32) error {
+func (r *ColumnRepo) rebalanceColumns(ctx context.Context, allCols []*ent.Column, moverIdx int, req *boardV1.MoveColumnRequest, tid int64) error {
 	ordered := make([]*ent.Column, 0, len(allCols))
 	mover := allCols[moverIdx]
 	for i, c := range allCols {
@@ -457,7 +457,7 @@ func (r *ColumnRepo) rebalanceColumns(ctx context.Context, allCols []*ent.Column
 	return nil
 }
 
-func (r *ColumnRepo) getColumnByID(ctx context.Context, id uint32, tid uint32, hasTenant bool) (*boardV1.Column, error) {
+func (r *ColumnRepo) getColumnByID(ctx context.Context, id int64, tid int64, hasTenant bool) (*boardV1.Column, error) {
 	q := r.entClient.Client().Column.Query().Where(column.IDEQ(id))
 	if hasTenant {
 		q = q.Where(column.TenantIDEQ(tid))
@@ -469,7 +469,7 @@ func (r *ColumnRepo) getColumnByID(ctx context.Context, id uint32, tid uint32, h
 	return r.mapper.ToDTO(t), nil
 }
 
-func (r *ColumnRepo) allocateColumnTailRank(ctx context.Context, boardID uint32, tid uint32) (string, error) {
+func (r *ColumnRepo) allocateColumnTailRank(ctx context.Context, boardID int64, tid int64) (string, error) {
 	last, err := r.entClient.Client().Column.Query().
 		Where(column.HasBoardWith(board.IDEQ(boardID)), column.TenantIDEQ(tid)).
 		Order(ent.Desc(column.FieldRank)).

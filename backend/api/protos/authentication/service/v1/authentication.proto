@@ -131,7 +131,7 @@ message LoginRequest {
     (gnostic.openapi.v3.property) = {description: "跳转链接"}
   ]; // 跳转链接
 
-  optional uint32 user_id = 6 [
+  optional int64 user_id = 6 [
     json_name = "user_id",
     (gnostic.openapi.v3.property) = {
       description: "用户ID"
@@ -258,7 +258,7 @@ message LoginResponse {
 
 // 用户登出 - 请求
 message LogoutRequest {
-  uint32 user_id = 1 [
+  int64 user_id = 1 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
       description: "用户ID"
@@ -296,7 +296,7 @@ message ValidateTokenRequest {
     }
   ];
 
-  optional uint32 user_id = 4 [
+  optional int64 user_id = 4 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
       description: "用户ID"
@@ -379,7 +379,7 @@ message RegisterUserRequest {
   ]; // 客户端类型
 }
 message RegisterUserResponse {
-  uint32 user_id = 1 [
+  int64 user_id = 1 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
       description: "用户ID"
@@ -389,7 +389,7 @@ message RegisterUserResponse {
 
 // 获取当前用户身份信息 - 响应
 message WhoAmIResponse {
-  uint32 user_id = 1 [
+  int64 user_id = 1 [
     json_name = "uid",
     (gnostic.openapi.v3.property) = {
       description: "用户ID"
@@ -405,7 +405,7 @@ message WhoAmIResponse {
 }
 
 message GetAccessTokensRequest {
-  uint32 user_id = 1 [
+  int64 user_id = 1 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
       description: "用户ID"
@@ -431,7 +431,7 @@ message GetAccessTokensResponse {
 
 // 将指定令牌加入黑名单 / 拉黑（支持通过明文 token 或 token_id）
 message BlockTokenRequest {
-  uint32 user_id = 1 [
+  int64 user_id = 1 [
     (google.api.field_behavior) = REQUIRED,
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
@@ -467,7 +467,7 @@ message BlockTokenRequest {
 }
 
 message UnblockTokenRequest {
-  uint32 user_id = 1 [
+  int64 user_id = 1 [
     (google.api.field_behavior) = REQUIRED,
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
@@ -515,7 +515,7 @@ message RevokeTokenByIdRequest {
     }
   ]; // 撤销原因
 
-  optional uint32 user_id = 4 [
+  optional int64 user_id = 4 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {
       description: "可选：关联的用户ID，便于高效定位要撤销的令牌（向后兼容）"
@@ -568,7 +568,7 @@ message VerifyCaptchaResponse {
 // 客户端以 Bearer JWT POST 换取短时 ticket，再用 ticket 做 WS 握手。
 // ticket 60 秒有效、单次使用、Redis 存储。
 message CreateWebSocketTicketRequest {
-  uint32 board_id = 1 [
+  int64 board_id = 1 [
     json_name = "boardId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {description: "订阅看板ID（写入 ticket 绑定，握手时校验）"}
@@ -595,12 +595,12 @@ message ConsumeWebSocketTicketResponse {
     (gnostic.openapi.v3.property) = {description: "ticket 是否有效"}
   ]; // ticket 是否有效
 
-  optional uint32 user_id = 2 [
+  optional int64 user_id = 2 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {description: "绑定的用户ID（有效时返回）"}
   ]; // 绑定的用户ID（有效时返回）
 
-  optional uint32 board_id = 3 [
+  optional int64 board_id = 3 [
     json_name = "boardId",
     (gnostic.openapi.v3.property) = {description: "绑定的看板ID（有效时返回）"}
   ]; // 绑定的看板ID（有效时返回）

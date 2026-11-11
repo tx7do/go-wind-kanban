@@ -117,7 +117,7 @@ func (r *CardRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}, nil
 }
 
-func (r *CardRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *CardRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Card.Query().
 		Where(card.IDEQ(id)).
 		Exist(ctx)
@@ -271,7 +271,7 @@ func (r *CardRepo) Update(ctx context.Context, req *boardV1.UpdateCardRequest) (
 	return result, err
 }
 
-func (r *CardRepo) bumpVersion(ctx context.Context, id uint32, tid uint32, hasTenant bool) error {
+func (r *CardRepo) bumpVersion(ctx context.Context, id int64, tid int64, hasTenant bool) error {
 	builder := r.entClient.Client().Card.UpdateOneID(id)
 	builder.Where(card.IDEQ(id))
 	if hasTenant {
@@ -342,7 +342,7 @@ func (r *CardRepo) Move(ctx context.Context, req *boardV1.MoveCardRequest) (*boa
 
 	// 确定目标列：同列重排用 mover 当前列；跨列移动校验目标列同租户。
 	targetColID := moverColID
-	var targetBoardID uint32
+	var targetBoardID int64
 	if req.GetTargetColumnId() != 0 {
 		tc, cerr := r.entClient.Client().Column.Query().
 			Where(column.IDEQ(req.GetTargetColumnId()), column.TenantIDEQ(tid)).
@@ -466,7 +466,7 @@ func (r *CardRepo) resolveAnchorRanks(allCards []*ent.Card, moverIdx int, req *b
 
 // rebalanceCards 对目标列整列重排，mover 按 anchor 策略插入目标位置后
 // 全列重新分配均匀 rank；跨列移动时 mover 的归属在重排中一并更新。
-func (r *CardRepo) rebalanceCards(ctx context.Context, allCards []*ent.Card, moverIdx int, req *boardV1.MoveCardRequest, targetColID, targetBoardID, moverColID, tid uint32) error {
+func (r *CardRepo) rebalanceCards(ctx context.Context, allCards []*ent.Card, moverIdx int, req *boardV1.MoveCardRequest, targetColID, targetBoardID, moverColID, tid int64) error {
 	ordered := make([]*ent.Card, 0, len(allCards)+1)
 	for i, c := range allCards {
 		if i == moverIdx {
@@ -532,7 +532,7 @@ func (r *CardRepo) rebalanceCards(ctx context.Context, allCards []*ent.Card, mov
 	return nil
 }
 
-func (r *CardRepo) getCardByID(ctx context.Context, id uint32, tid uint32, hasTenant bool) (*boardV1.Card, error) {
+func (r *CardRepo) getCardByID(ctx context.Context, id int64, tid int64, hasTenant bool) (*boardV1.Card, error) {
 	q := r.entClient.Client().Card.Query().Where(card.IDEQ(id))
 	if hasTenant {
 		q = q.Where(card.TenantIDEQ(tid))
@@ -544,7 +544,7 @@ func (r *CardRepo) getCardByID(ctx context.Context, id uint32, tid uint32, hasTe
 	return r.mapper.ToDTO(t), nil
 }
 
-func (r *CardRepo) allocateCardTailRank(ctx context.Context, colID uint32, tid uint32) (string, error) {
+func (r *CardRepo) allocateCardTailRank(ctx context.Context, colID int64, tid int64) (string, error) {
 	last, err := r.entClient.Client().Card.Query().
 		Where(card.HasColumnWith(column.IDEQ(colID)), card.TenantIDEQ(tid)).
 		Order(ent.Desc(card.FieldRank)).

@@ -4,69 +4,75 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import '../../../transport.dart';
+import '../../../proto_wire.dart';
 
 /// 前台应用错误定义
 enum AppErrorReason {
-  badGateway('BAD_GATEWAY'),
-  badRequest('BAD_REQUEST'),
-  conflict('CONFLICT'),
-  expectationFailed('EXPECTATION_FAILED'),
-  failedDependency('FAILED_DEPENDENCY'),
-  forbidden('FORBIDDEN'),
-  gatewayTimeout('GATEWAY_TIMEOUT'),
-  gone('GONE'),
-  httpVersionNotSupported('HTTP_VERSION_NOT_SUPPORTED'),
-  imATeapot('IM_A_TEAPOT'),
-  incorrectAccessToken('INCORRECT_ACCESS_TOKEN'),
-  incorrectAppSecret('INCORRECT_APP_SECRET'),
-  incorrectRefreshToken('INCORRECT_REFRESH_TOKEN'),
-  insufficientStorage('INSUFFICIENT_STORAGE'),
-  internalServerError('INTERNAL_SERVER_ERROR'),
-  invalidGrantType('INVALID_GRANT_TYPE'),
-  invalidPassword('INVALID_PASSWORD'),
-  invalidToken('INVALID_TOKEN'),
-  invalidUserid('INVALID_USERID'),
-  lengthRequired('LENGTH_REQUIRED'),
-  locked('LOCKED'),
-  loopDetected('LOOP_DETECTED'),
-  methodNotAllowed('METHOD_NOT_ALLOWED'),
-  misdirectedRequest('MISDIRECTED_REQUEST'),
-  networkAuthenticationRequired('NETWORK_AUTHENTICATION_REQUIRED'),
-  networkConnectTimeoutError('NETWORK_CONNECT_TIMEOUT_ERROR'),
-  networkReadTimeoutError('NETWORK_READ_TIMEOUT_ERROR'),
-  notAcceptable('NOT_ACCEPTABLE'),
-  notExtended('NOT_EXTENDED'),
-  notFound('NOT_FOUND'),
-  notImplemented('NOT_IMPLEMENTED'),
-  payloadTooLarge('PAYLOAD_TOO_LARGE'),
-  paymentRequired('PAYMENT_REQUIRED'),
-  preconditionFailed('PRECONDITION_FAILED'),
-  preconditionRequired('PRECONDITION_REQUIRED'),
-  proxyAuthenticationRequired('PROXY_AUTHENTICATION_REQUIRED'),
-  rangeNotSatisfiable('RANGE_NOT_SATISFIABLE'),
-  requestHeaderFieldsTooLarge('REQUEST_HEADER_FIELDS_TOO_LARGE'),
-  requestTimeout('REQUEST_TIMEOUT'),
-  serviceUnavailable('SERVICE_UNAVAILABLE'),
-  tokenExpired('TOKEN_EXPIRED'),
-  tokenNotExist('TOKEN_NOT_EXIST'),
-  tooEarly('TOO_EARLY'),
-  tooManyRequests('TOO_MANY_REQUESTS'),
-  unauthorized('UNAUTHORIZED'),
-  unavailableForLegalReasons('UNAVAILABLE_FOR_LEGAL_REASONS'),
-  unprocessableEntity('UNPROCESSABLE_ENTITY'),
-  unsupportedMediaType('UNSUPPORTED_MEDIA_TYPE'),
-  upgradeRequired('UPGRADE_REQUIRED'),
-  uriTooLong('URI_TOO_LONG'),
-  userFreeze('USER_FREEZE'),
-  userNotFound('USER_NOT_FOUND'),
-  variantAlsoNegotiates('VARIANT_ALSO_NEGOTIATES');
+  badGateway('BAD_GATEWAY', 2200),
+  badRequest('BAD_REQUEST', 0),
+  conflict('CONFLICT', 900),
+  expectationFailed('EXPECTATION_FAILED', 1070),
+  failedDependency('FAILED_DEPENDENCY', 1120),
+  forbidden('FORBIDDEN', 300),
+  gatewayTimeout('GATEWAY_TIMEOUT', 2400),
+  gone('GONE', 1000),
+  httpVersionNotSupported('HTTP_VERSION_NOT_SUPPORTED', 2500),
+  imATeapot('IM_A_TEAPOT', 1080),
+  incorrectAccessToken('INCORRECT_ACCESS_TOKEN', 104),
+  incorrectAppSecret('INCORRECT_APP_SECRET', 103),
+  incorrectRefreshToken('INCORRECT_REFRESH_TOKEN', 105),
+  insufficientStorage('INSUFFICIENT_STORAGE', 2700),
+  internalServerError('INTERNAL_SERVER_ERROR', 2000),
+  invalidGrantType('INVALID_GRANT_TYPE', 1),
+  invalidPassword('INVALID_PASSWORD', 4),
+  invalidToken('INVALID_TOKEN', 3),
+  invalidUserid('INVALID_USERID', 2),
+  lengthRequired('LENGTH_REQUIRED', 1010),
+  locked('LOCKED', 1110),
+  loopDetected('LOOP_DETECTED', 2800),
+  methodNotAllowed('METHOD_NOT_ALLOWED', 500),
+  misdirectedRequest('MISDIRECTED_REQUEST', 1090),
+  networkAuthenticationRequired('NETWORK_AUTHENTICATION_REQUIRED', 3000),
+  networkConnectTimeoutError('NETWORK_CONNECT_TIMEOUT_ERROR', 3200),
+  networkReadTimeoutError('NETWORK_READ_TIMEOUT_ERROR', 3100),
+  notAcceptable('NOT_ACCEPTABLE', 600),
+  notExtended('NOT_EXTENDED', 2900),
+  notFound('NOT_FOUND', 400),
+  notImplemented('NOT_IMPLEMENTED', 2100),
+  payloadTooLarge('PAYLOAD_TOO_LARGE', 1030),
+  paymentRequired('PAYMENT_REQUIRED', 200),
+  preconditionFailed('PRECONDITION_FAILED', 1020),
+  preconditionRequired('PRECONDITION_REQUIRED', 1150),
+  proxyAuthenticationRequired('PROXY_AUTHENTICATION_REQUIRED', 700),
+  rangeNotSatisfiable('RANGE_NOT_SATISFIABLE', 1060),
+  requestHeaderFieldsTooLarge('REQUEST_HEADER_FIELDS_TOO_LARGE', 1170),
+  requestTimeout('REQUEST_TIMEOUT', 800),
+  serviceUnavailable('SERVICE_UNAVAILABLE', 2300),
+  tokenExpired('TOKEN_EXPIRED', 106),
+  tokenNotExist('TOKEN_NOT_EXIST', 107),
+  tooEarly('TOO_EARLY', 1130),
+  tooManyRequests('TOO_MANY_REQUESTS', 1160),
+  unauthorized('UNAUTHORIZED', 100),
+  unavailableForLegalReasons('UNAVAILABLE_FOR_LEGAL_REASONS', 1180),
+  unprocessableEntity('UNPROCESSABLE_ENTITY', 1100),
+  unsupportedMediaType('UNSUPPORTED_MEDIA_TYPE', 1050),
+  upgradeRequired('UPGRADE_REQUIRED', 1140),
+  uriTooLong('URI_TOO_LONG', 1040),
+  userFreeze('USER_FREEZE', 101),
+  userNotFound('USER_NOT_FOUND', 401),
+  variantAlsoNegotiates('VARIANT_ALSO_NEGOTIATES', 2600);
 
   final String value;
-  const AppErrorReason(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AppErrorReason(this.value, this.wire);
 
   static AppErrorReason fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AppErrorReason value: ' + v));
+  static AppErrorReason fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AppErrorReason wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -178,7 +184,7 @@ class AuthenticationServiceV1LoginRequest {
       refresh_token: json['refresh_token'] as String?,
       scope: json['scope'] as String?,
       tenant_code: json['tenant_code'] as String?,
-      user_id: json['user_id'] as int?,
+      user_id: json['user_id'] != null ? int.parse(json['user_id'].toString()) : null,
       username: json['username'] as String?,
     );
   }
@@ -199,7 +205,7 @@ class AuthenticationServiceV1LoginRequest {
     if (refresh_token != null) json['refresh_token'] = refresh_token;
     if (scope != null) json['scope'] = scope;
     if (tenant_code != null) json['tenant_code'] = tenant_code;
-    if (user_id != null) json['user_id'] = user_id;
+    if (user_id != null) json['user_id'] = user_id.toString();
     if (username != null) json['username'] = username;
     return json;
   }
@@ -289,35 +295,230 @@ class AuthenticationServiceV1LoginRequest {
       username: username ?? this.username,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: grant_type
+    final f1 = grant_type;
+    if (f1 != null) {
+      w.writeEnum(1, f1.wire); // AuthenticationServiceV1GrantType
+    }
+    // field 2: client_id
+    final f2 = client_id;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+    // field 3: client_secret
+    final f3 = client_secret;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: scope
+    final f4 = scope;
+    if (f4 != null) {
+      w.writeString(4, f4);
+    }
+    // field 5: redirect_uri
+    final f5 = redirect_uri;
+    if (f5 != null) {
+      w.writeString(5, f5);
+    }
+    // field 6: user_id
+    final f6 = user_id;
+    if (f6 != null) {
+      w.writeInt64(6, f6);
+    }
+    // field 10: username
+    final f10 = username;
+    if (f10 != null) {
+      w.writeString(10, f10);
+    }
+    // field 11: email
+    final f11 = email;
+    if (f11 != null) {
+      w.writeString(11, f11);
+    }
+    // field 12: mobile
+    final f12 = mobile;
+    if (f12 != null) {
+      w.writeString(12, f12);
+    }
+    // field 19: password
+    final f19 = password;
+    if (f19 != null) {
+      w.writeString(19, f19);
+    }
+    // field 20: refresh_token
+    final f20 = refresh_token;
+    if (f20 != null) {
+      w.writeString(20, f20);
+    }
+    // field 30: code
+    final f30 = code;
+    if (f30 != null) {
+      w.writeString(30, f30);
+    }
+    // field 40: client_type
+    final f40 = client_type;
+    if (f40 != null) {
+      w.writeEnum(40, f40.wire); // AuthenticationServiceV1ClientType
+    }
+    // field 50: device_id
+    final f50 = device_id;
+    if (f50 != null) {
+      w.writeString(50, f50);
+    }
+    // field 60: jti
+    final f60 = jti;
+    if (f60 != null) {
+      w.writeString(60, f60);
+    }
+    // field 70: tenant_code
+    final f70 = tenant_code;
+    if (f70 != null) {
+      w.writeString(70, f70);
+    }
+  }
+
+  factory AuthenticationServiceV1LoginRequest.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1LoginRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1LoginRequest _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1LoginRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: grant_type
+        case 1: {
+          m.grant_type = AuthenticationServiceV1GrantType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: client_id
+        case 2: {
+          m.client_id = r.readString();
+          break;
+        }
+        // field 3: client_secret
+        case 3: {
+          m.client_secret = r.readString();
+          break;
+        }
+        // field 4: scope
+        case 4: {
+          m.scope = r.readString();
+          break;
+        }
+        // field 5: redirect_uri
+        case 5: {
+          m.redirect_uri = r.readString();
+          break;
+        }
+        // field 6: user_id
+        case 6: {
+          m.user_id = r.readInt64();
+          break;
+        }
+        // field 10: username
+        case 10: {
+          m.username = r.readString();
+          break;
+        }
+        // field 11: email
+        case 11: {
+          m.email = r.readString();
+          break;
+        }
+        // field 12: mobile
+        case 12: {
+          m.mobile = r.readString();
+          break;
+        }
+        // field 19: password
+        case 19: {
+          m.password = r.readString();
+          break;
+        }
+        // field 20: refresh_token
+        case 20: {
+          m.refresh_token = r.readString();
+          break;
+        }
+        // field 30: code
+        case 30: {
+          m.code = r.readString();
+          break;
+        }
+        // field 40: client_type
+        case 40: {
+          m.client_type = AuthenticationServiceV1ClientType.fromWire(r.readEnum());
+          break;
+        }
+        // field 50: device_id
+        case 50: {
+          m.device_id = r.readString();
+          break;
+        }
+        // field 60: jti
+        case 60: {
+          m.jti = r.readString();
+          break;
+        }
+        // field 70: tenant_code
+        case 70: {
+          m.tenant_code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 授权类型
 enum AuthenticationServiceV1GrantType {
-  authorizationCode('authorization_code'),
-  clientCredentials('client_credentials'),
-  implicit('implicit'),
-  password('password'),
-  refreshToken('refresh_token');
+  authorizationCode('authorization_code', 2),
+  clientCredentials('client_credentials', 1),
+  implicit('implicit', 4),
+  password('password', 0),
+  refreshToken('refresh_token', 3);
 
   final String value;
-  const AuthenticationServiceV1GrantType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AuthenticationServiceV1GrantType(this.value, this.wire);
 
   static AuthenticationServiceV1GrantType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1GrantType value: ' + v));
+  static AuthenticationServiceV1GrantType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1GrantType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 客户端类型
 enum AuthenticationServiceV1ClientType {
-  admin('admin'),
-  app('app');
+  admin('admin', 0),
+  app('app', 1);
 
   final String value;
-  const AuthenticationServiceV1ClientType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AuthenticationServiceV1ClientType(this.value, this.wire);
 
   static AuthenticationServiceV1ClientType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1ClientType value: ' + v));
+  static AuthenticationServiceV1ClientType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1ClientType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -415,18 +616,119 @@ class AuthenticationServiceV1LoginResponse {
       token_type: token_type ?? this.token_type,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: token_type
+    final f1 = token_type;
+    if (f1 != null) {
+      w.writeEnum(1, f1.wire); // AuthenticationServiceV1TokenType
+    }
+    // field 2: access_token
+    final f2 = access_token;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+    // field 3: expires_in
+    final f3 = expires_in;
+    if (f3 != null) {
+      w.writeInt64(3, f3);
+    }
+    // field 4: refresh_token
+    final f4 = refresh_token;
+    if (f4 != null) {
+      w.writeString(4, f4);
+    }
+    // field 5: scope
+    final f5 = scope;
+    if (f5 != null) {
+      w.writeString(5, f5);
+    }
+    // field 6: refresh_expires_in
+    final f6 = refresh_expires_in;
+    if (f6 != null) {
+      w.writeInt64(6, f6);
+    }
+    // field 7: id_token
+    final f7 = id_token;
+    if (f7 != null) {
+      w.writeString(7, f7);
+    }
+  }
+
+  factory AuthenticationServiceV1LoginResponse.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1LoginResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1LoginResponse _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1LoginResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: token_type
+        case 1: {
+          m.token_type = AuthenticationServiceV1TokenType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: access_token
+        case 2: {
+          m.access_token = r.readString();
+          break;
+        }
+        // field 3: expires_in
+        case 3: {
+          m.expires_in = r.readInt64();
+          break;
+        }
+        // field 4: refresh_token
+        case 4: {
+          m.refresh_token = r.readString();
+          break;
+        }
+        // field 5: scope
+        case 5: {
+          m.scope = r.readString();
+          break;
+        }
+        // field 6: refresh_expires_in
+        case 6: {
+          m.refresh_expires_in = r.readInt64();
+          break;
+        }
+        // field 7: id_token
+        case 7: {
+          m.id_token = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 令牌类型
 enum AuthenticationServiceV1TokenType {
-  bearer('bearer'),
-  mac('mac');
+  bearer('bearer', 0),
+  mac('mac', 1);
 
   final String value;
-  const AuthenticationServiceV1TokenType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const AuthenticationServiceV1TokenType(this.value, this.wire);
 
   static AuthenticationServiceV1TokenType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1TokenType value: ' + v));
+  static AuthenticationServiceV1TokenType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown AuthenticationServiceV1TokenType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -449,13 +751,13 @@ class AuthenticationServiceV1CreateWebSocketTicketRequest {
 
   factory AuthenticationServiceV1CreateWebSocketTicketRequest.fromJson(Map<String, dynamic> json) {
     return AuthenticationServiceV1CreateWebSocketTicketRequest(
-      boardId: json['boardId'] as int?,
+      boardId: json['boardId'] != null ? int.parse(json['boardId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (boardId != null) json['boardId'] = boardId;
+    if (boardId != null) json['boardId'] = boardId.toString();
     return json;
   }
 
@@ -484,6 +786,43 @@ class AuthenticationServiceV1CreateWebSocketTicketRequest {
       boardId: boardId ?? this.boardId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: boardId
+    final f1 = boardId;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory AuthenticationServiceV1CreateWebSocketTicketRequest.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1CreateWebSocketTicketRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1CreateWebSocketTicketRequest _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1CreateWebSocketTicketRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: boardId
+        case 1: {
+          m.boardId = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class AuthenticationServiceV1CreateWebSocketTicketResponse {
@@ -530,6 +869,43 @@ class AuthenticationServiceV1CreateWebSocketTicketResponse {
       ticket: ticket ?? this.ticket,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: ticket
+    final f1 = ticket;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+  }
+
+  factory AuthenticationServiceV1CreateWebSocketTicketResponse.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1CreateWebSocketTicketResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1CreateWebSocketTicketResponse _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1CreateWebSocketTicketResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: ticket
+        case 1: {
+          m.ticket = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板服务
@@ -624,7 +1000,9 @@ class BoardServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/boards/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'BoardService',
       method: 'Update',
@@ -651,7 +1029,9 @@ class BoardServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/boards/${request.id}:move';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
       service: 'BoardService',
       method: 'Move',
@@ -678,7 +1058,9 @@ class BoardServiceClient {
       throw ArgumentError('missing required field request.board_id');
     }
     final path = '/app/v1/boards/${request.boardId}:sync';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('boardId');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
       service: 'BoardService',
       method: 'SyncBoard',
@@ -834,6 +1216,153 @@ class PaginationPagingRequest {
       token: token ?? this.token,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: page
+    final f1 = page;
+    if (f1 != null) {
+      w.writeUint32(1, f1);
+    }
+    // field 2: pageSize
+    final f2 = pageSize;
+    if (f2 != null) {
+      w.writeUint32(2, f2);
+    }
+    // field 3: offset
+    final f3 = offset;
+    if (f3 != null) {
+      w.writeUint64(3, f3);
+    }
+    // field 4: limit
+    final f4 = limit;
+    if (f4 != null) {
+      w.writeUint32(4, f4);
+    }
+    // field 5: token
+    final f5 = token;
+    if (f5 != null) {
+      w.writeString(5, f5);
+    }
+    // field 6: noPaging
+    final f6 = noPaging;
+    if (f6 != null) {
+      w.writeBool(6, f6);
+    }
+    // field 10: query
+    final f10 = query;
+    if (f10 != null) {
+      w.writeString(10, f10);
+    }
+    // field 11: filter
+    final f11 = filter;
+    if (f11 != null) {
+      w.writeString(11, f11);
+    }
+    // field 12: filterExpr
+    final f12 = filterExpr;
+    if (f12 != null) {
+      final cw = ProtoWireWriter(); f12._writeTo(cw); w.writeRaw(12, cw.toBuffer()); // PaginationFilterExpr
+    }
+    // field 20: orderBy
+    final f20 = orderBy;
+    if (f20 != null) {
+      w.writeString(20, f20);
+    }
+    // field 21: sorting
+    final f21 = sorting;
+    if (f21 != null) {
+      for (final e in f21) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(21, cw.toBuffer()); }
+    }
+    // field 30: fieldMask
+    final f30 = fieldMask;
+    if (f30 != null) {
+      w.writeFieldMask(30, f30);
+    }
+  }
+
+  factory PaginationPagingRequest.fromBuffer(List<int> bytes) {
+    return PaginationPagingRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationPagingRequest _readFrom(ProtoWireReader r) {
+    final m = PaginationPagingRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: page
+        case 1: {
+          m.page = r.readUint32();
+          break;
+        }
+        // field 2: pageSize
+        case 2: {
+          m.pageSize = r.readUint32();
+          break;
+        }
+        // field 3: offset
+        case 3: {
+          m.offset = r.readUint64();
+          break;
+        }
+        // field 4: limit
+        case 4: {
+          m.limit = r.readUint32();
+          break;
+        }
+        // field 5: token
+        case 5: {
+          m.token = r.readString();
+          break;
+        }
+        // field 6: noPaging
+        case 6: {
+          m.noPaging = r.readBool();
+          break;
+        }
+        // field 10: query
+        case 10: {
+          m.query = r.readString();
+          break;
+        }
+        // field 11: filter
+        case 11: {
+          m.filter = r.readString();
+          break;
+        }
+        // field 12: filterExpr
+        case 12: {
+          m.filterExpr = PaginationFilterExpr._readFrom(r.readNested());
+          break;
+        }
+        // field 20: orderBy
+        case 20: {
+          m.orderBy = r.readString();
+          break;
+        }
+        // field 21: sorting
+        case 21: {
+          m.sorting = r.readNestedList().map(PaginationSorting._readFrom).toList();
+          break;
+        }
+        // field 30: fieldMask
+        case 30: {
+          m.fieldMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 过滤表达式
@@ -900,19 +1429,80 @@ class PaginationFilterExpr {
       type: type ?? this.type,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: type
+    final f1 = type;
+    if (f1 != null) {
+      w.writeEnum(1, f1.wire); // PaginationExprType
+    }
+    // field 2: conditions
+    final f2 = conditions;
+    if (f2 != null) {
+      for (final e in f2) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+    }
+    // field 3: groups
+    final f3 = groups;
+    if (f3 != null) {
+      for (final e in f3) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(3, cw.toBuffer()); }
+    }
+  }
+
+  factory PaginationFilterExpr.fromBuffer(List<int> bytes) {
+    return PaginationFilterExpr._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationFilterExpr _readFrom(ProtoWireReader r) {
+    final m = PaginationFilterExpr();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: type
+        case 1: {
+          m.type = PaginationExprType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: conditions
+        case 2: {
+          m.conditions = r.readNestedList().map(PaginationFilterCondition._readFrom).toList();
+          break;
+        }
+        // field 3: groups
+        case 3: {
+          m.groups = r.readNestedList().map(PaginationFilterExpr._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 过滤表达式类型
 enum PaginationExprType {
-  and('AND'),
-  exprTypeUnspecified('EXPR_TYPE_UNSPECIFIED'),
-  or('OR');
+  and('AND', 1),
+  exprTypeUnspecified('EXPR_TYPE_UNSPECIFIED', 0),
+  or('OR', 2);
 
   final String value;
-  const PaginationExprType(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationExprType(this.value, this.wire);
 
   static PaginationExprType fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationExprType value: ' + v));
+  static PaginationExprType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationExprType wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1019,45 +1609,145 @@ class PaginationFilterCondition {
       values: values ?? this.values,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: field
+    final f1 = field;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: op
+    final f2 = op;
+    if (f2 != null) {
+      w.writeEnum(2, f2.wire); // PaginationOperator
+    }
+    // field 3: value
+    final f3 = value;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: values
+    final f4 = values;
+    if (f4 != null) {
+      w.writeStringList(4, f4);
+    }
+    // field 5: datePart
+    final f5 = datePart;
+    if (f5 != null) {
+      w.writeEnum(5, f5.wire); // PaginationDatePart
+    }
+    // field 6: jsonPath
+    final f6 = jsonPath;
+    if (f6 != null) {
+      w.writeString(6, f6);
+    }
+    // field 7: jsonValue
+    final f7 = jsonValue;
+    if (f7 != null) {
+      throw UnsupportedError('dart-http wire: google.protobuf.Value not supported');
+    }
+  }
+
+  factory PaginationFilterCondition.fromBuffer(List<int> bytes) {
+    return PaginationFilterCondition._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationFilterCondition _readFrom(ProtoWireReader r) {
+    final m = PaginationFilterCondition();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: field
+        case 1: {
+          m.field = r.readString();
+          break;
+        }
+        // field 2: op
+        case 2: {
+          m.op = PaginationOperator.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: value
+        case 3: {
+          m.value = r.readString();
+          break;
+        }
+        // field 4: values
+        case 4: {
+          m.values = r.readStringList();
+          break;
+        }
+        // field 5: datePart
+        case 5: {
+          m.datePart = PaginationDatePart.fromWire(r.readEnum());
+          break;
+        }
+        // field 6: jsonPath
+        case 6: {
+          m.jsonPath = r.readString();
+          break;
+        }
+        // field 7: jsonValue
+        case 7: {
+          throw UnsupportedError('dart-http wire: google.protobuf.Value not supported');
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 操作符枚举
 enum PaginationOperator {
-  arrayContains('ARRAY_CONTAINS'),
-  between('BETWEEN'),
-  contains('CONTAINS'),
-  endsWith('ENDS_WITH'),
-  eq('EQ'),
-  exact('EXACT'),
-  exists('EXISTS'),
-  gt('GT'),
-  gte('GTE'),
-  icontains('ICONTAINS'),
-  iendsWith('IENDS_WITH'),
-  iexact('IEXACT'),
-  ilike('ILIKE'),
-  in_('IN'),
-  iregexp('IREGEXP'),
-  isNotNull('IS_NOT_NULL'),
-  isNull('IS_NULL'),
-  istartsWith('ISTARTS_WITH'),
-  jsonContains('JSON_CONTAINS'),
-  like('LIKE'),
-  lt('LT'),
-  lte('LTE'),
-  neq('NEQ'),
-  nin('NIN'),
-  notLike('NOT_LIKE'),
-  operatorUnspecified('OPERATOR_UNSPECIFIED'),
-  regexp('REGEXP'),
-  search('SEARCH'),
-  startsWith('STARTS_WITH');
+  arrayContains('ARRAY_CONTAINS', 24),
+  between('BETWEEN', 14),
+  contains('CONTAINS', 17),
+  endsWith('ENDS_WITH', 19),
+  eq('EQ', 1),
+  exact('EXACT', 27),
+  exists('EXISTS', 25),
+  gt('GT', 3),
+  gte('GTE', 4),
+  icontains('ICONTAINS', 20),
+  iendsWith('IENDS_WITH', 22),
+  iexact('IEXACT', 28),
+  ilike('ILIKE', 8),
+  in_('IN', 10),
+  iregexp('IREGEXP', 16),
+  isNotNull('IS_NOT_NULL', 13),
+  isNull('IS_NULL', 12),
+  istartsWith('ISTARTS_WITH', 21),
+  jsonContains('JSON_CONTAINS', 23),
+  like('LIKE', 7),
+  lt('LT', 5),
+  lte('LTE', 6),
+  neq('NEQ', 2),
+  nin('NIN', 11),
+  notLike('NOT_LIKE', 9),
+  operatorUnspecified('OPERATOR_UNSPECIFIED', 0),
+  regexp('REGEXP', 15),
+  search('SEARCH', 26),
+  startsWith('STARTS_WITH', 18);
 
   final String value;
-  const PaginationOperator(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationOperator(this.value, this.wire);
 
   static PaginationOperator fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationOperator value: ' + v));
+  static PaginationOperator fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationOperator wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1068,27 +1758,31 @@ enum PaginationOperator {
 
 /// 日期时间部分枚举
 enum PaginationDatePart {
-  date('DATE'),
-  datePartUnspecified('DATE_PART_UNSPECIFIED'),
-  day('DAY'),
-  hour('HOUR'),
-  isoWeekDay('ISO_WEEK_DAY'),
-  isoYear('ISO_YEAR'),
-  microsecond('MICROSECOND'),
-  minute('MINUTE'),
-  month('MONTH'),
-  quarter('QUARTER'),
-  second('SECOND'),
-  time('TIME'),
-  week('WEEK'),
-  weekDay('WEEK_DAY'),
-  year('YEAR');
+  date('DATE', 1),
+  datePartUnspecified('DATE_PART_UNSPECIFIED', 0),
+  day('DAY', 9),
+  hour('HOUR', 11),
+  isoWeekDay('ISO_WEEK_DAY', 8),
+  isoYear('ISO_YEAR', 3),
+  microsecond('MICROSECOND', 14),
+  minute('MINUTE', 12),
+  month('MONTH', 5),
+  quarter('QUARTER', 4),
+  second('SECOND', 13),
+  time('TIME', 10),
+  week('WEEK', 6),
+  weekDay('WEEK_DAY', 7),
+  year('YEAR', 2);
 
   final String value;
-  const PaginationDatePart(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationDatePart(this.value, this.wire);
 
   static PaginationDatePart fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationDatePart value: ' + v));
+  static PaginationDatePart fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationDatePart wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1148,18 +1842,69 @@ class PaginationSorting {
       field: field ?? this.field,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: field
+    final f1 = field;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: direction
+    final f2 = direction;
+    if (f2 != null) {
+      w.writeEnum(2, f2.wire); // PaginationSorting$Direction
+    }
+  }
+
+  factory PaginationSorting.fromBuffer(List<int> bytes) {
+    return PaginationSorting._readFrom(ProtoWireReader(bytes));
+  }
+
+  static PaginationSorting _readFrom(ProtoWireReader r) {
+    final m = PaginationSorting();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: field
+        case 1: {
+          m.field = r.readString();
+          break;
+        }
+        // field 2: direction
+        case 2: {
+          m.direction = PaginationSorting$Direction.fromWire(r.readEnum());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 排序方向（ASC/DESC，默认ASC）
 enum PaginationSorting$Direction {
-  asc('ASC'),
-  desc('DESC');
+  asc('ASC', 0),
+  desc('DESC', 1);
 
   final String value;
-  const PaginationSorting$Direction(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const PaginationSorting$Direction(this.value, this.wire);
 
   static PaginationSorting$Direction fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown PaginationSorting\$Direction value: ' + v));
+  static PaginationSorting$Direction fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown PaginationSorting\$Direction wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -1221,6 +1966,53 @@ class BoardServiceV1ListBoardResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+  }
+
+  factory BoardServiceV1ListBoardResponse.fromBuffer(List<int> bytes) {
+    return BoardServiceV1ListBoardResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1ListBoardResponse _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1ListBoardResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(BoardServiceV1Board._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板
@@ -1260,16 +2052,16 @@ class BoardServiceV1Board {
   factory BoardServiceV1Board.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1Board(
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
       rank: json['rank'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       version: json['version'] as int?,
     );
   }
@@ -1277,16 +2069,16 @@ class BoardServiceV1Board {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
     if (rank != null) json['rank'] = rank;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (version != null) json['version'] = version;
     return json;
   }
@@ -1360,6 +2152,153 @@ class BoardServiceV1Board {
       version: version ?? this.version,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+    // field 3: description
+    final f3 = description;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: rank
+    final f4 = rank;
+    if (f4 != null) {
+      w.writeString(4, f4);
+    }
+    // field 5: version
+    final f5 = version;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+    // field 20: tenantId
+    final f20 = tenantId;
+    if (f20 != null) {
+      w.writeInt64(20, f20);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeInt64(100, f100);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeInt64(101, f101);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeInt64(102, f102);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202);
+    }
+  }
+
+  factory BoardServiceV1Board.fromBuffer(List<int> bytes) {
+    return BoardServiceV1Board._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1Board _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1Board();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 3: description
+        case 3: {
+          m.description = r.readString();
+          break;
+        }
+        // field 4: rank
+        case 4: {
+          m.rank = r.readString();
+          break;
+        }
+        // field 5: version
+        case 5: {
+          m.version = r.readUint32();
+          break;
+        }
+        // field 20: tenantId
+        case 20: {
+          m.tenantId = r.readInt64();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readInt64();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readInt64();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readInt64();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// Well-known type: Timestamp
@@ -1378,14 +2317,14 @@ class BoardServiceV1GetBoardRequest {
 
   factory BoardServiceV1GetBoardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1GetBoardRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       viewMask: json['viewMask'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
   }
@@ -1419,6 +2358,53 @@ class BoardServiceV1GetBoardRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100);
+    }
+  }
+
+  factory BoardServiceV1GetBoardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1GetBoardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1GetBoardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1GetBoardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 创建看板 - 请求
@@ -1466,6 +2452,43 @@ class BoardServiceV1CreateBoardRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // BoardServiceV1Board
+    }
+  }
+
+  factory BoardServiceV1CreateBoardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1CreateBoardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1CreateBoardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1CreateBoardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = BoardServiceV1Board._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 更新看板 - 请求
@@ -1489,7 +2512,7 @@ class BoardServiceV1UpdateBoardRequest {
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Board.fromJson(json['data'] as Map<String, dynamic>) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -1499,7 +2522,7 @@ class BoardServiceV1UpdateBoardRequest {
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -1545,6 +2568,83 @@ class BoardServiceV1UpdateBoardRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // BoardServiceV1Board
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4);
+    }
+    // field 5: expectedVersion
+    final f5 = expectedVersion;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+  }
+
+  factory BoardServiceV1UpdateBoardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1UpdateBoardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1UpdateBoardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1UpdateBoardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = BoardServiceV1Board._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        // field 5: expectedVersion
+        case 5: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 删除看板 - 请求
@@ -1557,13 +2657,13 @@ class BoardServiceV1DeleteBoardRequest {
 
   factory BoardServiceV1DeleteBoardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1DeleteBoardRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -1592,6 +2692,43 @@ class BoardServiceV1DeleteBoardRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory BoardServiceV1DeleteBoardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1DeleteBoardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1DeleteBoardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1DeleteBoardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 移动看板 - 请求
@@ -1612,19 +2749,19 @@ class BoardServiceV1MoveBoardRequest {
 
   factory BoardServiceV1MoveBoardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1MoveBoardRequest(
-      afterId: json['afterId'] as int?,
-      beforeId: json['beforeId'] as int?,
+      afterId: json['afterId'] != null ? int.parse(json['afterId'].toString()) : null,
+      beforeId: json['beforeId'] != null ? int.parse(json['beforeId'].toString()) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (afterId != null) json['afterId'] = afterId;
-    if (beforeId != null) json['beforeId'] = beforeId;
+    if (afterId != null) json['afterId'] = afterId.toString();
+    if (beforeId != null) json['beforeId'] = beforeId.toString();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -1665,6 +2802,73 @@ class BoardServiceV1MoveBoardRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: beforeId
+    final f2 = beforeId;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+    // field 3: afterId
+    final f3 = afterId;
+    if (f3 != null) {
+      w.writeInt64(3, f3);
+    }
+    // field 10: expectedVersion
+    final f10 = expectedVersion;
+    if (f10 != null) {
+      w.writeUint32(10, f10);
+    }
+  }
+
+  factory BoardServiceV1MoveBoardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1MoveBoardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1MoveBoardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1MoveBoardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: beforeId
+        case 2: {
+          m.beforeId = r.readInt64();
+          break;
+        }
+        // field 3: afterId
+        case 3: {
+          m.afterId = r.readInt64();
+          break;
+        }
+        // field 10: expectedVersion
+        case 10: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 获取看板快照 - 请求
@@ -1679,13 +2883,13 @@ class BoardServiceV1GetBoardSnapshotRequest {
 
   factory BoardServiceV1GetBoardSnapshotRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1GetBoardSnapshotRequest(
-      boardId: json['boardId'] as int?,
+      boardId: json['boardId'] != null ? int.parse(json['boardId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (boardId != null) json['boardId'] = boardId;
+    if (boardId != null) json['boardId'] = boardId.toString();
     return json;
   }
 
@@ -1714,6 +2918,43 @@ class BoardServiceV1GetBoardSnapshotRequest {
       boardId: boardId ?? this.boardId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: boardId
+    final f1 = boardId;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory BoardServiceV1GetBoardSnapshotRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1GetBoardSnapshotRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1GetBoardSnapshotRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1GetBoardSnapshotRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: boardId
+        case 1: {
+          m.boardId = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板完整快照（列与卡片为扁平列表，客户端按 column_id 分组组装看板视图）
@@ -1777,6 +3018,63 @@ class BoardServiceV1BoardSnapshot {
       columns: columns ?? this.columns,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: board
+    final f1 = board;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // BoardServiceV1Board
+    }
+    // field 2: columns
+    final f2 = columns;
+    if (f2 != null) {
+      for (final e in f2) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+    }
+    // field 3: cards
+    final f3 = cards;
+    if (f3 != null) {
+      for (final e in f3) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(3, cw.toBuffer()); }
+    }
+  }
+
+  factory BoardServiceV1BoardSnapshot.fromBuffer(List<int> bytes) {
+    return BoardServiceV1BoardSnapshot._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1BoardSnapshot _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1BoardSnapshot();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: board
+        case 1: {
+          m.board = BoardServiceV1Board._readFrom(r.readNested());
+          break;
+        }
+        // field 2: columns
+        case 2: {
+          m.columns = r.readNestedList().map(BoardServiceV1Column._readFrom).toList();
+          break;
+        }
+        // field 3: cards
+        case 3: {
+          m.cards = r.readNestedList().map(BoardServiceV1Card._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板列
@@ -1819,36 +3117,36 @@ class BoardServiceV1Column {
 
   factory BoardServiceV1Column.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1Column(
-      boardId: json['boardId'] as int?,
+      boardId: json['boardId'] != null ? int.parse(json['boardId'].toString()) : null,
       color: json['color'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
       rank: json['rank'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       version: json['version'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (boardId != null) json['boardId'] = boardId;
+    if (boardId != null) json['boardId'] = boardId.toString();
     if (color != null) json['color'] = color;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
     if (rank != null) json['rank'] = rank;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (version != null) json['version'] = version;
     return json;
   }
@@ -1926,6 +3224,163 @@ class BoardServiceV1Column {
       version: version ?? this.version,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+    // field 3: color
+    final f3 = color;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: rank
+    final f4 = rank;
+    if (f4 != null) {
+      w.writeString(4, f4);
+    }
+    // field 5: version
+    final f5 = version;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+    // field 6: boardId
+    final f6 = boardId;
+    if (f6 != null) {
+      w.writeInt64(6, f6);
+    }
+    // field 20: tenantId
+    final f20 = tenantId;
+    if (f20 != null) {
+      w.writeInt64(20, f20);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeInt64(100, f100);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeInt64(101, f101);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeInt64(102, f102);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202);
+    }
+  }
+
+  factory BoardServiceV1Column.fromBuffer(List<int> bytes) {
+    return BoardServiceV1Column._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1Column _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1Column();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 3: color
+        case 3: {
+          m.color = r.readString();
+          break;
+        }
+        // field 4: rank
+        case 4: {
+          m.rank = r.readString();
+          break;
+        }
+        // field 5: version
+        case 5: {
+          m.version = r.readUint32();
+          break;
+        }
+        // field 6: boardId
+        case 6: {
+          m.boardId = r.readInt64();
+          break;
+        }
+        // field 20: tenantId
+        case 20: {
+          m.tenantId = r.readInt64();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readInt64();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readInt64();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readInt64();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板卡片
@@ -1977,21 +3432,21 @@ class BoardServiceV1Card {
   factory BoardServiceV1Card.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1Card(
       archived: json['archived'] as bool?,
-      boardId: json['boardId'] as int?,
-      columnId: json['columnId'] as int?,
+      boardId: json['boardId'] != null ? int.parse(json['boardId'].toString()) : null,
+      columnId: json['columnId'] != null ? int.parse(json['columnId'].toString()) : null,
       coverColor: json['coverColor'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
       dueDate: json['dueDate'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
       rank: json['rank'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       version: json['version'] as int?,
     );
   }
@@ -1999,21 +3454,21 @@ class BoardServiceV1Card {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (archived != null) json['archived'] = archived;
-    if (boardId != null) json['boardId'] = boardId;
-    if (columnId != null) json['columnId'] = columnId;
+    if (boardId != null) json['boardId'] = boardId.toString();
+    if (columnId != null) json['columnId'] = columnId.toString();
     if (coverColor != null) json['coverColor'] = coverColor;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
     if (dueDate != null) json['dueDate'] = dueDate;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
     if (rank != null) json['rank'] = rank;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (version != null) json['version'] = version;
     return json;
   }
@@ -2107,6 +3562,203 @@ class BoardServiceV1Card {
       version: version ?? this.version,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+    // field 3: description
+    final f3 = description;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: rank
+    final f4 = rank;
+    if (f4 != null) {
+      w.writeString(4, f4);
+    }
+    // field 5: version
+    final f5 = version;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+    // field 6: columnId
+    final f6 = columnId;
+    if (f6 != null) {
+      w.writeInt64(6, f6);
+    }
+    // field 7: boardId
+    final f7 = boardId;
+    if (f7 != null) {
+      w.writeInt64(7, f7);
+    }
+    // field 8: dueDate
+    final f8 = dueDate;
+    if (f8 != null) {
+      w.writeTimestamp(8, f8);
+    }
+    // field 9: archived
+    final f9 = archived;
+    if (f9 != null) {
+      w.writeBool(9, f9);
+    }
+    // field 10: coverColor
+    final f10 = coverColor;
+    if (f10 != null) {
+      w.writeString(10, f10);
+    }
+    // field 20: tenantId
+    final f20 = tenantId;
+    if (f20 != null) {
+      w.writeInt64(20, f20);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeInt64(100, f100);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeInt64(101, f101);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeInt64(102, f102);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202);
+    }
+  }
+
+  factory BoardServiceV1Card.fromBuffer(List<int> bytes) {
+    return BoardServiceV1Card._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1Card _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1Card();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 3: description
+        case 3: {
+          m.description = r.readString();
+          break;
+        }
+        // field 4: rank
+        case 4: {
+          m.rank = r.readString();
+          break;
+        }
+        // field 5: version
+        case 5: {
+          m.version = r.readUint32();
+          break;
+        }
+        // field 6: columnId
+        case 6: {
+          m.columnId = r.readInt64();
+          break;
+        }
+        // field 7: boardId
+        case 7: {
+          m.boardId = r.readInt64();
+          break;
+        }
+        // field 8: dueDate
+        case 8: {
+          m.dueDate = r.readTimestampIso();
+          break;
+        }
+        // field 9: archived
+        case 9: {
+          m.archived = r.readBool();
+          break;
+        }
+        // field 10: coverColor
+        case 10: {
+          m.coverColor = r.readString();
+          break;
+        }
+        // field 20: tenantId
+        case 20: {
+          m.tenantId = r.readInt64();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readInt64();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readInt64();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readInt64();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 差量同步 - 请求
@@ -2127,7 +3779,7 @@ class BoardServiceV1SyncBoardRequest {
 
   factory BoardServiceV1SyncBoardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1SyncBoardRequest(
-      boardId: json['boardId'] as int?,
+      boardId: json['boardId'] != null ? int.parse(json['boardId'].toString()) : null,
       knownBoardVersion: json['knownBoardVersion'] as int?,
       knownCardVersions: (json['knownCardVersions'] as List<dynamic>?)?.map((e) => BoardServiceV1VersionEntry.fromJson(e as Map<String, dynamic>)).toList(),
       knownColumnVersions: (json['knownColumnVersions'] as List<dynamic>?)?.map((e) => BoardServiceV1VersionEntry.fromJson(e as Map<String, dynamic>)).toList(),
@@ -2136,7 +3788,7 @@ class BoardServiceV1SyncBoardRequest {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (boardId != null) json['boardId'] = boardId;
+    if (boardId != null) json['boardId'] = boardId.toString();
     if (knownBoardVersion != null) json['knownBoardVersion'] = knownBoardVersion;
     if (knownCardVersions != null) json['knownCardVersions'] = knownCardVersions!.map((e) => e.toJson()).toList();
     if (knownColumnVersions != null) json['knownColumnVersions'] = knownColumnVersions!.map((e) => e.toJson()).toList();
@@ -2180,6 +3832,73 @@ class BoardServiceV1SyncBoardRequest {
       knownColumnVersions: knownColumnVersions ?? this.knownColumnVersions,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: boardId
+    final f1 = boardId;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: knownBoardVersion
+    final f2 = knownBoardVersion;
+    if (f2 != null) {
+      w.writeUint32(2, f2);
+    }
+    // field 3: knownColumnVersions
+    final f3 = knownColumnVersions;
+    if (f3 != null) {
+      for (final e in f3) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(3, cw.toBuffer()); }
+    }
+    // field 4: knownCardVersions
+    final f4 = knownCardVersions;
+    if (f4 != null) {
+      for (final e in f4) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(4, cw.toBuffer()); }
+    }
+  }
+
+  factory BoardServiceV1SyncBoardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1SyncBoardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1SyncBoardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1SyncBoardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: boardId
+        case 1: {
+          m.boardId = r.readInt64();
+          break;
+        }
+        // field 2: knownBoardVersion
+        case 2: {
+          m.knownBoardVersion = r.readUint32();
+          break;
+        }
+        // field 3: knownColumnVersions
+        case 3: {
+          m.knownColumnVersions = r.readNestedList().map(BoardServiceV1VersionEntry._readFrom).toList();
+          break;
+        }
+        // field 4: knownCardVersions
+        case 4: {
+          m.knownCardVersions = r.readNestedList().map(BoardServiceV1VersionEntry._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 版本条目（差量同步用；以消息替代 map 以兼容各端代码生成器）
@@ -2194,14 +3913,14 @@ class BoardServiceV1VersionEntry {
 
   factory BoardServiceV1VersionEntry.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1VersionEntry(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       version: json['version'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (version != null) json['version'] = version;
     return json;
   }
@@ -2235,6 +3954,53 @@ class BoardServiceV1VersionEntry {
       version: version ?? this.version,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: version
+    final f2 = version;
+    if (f2 != null) {
+      w.writeUint32(2, f2);
+    }
+  }
+
+  factory BoardServiceV1VersionEntry.fromBuffer(List<int> bytes) {
+    return BoardServiceV1VersionEntry._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1VersionEntry _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1VersionEntry();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: version
+        case 2: {
+          m.version = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 差量同步 - 回应
@@ -2256,8 +4022,8 @@ class BoardServiceV1SyncBoardResponse {
   factory BoardServiceV1SyncBoardResponse.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1SyncBoardResponse(
       board: json['board'] != null ? BoardServiceV1Board.fromJson(json['board'] as Map<String, dynamic>) : null,
-      deletedCardIds: (json['deletedCardIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
-      deletedColumnIds: (json['deletedColumnIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      deletedCardIds: (json['deletedCardIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
+      deletedColumnIds: (json['deletedColumnIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       upsertedCards: (json['upsertedCards'] as List<dynamic>?)?.map((e) => BoardServiceV1Card.fromJson(e as Map<String, dynamic>)).toList(),
       upsertedColumns: (json['upsertedColumns'] as List<dynamic>?)?.map((e) => BoardServiceV1Column.fromJson(e as Map<String, dynamic>)).toList(),
     );
@@ -2266,8 +4032,8 @@ class BoardServiceV1SyncBoardResponse {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (board != null) json['board'] = board!.toJson();
-    if (deletedCardIds != null) json['deletedCardIds'] = deletedCardIds;
-    if (deletedColumnIds != null) json['deletedColumnIds'] = deletedColumnIds;
+    if (deletedCardIds != null) json['deletedCardIds'] = deletedCardIds!.map((e) => e.toString()).toList();
+    if (deletedColumnIds != null) json['deletedColumnIds'] = deletedColumnIds!.map((e) => e.toString()).toList();
     if (upsertedCards != null) json['upsertedCards'] = upsertedCards!.map((e) => e.toJson()).toList();
     if (upsertedColumns != null) json['upsertedColumns'] = upsertedColumns!.map((e) => e.toJson()).toList();
     return json;
@@ -2314,6 +4080,83 @@ class BoardServiceV1SyncBoardResponse {
       upsertedColumns: upsertedColumns ?? this.upsertedColumns,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: board
+    final f1 = board;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // BoardServiceV1Board
+    }
+    // field 2: upsertedColumns
+    final f2 = upsertedColumns;
+    if (f2 != null) {
+      for (final e in f2) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+    }
+    // field 3: deletedColumnIds
+    final f3 = deletedColumnIds;
+    if (f3 != null) {
+      w.writePackedVarintList(3, f3);
+    }
+    // field 4: upsertedCards
+    final f4 = upsertedCards;
+    if (f4 != null) {
+      for (final e in f4) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(4, cw.toBuffer()); }
+    }
+    // field 5: deletedCardIds
+    final f5 = deletedCardIds;
+    if (f5 != null) {
+      w.writePackedVarintList(5, f5);
+    }
+  }
+
+  factory BoardServiceV1SyncBoardResponse.fromBuffer(List<int> bytes) {
+    return BoardServiceV1SyncBoardResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1SyncBoardResponse _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1SyncBoardResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: board
+        case 1: {
+          m.board = BoardServiceV1Board._readFrom(r.readNested());
+          break;
+        }
+        // field 2: upsertedColumns
+        case 2: {
+          m.upsertedColumns = r.readNestedList().map(BoardServiceV1Column._readFrom).toList();
+          break;
+        }
+        // field 3: deletedColumnIds
+        case 3: {
+          m.deletedColumnIds = r.readVarintList();
+          break;
+        }
+        // field 4: upsertedCards
+        case 4: {
+          m.upsertedCards = r.readNestedList().map(BoardServiceV1Card._readFrom).toList();
+          break;
+        }
+        // field 5: deletedCardIds
+        case 5: {
+          m.deletedCardIds = r.readVarintList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板卡片服务
@@ -2408,7 +4251,9 @@ class CardServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/cards/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'CardService',
       method: 'Update',
@@ -2435,7 +4280,9 @@ class CardServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/cards/${request.id}:move';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
       service: 'CardService',
       method: 'Move',
@@ -2497,6 +4344,53 @@ class BoardServiceV1ListCardResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+  }
+
+  factory BoardServiceV1ListCardResponse.fromBuffer(List<int> bytes) {
+    return BoardServiceV1ListCardResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1ListCardResponse _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1ListCardResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(BoardServiceV1Card._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 查询卡片详情 - 请求
@@ -2511,14 +4405,14 @@ class BoardServiceV1GetCardRequest {
 
   factory BoardServiceV1GetCardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1GetCardRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       viewMask: json['viewMask'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
   }
@@ -2552,6 +4446,53 @@ class BoardServiceV1GetCardRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100);
+    }
+  }
+
+  factory BoardServiceV1GetCardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1GetCardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1GetCardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1GetCardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 创建卡片 - 请求
@@ -2599,6 +4540,43 @@ class BoardServiceV1CreateCardRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // BoardServiceV1Card
+    }
+  }
+
+  factory BoardServiceV1CreateCardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1CreateCardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1CreateCardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1CreateCardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = BoardServiceV1Card._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 更新卡片 - 请求
@@ -2622,7 +4600,7 @@ class BoardServiceV1UpdateCardRequest {
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Card.fromJson(json['data'] as Map<String, dynamic>) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -2632,7 +4610,7 @@ class BoardServiceV1UpdateCardRequest {
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -2678,6 +4656,83 @@ class BoardServiceV1UpdateCardRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // BoardServiceV1Card
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4);
+    }
+    // field 5: expectedVersion
+    final f5 = expectedVersion;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+  }
+
+  factory BoardServiceV1UpdateCardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1UpdateCardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1UpdateCardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1UpdateCardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = BoardServiceV1Card._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        // field 5: expectedVersion
+        case 5: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 删除卡片 - 请求
@@ -2690,13 +4745,13 @@ class BoardServiceV1DeleteCardRequest {
 
   factory BoardServiceV1DeleteCardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1DeleteCardRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -2725,6 +4780,43 @@ class BoardServiceV1DeleteCardRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory BoardServiceV1DeleteCardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1DeleteCardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1DeleteCardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1DeleteCardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 移动卡片 - 请求
@@ -2747,21 +4839,21 @@ class BoardServiceV1MoveCardRequest {
 
   factory BoardServiceV1MoveCardRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1MoveCardRequest(
-      afterId: json['afterId'] as int?,
-      beforeId: json['beforeId'] as int?,
+      afterId: json['afterId'] != null ? int.parse(json['afterId'].toString()) : null,
+      beforeId: json['beforeId'] != null ? int.parse(json['beforeId'].toString()) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
-      targetColumnId: json['targetColumnId'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
+      targetColumnId: json['targetColumnId'] != null ? int.parse(json['targetColumnId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (afterId != null) json['afterId'] = afterId;
-    if (beforeId != null) json['beforeId'] = beforeId;
+    if (afterId != null) json['afterId'] = afterId.toString();
+    if (beforeId != null) json['beforeId'] = beforeId.toString();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
-    if (targetColumnId != null) json['targetColumnId'] = targetColumnId;
+    if (id != null) json['id'] = id.toString();
+    if (targetColumnId != null) json['targetColumnId'] = targetColumnId.toString();
     return json;
   }
 
@@ -2806,6 +4898,83 @@ class BoardServiceV1MoveCardRequest {
       targetColumnId: targetColumnId ?? this.targetColumnId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: targetColumnId
+    final f2 = targetColumnId;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+    // field 3: beforeId
+    final f3 = beforeId;
+    if (f3 != null) {
+      w.writeInt64(3, f3);
+    }
+    // field 4: afterId
+    final f4 = afterId;
+    if (f4 != null) {
+      w.writeInt64(4, f4);
+    }
+    // field 10: expectedVersion
+    final f10 = expectedVersion;
+    if (f10 != null) {
+      w.writeUint32(10, f10);
+    }
+  }
+
+  factory BoardServiceV1MoveCardRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1MoveCardRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1MoveCardRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1MoveCardRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: targetColumnId
+        case 2: {
+          m.targetColumnId = r.readInt64();
+          break;
+        }
+        // field 3: beforeId
+        case 3: {
+          m.beforeId = r.readInt64();
+          break;
+        }
+        // field 4: afterId
+        case 4: {
+          m.afterId = r.readInt64();
+          break;
+        }
+        // field 10: expectedVersion
+        case 10: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板列服务
@@ -2900,7 +5069,9 @@ class ColumnServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/columns/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'ColumnService',
       method: 'Update',
@@ -2927,7 +5098,9 @@ class ColumnServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/columns/${request.id}:move';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
       service: 'ColumnService',
       method: 'Move',
@@ -2989,6 +5162,53 @@ class BoardServiceV1ListColumnResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+  }
+
+  factory BoardServiceV1ListColumnResponse.fromBuffer(List<int> bytes) {
+    return BoardServiceV1ListColumnResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1ListColumnResponse _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1ListColumnResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(BoardServiceV1Column._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 查询列详情 - 请求
@@ -3003,14 +5223,14 @@ class BoardServiceV1GetColumnRequest {
 
   factory BoardServiceV1GetColumnRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1GetColumnRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       viewMask: json['viewMask'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
   }
@@ -3044,6 +5264,53 @@ class BoardServiceV1GetColumnRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100);
+    }
+  }
+
+  factory BoardServiceV1GetColumnRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1GetColumnRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1GetColumnRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1GetColumnRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 创建列 - 请求
@@ -3091,6 +5358,43 @@ class BoardServiceV1CreateColumnRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // BoardServiceV1Column
+    }
+  }
+
+  factory BoardServiceV1CreateColumnRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1CreateColumnRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1CreateColumnRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1CreateColumnRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = BoardServiceV1Column._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 更新列 - 请求
@@ -3114,7 +5418,7 @@ class BoardServiceV1UpdateColumnRequest {
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Column.fromJson(json['data'] as Map<String, dynamic>) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -3124,7 +5428,7 @@ class BoardServiceV1UpdateColumnRequest {
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -3170,6 +5474,83 @@ class BoardServiceV1UpdateColumnRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // BoardServiceV1Column
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4);
+    }
+    // field 5: expectedVersion
+    final f5 = expectedVersion;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+  }
+
+  factory BoardServiceV1UpdateColumnRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1UpdateColumnRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1UpdateColumnRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1UpdateColumnRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = BoardServiceV1Column._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        // field 5: expectedVersion
+        case 5: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 删除列 - 请求
@@ -3182,13 +5563,13 @@ class BoardServiceV1DeleteColumnRequest {
 
   factory BoardServiceV1DeleteColumnRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1DeleteColumnRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -3217,6 +5598,43 @@ class BoardServiceV1DeleteColumnRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory BoardServiceV1DeleteColumnRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1DeleteColumnRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1DeleteColumnRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1DeleteColumnRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 移动列 - 请求
@@ -3237,19 +5655,19 @@ class BoardServiceV1MoveColumnRequest {
 
   factory BoardServiceV1MoveColumnRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1MoveColumnRequest(
-      afterId: json['afterId'] as int?,
-      beforeId: json['beforeId'] as int?,
+      afterId: json['afterId'] != null ? int.parse(json['afterId'].toString()) : null,
+      beforeId: json['beforeId'] != null ? int.parse(json['beforeId'].toString()) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (afterId != null) json['afterId'] = afterId;
-    if (beforeId != null) json['beforeId'] = beforeId;
+    if (afterId != null) json['afterId'] = afterId.toString();
+    if (beforeId != null) json['beforeId'] = beforeId.toString();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -3290,6 +5708,73 @@ class BoardServiceV1MoveColumnRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: beforeId
+    final f2 = beforeId;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+    // field 3: afterId
+    final f3 = afterId;
+    if (f3 != null) {
+      w.writeInt64(3, f3);
+    }
+    // field 10: expectedVersion
+    final f10 = expectedVersion;
+    if (f10 != null) {
+      w.writeUint32(10, f10);
+    }
+  }
+
+  factory BoardServiceV1MoveColumnRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1MoveColumnRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1MoveColumnRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1MoveColumnRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: beforeId
+        case 2: {
+          m.beforeId = r.readInt64();
+          break;
+        }
+        // field 3: afterId
+        case 3: {
+          m.afterId = r.readInt64();
+          break;
+        }
+        // field 10: expectedVersion
+        case 10: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板标签服务
@@ -3380,7 +5865,9 @@ class LabelServiceClient {
       throw ArgumentError('missing required field request.id');
     }
     final path = '/app/v1/labels/${request.id}';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('id');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'PUT', body, TransportMeta(
       service: 'LabelService',
       method: 'Update',
@@ -3405,7 +5892,9 @@ class LabelServiceClient {
       throw ArgumentError('missing required field request.card_id');
     }
     final path = '/app/v1/cards/${request.cardId}:set-labels';
-    final body = jsonEncode(request.toJson());
+    final bodyMap = request.toJson();
+    bodyMap.remove('cardId');
+    final body = jsonEncode(bodyMap);
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
       service: 'LabelService',
       method: 'SetCardLabels',
@@ -3479,6 +5968,53 @@ class BoardServiceV1ListLabelResponse {
       total: total ?? this.total,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+    // field 2: total
+    final f2 = total;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+  }
+
+  factory BoardServiceV1ListLabelResponse.fromBuffer(List<int> bytes) {
+    return BoardServiceV1ListLabelResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1ListLabelResponse _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1ListLabelResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(BoardServiceV1Label._readFrom).toList();
+          break;
+        }
+        // field 2: total
+        case 2: {
+          m.total = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 看板标签（Planka 同款：board 级 + 颜色）
@@ -3517,33 +6053,33 @@ class BoardServiceV1Label {
 
   factory BoardServiceV1Label.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1Label(
-      boardId: json['boardId'] as int?,
+      boardId: json['boardId'] != null ? int.parse(json['boardId'].toString()) : null,
       color: json['color'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (boardId != null) json['boardId'] = boardId;
+    if (boardId != null) json['boardId'] = boardId.toString();
     if (color != null) json['color'] = color;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -3612,6 +6148,143 @@ class BoardServiceV1Label {
       updatedBy: updatedBy ?? this.updatedBy,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+    // field 3: color
+    final f3 = color;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: boardId
+    final f4 = boardId;
+    if (f4 != null) {
+      w.writeInt64(4, f4);
+    }
+    // field 20: tenantId
+    final f20 = tenantId;
+    if (f20 != null) {
+      w.writeInt64(20, f20);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeInt64(100, f100);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeInt64(101, f101);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeInt64(102, f102);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202);
+    }
+  }
+
+  factory BoardServiceV1Label.fromBuffer(List<int> bytes) {
+    return BoardServiceV1Label._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1Label _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1Label();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 3: color
+        case 3: {
+          m.color = r.readString();
+          break;
+        }
+        // field 4: boardId
+        case 4: {
+          m.boardId = r.readInt64();
+          break;
+        }
+        // field 20: tenantId
+        case 20: {
+          m.tenantId = r.readInt64();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readInt64();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readInt64();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readInt64();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 查询标签详情 - 请求
@@ -3626,14 +6299,14 @@ class BoardServiceV1GetLabelRequest {
 
   factory BoardServiceV1GetLabelRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1GetLabelRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       viewMask: json['viewMask'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
   }
@@ -3667,6 +6340,53 @@ class BoardServiceV1GetLabelRequest {
       viewMask: viewMask ?? this.viewMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100);
+    }
+  }
+
+  factory BoardServiceV1GetLabelRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1GetLabelRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1GetLabelRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1GetLabelRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 创建标签 - 请求
@@ -3714,6 +6434,43 @@ class BoardServiceV1CreateLabelRequest {
       data: data ?? this.data,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: data
+    final f1 = data;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // BoardServiceV1Label
+    }
+  }
+
+  factory BoardServiceV1CreateLabelRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1CreateLabelRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1CreateLabelRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1CreateLabelRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: data
+        case 1: {
+          m.data = BoardServiceV1Label._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 更新标签 - 请求
@@ -3737,7 +6494,7 @@ class BoardServiceV1UpdateLabelRequest {
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? BoardServiceV1Label.fromJson(json['data'] as Map<String, dynamic>) : null,
       expectedVersion: json['expectedVersion'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -3747,7 +6504,7 @@ class BoardServiceV1UpdateLabelRequest {
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
     if (expectedVersion != null) json['expectedVersion'] = expectedVersion;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -3793,6 +6550,83 @@ class BoardServiceV1UpdateLabelRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // BoardServiceV1Label
+    }
+    // field 3: updateMask
+    final f3 = updateMask;
+    if (f3 != null) {
+      w.writeFieldMask(3, f3);
+    }
+    // field 4: allowMissing
+    final f4 = allowMissing;
+    if (f4 != null) {
+      w.writeBool(4, f4);
+    }
+    // field 5: expectedVersion
+    final f5 = expectedVersion;
+    if (f5 != null) {
+      w.writeUint32(5, f5);
+    }
+  }
+
+  factory BoardServiceV1UpdateLabelRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1UpdateLabelRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1UpdateLabelRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1UpdateLabelRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = BoardServiceV1Label._readFrom(r.readNested());
+          break;
+        }
+        // field 3: updateMask
+        case 3: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 4: allowMissing
+        case 4: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        // field 5: expectedVersion
+        case 5: {
+          m.expectedVersion = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 删除标签 - 请求
@@ -3805,13 +6639,13 @@ class BoardServiceV1DeleteLabelRequest {
 
   factory BoardServiceV1DeleteLabelRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1DeleteLabelRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -3840,6 +6674,43 @@ class BoardServiceV1DeleteLabelRequest {
       id: id ?? this.id,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory BoardServiceV1DeleteLabelRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1DeleteLabelRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1DeleteLabelRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1DeleteLabelRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 设置卡片标签 - 请求（全量替换）
@@ -3856,15 +6727,15 @@ class BoardServiceV1SetCardLabelsRequest {
 
   factory BoardServiceV1SetCardLabelsRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1SetCardLabelsRequest(
-      cardId: json['cardId'] as int?,
-      labelIds: (json['labelIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      cardId: json['cardId'] != null ? int.parse(json['cardId'].toString()) : null,
+      labelIds: (json['labelIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (cardId != null) json['cardId'] = cardId;
-    if (labelIds != null) json['labelIds'] = labelIds;
+    if (cardId != null) json['cardId'] = cardId.toString();
+    if (labelIds != null) json['labelIds'] = labelIds!.map((e) => e.toString()).toList();
     return json;
   }
 
@@ -3897,6 +6768,53 @@ class BoardServiceV1SetCardLabelsRequest {
       labelIds: labelIds ?? this.labelIds,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: cardId
+    final f1 = cardId;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: labelIds
+    final f2 = labelIds;
+    if (f2 != null) {
+      w.writePackedVarintList(2, f2);
+    }
+  }
+
+  factory BoardServiceV1SetCardLabelsRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1SetCardLabelsRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1SetCardLabelsRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1SetCardLabelsRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: cardId
+        case 1: {
+          m.cardId = r.readInt64();
+          break;
+        }
+        // field 2: labelIds
+        case 2: {
+          m.labelIds = r.readVarintList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 查询卡片标签 - 请求
@@ -3911,13 +6829,13 @@ class BoardServiceV1GetCardLabelsRequest {
 
   factory BoardServiceV1GetCardLabelsRequest.fromJson(Map<String, dynamic> json) {
     return BoardServiceV1GetCardLabelsRequest(
-      cardId: json['cardId'] as int?,
+      cardId: json['cardId'] != null ? int.parse(json['cardId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (cardId != null) json['cardId'] = cardId;
+    if (cardId != null) json['cardId'] = cardId.toString();
     return json;
   }
 
@@ -3946,6 +6864,43 @@ class BoardServiceV1GetCardLabelsRequest {
       cardId: cardId ?? this.cardId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: cardId
+    final f1 = cardId;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+  }
+
+  factory BoardServiceV1GetCardLabelsRequest.fromBuffer(List<int> bytes) {
+    return BoardServiceV1GetCardLabelsRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static BoardServiceV1GetCardLabelsRequest _readFrom(ProtoWireReader r) {
+    final m = BoardServiceV1GetCardLabelsRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: cardId
+        case 1: {
+          m.cardId = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 用户个人资料服务
@@ -4126,43 +7081,43 @@ class IdentityServiceV1User {
       avatar: json['avatar'] as String?,
       commentCount: json['commentCount'] != null ? int.parse(json['commentCount'].toString()) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
       email: json['email'] as String?,
       followers: json['followers'] != null ? int.parse(json['followers'].toString()) : null,
       following: json['following'] != null ? int.parse(json['following'].toString()) : null,
       gender: json['gender'] != null ? IdentityServiceV1User$Gender.fromString(json['gender'] as String) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       lastLoginAt: json['lastLoginAt'] as String?,
       lastLoginIp: json['lastLoginIp'] as String?,
       likeCount: json['likeCount'] != null ? int.parse(json['likeCount'].toString()) : null,
       lockedUntil: json['lockedUntil'] as String?,
       mobile: json['mobile'] as String?,
       nickname: json['nickname'] as String?,
-      orgUnitId: json['orgUnitId'] as int?,
-      orgUnitIds: (json['orgUnitIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      orgUnitId: json['orgUnitId'] != null ? int.parse(json['orgUnitId'].toString()) : null,
+      orgUnitIds: (json['orgUnitIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       orgUnitName: json['orgUnitName'] as String?,
       orgUnitNames: (json['orgUnitNames'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      positionId: json['positionId'] as int?,
-      positionIds: (json['positionIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      positionId: json['positionId'] != null ? int.parse(json['positionId'].toString()) : null,
+      positionIds: (json['positionIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       positionName: json['positionName'] as String?,
       positionNames: (json['positionNames'] as List<dynamic>?)?.map((e) => e as String).toList(),
       postCount: json['postCount'] != null ? int.parse(json['postCount'].toString()) : null,
       realname: json['realname'] as String?,
       region: json['region'] as String?,
       remark: json['remark'] as String?,
-      roleId: json['roleId'] as int?,
-      roleIds: (json['roleIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      roleId: json['roleId'] != null ? int.parse(json['roleId'].toString()) : null,
+      roleIds: (json['roleIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       roleNames: (json['roleNames'] as List<dynamic>?)?.map((e) => e as String).toList(),
       roles: (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
       status: json['status'] != null ? IdentityServiceV1User$Status.fromString(json['status'] as String) : null,
       telephone: json['telephone'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       tenantName: json['tenantName'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       username: json['username'] as String?,
     );
   }
@@ -4173,43 +7128,43 @@ class IdentityServiceV1User {
     if (avatar != null) json['avatar'] = avatar;
     if (commentCount != null) json['commentCount'] = commentCount.toString();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
     if (email != null) json['email'] = email;
     if (followers != null) json['followers'] = followers.toString();
     if (following != null) json['following'] = following.toString();
     if (gender != null) json['gender'] = gender!.value;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (lastLoginAt != null) json['lastLoginAt'] = lastLoginAt;
     if (lastLoginIp != null) json['lastLoginIp'] = lastLoginIp;
     if (likeCount != null) json['likeCount'] = likeCount.toString();
     if (lockedUntil != null) json['lockedUntil'] = lockedUntil;
     if (mobile != null) json['mobile'] = mobile;
     if (nickname != null) json['nickname'] = nickname;
-    if (orgUnitId != null) json['orgUnitId'] = orgUnitId;
-    if (orgUnitIds != null) json['orgUnitIds'] = orgUnitIds;
+    if (orgUnitId != null) json['orgUnitId'] = orgUnitId.toString();
+    if (orgUnitIds != null) json['orgUnitIds'] = orgUnitIds!.map((e) => e.toString()).toList();
     if (orgUnitName != null) json['orgUnitName'] = orgUnitName;
     if (orgUnitNames != null) json['orgUnitNames'] = orgUnitNames;
-    if (positionId != null) json['positionId'] = positionId;
-    if (positionIds != null) json['positionIds'] = positionIds;
+    if (positionId != null) json['positionId'] = positionId.toString();
+    if (positionIds != null) json['positionIds'] = positionIds!.map((e) => e.toString()).toList();
     if (positionName != null) json['positionName'] = positionName;
     if (positionNames != null) json['positionNames'] = positionNames;
     if (postCount != null) json['postCount'] = postCount.toString();
     if (realname != null) json['realname'] = realname;
     if (region != null) json['region'] = region;
     if (remark != null) json['remark'] = remark;
-    if (roleId != null) json['roleId'] = roleId;
-    if (roleIds != null) json['roleIds'] = roleIds;
+    if (roleId != null) json['roleId'] = roleId.toString();
+    if (roleIds != null) json['roleIds'] = roleIds!.map((e) => e.toString()).toList();
     if (roleNames != null) json['roleNames'] = roleNames;
     if (roles != null) json['roles'] = roles;
     if (status != null) json['status'] = status!.value;
     if (telephone != null) json['telephone'] = telephone;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (tenantName != null) json['tenantName'] = tenantName;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (username != null) json['username'] = username;
     return json;
   }
@@ -4403,37 +7358,492 @@ class IdentityServiceV1User {
       username: username ?? this.username,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: tenantId
+    final f2 = tenantId;
+    if (f2 != null) {
+      w.writeInt64(2, f2);
+    }
+    // field 3: tenantName
+    final f3 = tenantName;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: orgUnitId
+    final f4 = orgUnitId;
+    if (f4 != null) {
+      w.writeInt64(4, f4);
+    }
+    // field 5: orgUnitIds
+    final f5 = orgUnitIds;
+    if (f5 != null) {
+      w.writePackedVarintList(5, f5);
+    }
+    // field 6: orgUnitName
+    final f6 = orgUnitName;
+    if (f6 != null) {
+      w.writeString(6, f6);
+    }
+    // field 7: orgUnitNames
+    final f7 = orgUnitNames;
+    if (f7 != null) {
+      w.writeStringList(7, f7);
+    }
+    // field 8: positionId
+    final f8 = positionId;
+    if (f8 != null) {
+      w.writeInt64(8, f8);
+    }
+    // field 9: positionIds
+    final f9 = positionIds;
+    if (f9 != null) {
+      w.writePackedVarintList(9, f9);
+    }
+    // field 10: positionName
+    final f10 = positionName;
+    if (f10 != null) {
+      w.writeString(10, f10);
+    }
+    // field 11: positionNames
+    final f11 = positionNames;
+    if (f11 != null) {
+      w.writeStringList(11, f11);
+    }
+    // field 12: roleId
+    final f12 = roleId;
+    if (f12 != null) {
+      w.writeInt64(12, f12);
+    }
+    // field 13: roleIds
+    final f13 = roleIds;
+    if (f13 != null) {
+      w.writePackedVarintList(13, f13);
+    }
+    // field 14: roles
+    final f14 = roles;
+    if (f14 != null) {
+      w.writeStringList(14, f14);
+    }
+    // field 15: roleNames
+    final f15 = roleNames;
+    if (f15 != null) {
+      w.writeStringList(15, f15);
+    }
+    // field 20: username
+    final f20 = username;
+    if (f20 != null) {
+      w.writeString(20, f20);
+    }
+    // field 21: nickname
+    final f21 = nickname;
+    if (f21 != null) {
+      w.writeString(21, f21);
+    }
+    // field 22: realname
+    final f22 = realname;
+    if (f22 != null) {
+      w.writeString(22, f22);
+    }
+    // field 23: avatar
+    final f23 = avatar;
+    if (f23 != null) {
+      w.writeString(23, f23);
+    }
+    // field 24: email
+    final f24 = email;
+    if (f24 != null) {
+      w.writeString(24, f24);
+    }
+    // field 25: mobile
+    final f25 = mobile;
+    if (f25 != null) {
+      w.writeString(25, f25);
+    }
+    // field 26: telephone
+    final f26 = telephone;
+    if (f26 != null) {
+      w.writeString(26, f26);
+    }
+    // field 27: gender
+    final f27 = gender;
+    if (f27 != null) {
+      w.writeEnum(27, f27.wire); // IdentityServiceV1User$Gender
+    }
+    // field 28: address
+    final f28 = address;
+    if (f28 != null) {
+      w.writeString(28, f28);
+    }
+    // field 29: region
+    final f29 = region;
+    if (f29 != null) {
+      w.writeString(29, f29);
+    }
+    // field 30: description
+    final f30 = description;
+    if (f30 != null) {
+      w.writeString(30, f30);
+    }
+    // field 31: remark
+    final f31 = remark;
+    if (f31 != null) {
+      w.writeString(31, f31);
+    }
+    // field 50: lastLoginAt
+    final f50 = lastLoginAt;
+    if (f50 != null) {
+      w.writeTimestamp(50, f50);
+    }
+    // field 51: lastLoginIp
+    final f51 = lastLoginIp;
+    if (f51 != null) {
+      w.writeString(51, f51);
+    }
+    // field 52: status
+    final f52 = status;
+    if (f52 != null) {
+      w.writeEnum(52, f52.wire); // IdentityServiceV1User$Status
+    }
+    // field 53: lockedUntil
+    final f53 = lockedUntil;
+    if (f53 != null) {
+      w.writeTimestamp(53, f53);
+    }
+    // field 80: followers
+    final f80 = followers;
+    if (f80 != null) {
+      w.writeInt64(80, f80);
+    }
+    // field 81: following
+    final f81 = following;
+    if (f81 != null) {
+      w.writeInt64(81, f81);
+    }
+    // field 90: postCount
+    final f90 = postCount;
+    if (f90 != null) {
+      w.writeInt64(90, f90);
+    }
+    // field 91: commentCount
+    final f91 = commentCount;
+    if (f91 != null) {
+      w.writeInt64(91, f91);
+    }
+    // field 92: likeCount
+    final f92 = likeCount;
+    if (f92 != null) {
+      w.writeInt64(92, f92);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeInt64(100, f100);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeInt64(101, f101);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeInt64(102, f102);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202);
+    }
+  }
+
+  factory IdentityServiceV1User.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1User._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1User _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1User();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: tenantId
+        case 2: {
+          m.tenantId = r.readInt64();
+          break;
+        }
+        // field 3: tenantName
+        case 3: {
+          m.tenantName = r.readString();
+          break;
+        }
+        // field 4: orgUnitId
+        case 4: {
+          m.orgUnitId = r.readInt64();
+          break;
+        }
+        // field 5: orgUnitIds
+        case 5: {
+          m.orgUnitIds = r.readVarintList();
+          break;
+        }
+        // field 6: orgUnitName
+        case 6: {
+          m.orgUnitName = r.readString();
+          break;
+        }
+        // field 7: orgUnitNames
+        case 7: {
+          m.orgUnitNames = r.readStringList();
+          break;
+        }
+        // field 8: positionId
+        case 8: {
+          m.positionId = r.readInt64();
+          break;
+        }
+        // field 9: positionIds
+        case 9: {
+          m.positionIds = r.readVarintList();
+          break;
+        }
+        // field 10: positionName
+        case 10: {
+          m.positionName = r.readString();
+          break;
+        }
+        // field 11: positionNames
+        case 11: {
+          m.positionNames = r.readStringList();
+          break;
+        }
+        // field 12: roleId
+        case 12: {
+          m.roleId = r.readInt64();
+          break;
+        }
+        // field 13: roleIds
+        case 13: {
+          m.roleIds = r.readVarintList();
+          break;
+        }
+        // field 14: roles
+        case 14: {
+          m.roles = r.readStringList();
+          break;
+        }
+        // field 15: roleNames
+        case 15: {
+          m.roleNames = r.readStringList();
+          break;
+        }
+        // field 20: username
+        case 20: {
+          m.username = r.readString();
+          break;
+        }
+        // field 21: nickname
+        case 21: {
+          m.nickname = r.readString();
+          break;
+        }
+        // field 22: realname
+        case 22: {
+          m.realname = r.readString();
+          break;
+        }
+        // field 23: avatar
+        case 23: {
+          m.avatar = r.readString();
+          break;
+        }
+        // field 24: email
+        case 24: {
+          m.email = r.readString();
+          break;
+        }
+        // field 25: mobile
+        case 25: {
+          m.mobile = r.readString();
+          break;
+        }
+        // field 26: telephone
+        case 26: {
+          m.telephone = r.readString();
+          break;
+        }
+        // field 27: gender
+        case 27: {
+          m.gender = IdentityServiceV1User$Gender.fromWire(r.readEnum());
+          break;
+        }
+        // field 28: address
+        case 28: {
+          m.address = r.readString();
+          break;
+        }
+        // field 29: region
+        case 29: {
+          m.region = r.readString();
+          break;
+        }
+        // field 30: description
+        case 30: {
+          m.description = r.readString();
+          break;
+        }
+        // field 31: remark
+        case 31: {
+          m.remark = r.readString();
+          break;
+        }
+        // field 50: lastLoginAt
+        case 50: {
+          m.lastLoginAt = r.readTimestampIso();
+          break;
+        }
+        // field 51: lastLoginIp
+        case 51: {
+          m.lastLoginIp = r.readString();
+          break;
+        }
+        // field 52: status
+        case 52: {
+          m.status = IdentityServiceV1User$Status.fromWire(r.readEnum());
+          break;
+        }
+        // field 53: lockedUntil
+        case 53: {
+          m.lockedUntil = r.readTimestampIso();
+          break;
+        }
+        // field 80: followers
+        case 80: {
+          m.followers = r.readInt64();
+          break;
+        }
+        // field 81: following
+        case 81: {
+          m.following = r.readInt64();
+          break;
+        }
+        // field 90: postCount
+        case 90: {
+          m.postCount = r.readInt64();
+          break;
+        }
+        // field 91: commentCount
+        case 91: {
+          m.commentCount = r.readInt64();
+          break;
+        }
+        // field 92: likeCount
+        case 92: {
+          m.likeCount = r.readInt64();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readInt64();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readInt64();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readInt64();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 用户性别
 enum IdentityServiceV1User$Gender {
-  female('FEMALE'),
-  male('MALE'),
-  secret('SECRET');
+  female('FEMALE', 2),
+  male('MALE', 1),
+  secret('SECRET', 0);
 
   final String value;
-  const IdentityServiceV1User$Gender(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const IdentityServiceV1User$Gender(this.value, this.wire);
 
   static IdentityServiceV1User$Gender fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Gender value: ' + v));
+  static IdentityServiceV1User$Gender fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Gender wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
 
 /// 用户状态
 enum IdentityServiceV1User$Status {
-  closed('CLOSED'),
-  disabled('DISABLED'),
-  expired('EXPIRED'),
-  locked('LOCKED'),
-  normal('NORMAL'),
-  pending('PENDING');
+  closed('CLOSED', 9),
+  disabled('DISABLED', 0),
+  expired('EXPIRED', 4),
+  locked('LOCKED', 3),
+  normal('NORMAL', 1),
+  pending('PENDING', 2);
 
   final String value;
-  const IdentityServiceV1User$Status(this.value);
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const IdentityServiceV1User$Status(this.value, this.wire);
 
   static IdentityServiceV1User$Status fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Status value: ' + v));
+  static IdentityServiceV1User$Status fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown IdentityServiceV1User\$Status wire value: ' + v.toString()));
   @override
   String toString() => value;
 }
@@ -4460,7 +7870,7 @@ class IdentityServiceV1UpdateUserRequest {
     return IdentityServiceV1UpdateUserRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? IdentityServiceV1User.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       password: json['password'] as String?,
       updateMask: json['updateMask'] as String?,
     );
@@ -4470,7 +7880,7 @@ class IdentityServiceV1UpdateUserRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (password != null) json['password'] = password;
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
@@ -4517,6 +7927,83 @@ class IdentityServiceV1UpdateUserRequest {
       updateMask: updateMask ?? this.updateMask,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeInt64(1, f1);
+    }
+    // field 2: data
+    final f2 = data;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1User
+    }
+    // field 3: password
+    final f3 = password;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+    // field 4: updateMask
+    final f4 = updateMask;
+    if (f4 != null) {
+      w.writeFieldMask(4, f4);
+    }
+    // field 5: allowMissing
+    final f5 = allowMissing;
+    if (f5 != null) {
+      w.writeBool(5, f5);
+    }
+  }
+
+  factory IdentityServiceV1UpdateUserRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1UpdateUserRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1UpdateUserRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1UpdateUserRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readInt64();
+          break;
+        }
+        // field 2: data
+        case 2: {
+          m.data = IdentityServiceV1User._readFrom(r.readNested());
+          break;
+        }
+        // field 3: password
+        case 3: {
+          m.password = r.readString();
+          break;
+        }
+        // field 4: updateMask
+        case 4: {
+          m.updateMask = r.readFieldMaskText();
+          break;
+        }
+        // field 5: allowMissing
+        case 5: {
+          m.allowMissing = r.readBool();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 修改用户密码（需要验证旧密码） - 请求
@@ -4572,6 +8059,53 @@ class IdentityServiceV1ChangePasswordRequest {
       oldPassword: oldPassword ?? this.oldPassword,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: oldPassword
+    final f1 = oldPassword;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: newPassword
+    final f2 = newPassword;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory IdentityServiceV1ChangePasswordRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1ChangePasswordRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1ChangePasswordRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1ChangePasswordRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: oldPassword
+        case 1: {
+          m.oldPassword = r.readString();
+          break;
+        }
+        // field 2: newPassword
+        case 2: {
+          m.newPassword = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1UploadAvatarRequest {
@@ -4626,6 +8160,53 @@ class IdentityServiceV1UploadAvatarRequest {
       imageUrl: imageUrl ?? this.imageUrl,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: imageBase64
+    final f1 = imageBase64;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: imageUrl
+    final f2 = imageUrl;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory IdentityServiceV1UploadAvatarRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1UploadAvatarRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1UploadAvatarRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1UploadAvatarRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: imageBase64
+        case 1: {
+          m.imageBase64 = r.readString();
+          break;
+        }
+        // field 2: imageUrl
+        case 2: {
+          m.imageUrl = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1UploadAvatarResponse {
@@ -4672,6 +8253,43 @@ class IdentityServiceV1UploadAvatarResponse {
       url: url ?? this.url,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: url
+    final f1 = url;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+  }
+
+  factory IdentityServiceV1UploadAvatarResponse.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1UploadAvatarResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1UploadAvatarResponse _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1UploadAvatarResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: url
+        case 1: {
+          m.url = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1BindContactRequest {
@@ -4726,6 +8344,53 @@ class IdentityServiceV1BindContactRequest {
       phone: phone ?? this.phone,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1BindPhoneRequest
+    }
+    // field 2: email
+    final f2 = email;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1BindEmailRequest
+    }
+  }
+
+  factory IdentityServiceV1BindContactRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1BindContactRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1BindContactRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1BindContactRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = IdentityServiceV1BindPhoneRequest._readFrom(r.readNested());
+          break;
+        }
+        // field 2: email
+        case 2: {
+          m.email = IdentityServiceV1BindEmailRequest._readFrom(r.readNested());
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1BindPhoneRequest {
@@ -4780,6 +8445,53 @@ class IdentityServiceV1BindPhoneRequest {
       phone: phone ?? this.phone,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory IdentityServiceV1BindPhoneRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1BindPhoneRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1BindPhoneRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1BindPhoneRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = r.readString();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1BindEmailRequest {
@@ -4834,6 +8546,53 @@ class IdentityServiceV1BindEmailRequest {
       verificationCode: verificationCode ?? this.verificationCode,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: email
+    final f1 = email;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: verificationCode
+    final f2 = verificationCode;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory IdentityServiceV1BindEmailRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1BindEmailRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1BindEmailRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1BindEmailRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: email
+        case 1: {
+          m.email = r.readString();
+          break;
+        }
+        // field 2: verificationCode
+        case 2: {
+          m.verificationCode = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class IdentityServiceV1VerifyContactRequest {
@@ -4897,6 +8656,63 @@ class IdentityServiceV1VerifyContactRequest {
       verificationId: verificationId ?? this.verificationId,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1PhoneVerification
+    }
+    // field 2: email
+    final f2 = email;
+    if (f2 != null) {
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1EmailVerification
+    }
+    // field 3: verificationId
+    final f3 = verificationId;
+    if (f3 != null) {
+      w.writeString(3, f3);
+    }
+  }
+
+  factory IdentityServiceV1VerifyContactRequest.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1VerifyContactRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1VerifyContactRequest _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1VerifyContactRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = IdentityServiceV1PhoneVerification._readFrom(r.readNested());
+          break;
+        }
+        // field 2: email
+        case 2: {
+          m.email = IdentityServiceV1EmailVerification._readFrom(r.readNested());
+          break;
+        }
+        // field 3: verificationId
+        case 3: {
+          m.verificationId = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 手机验证
@@ -4954,6 +8770,53 @@ class IdentityServiceV1PhoneVerification {
       phone: phone ?? this.phone,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: phone
+    final f1 = phone;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory IdentityServiceV1PhoneVerification.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1PhoneVerification._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1PhoneVerification _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1PhoneVerification();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: phone
+        case 1: {
+          m.phone = r.readString();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 邮箱验证
@@ -5011,6 +8874,53 @@ class IdentityServiceV1EmailVerification {
       email: email ?? this.email,
     );
   }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: email
+    final f1 = email;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory IdentityServiceV1EmailVerification.fromBuffer(List<int> bytes) {
+    return IdentityServiceV1EmailVerification._readFrom(ProtoWireReader(bytes));
+  }
+
+  static IdentityServiceV1EmailVerification _readFrom(ProtoWireReader r) {
+    final m = IdentityServiceV1EmailVerification();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: email
+        case 1: {
+          m.email = r.readString();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 class ApiClient {

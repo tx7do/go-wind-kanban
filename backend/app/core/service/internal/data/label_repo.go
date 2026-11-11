@@ -78,7 +78,7 @@ func (r *LabelRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (
 	return &boardV1.ListLabelResponse{Total: ret.Total, Items: ret.Items}, nil
 }
 
-func (r *LabelRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *LabelRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Label.Query().Where(label.IDEQ(id)).Exist(ctx)
 	if err != nil {
 		return false, boardV1.ErrorInternalServerError("query exist failed")
@@ -226,18 +226,18 @@ func (r *LabelRepo) SetCardLabels(ctx context.Context, req *boardV1.SetCardLabel
 	if err != nil {
 		return boardV1.ErrorInternalServerError("query card labels failed")
 	}
-	currentSet := make(map[uint32]struct{}, len(current))
+	currentSet := make(map[int64]struct{}, len(current))
 	for _, cl := range current {
 		currentSet[cl.LabelID] = struct{}{}
 	}
-	targetSet := make(map[uint32]struct{}, len(req.GetLabelIds()))
+	targetSet := make(map[int64]struct{}, len(req.GetLabelIds()))
 	for _, id := range req.GetLabelIds() {
 		targetSet[id] = struct{}{}
 	}
 
 	// 差量校验：目标标签必须同租户且存在
 	if len(targetSet) > 0 {
-		ids := make([]uint32, 0, len(targetSet))
+		ids := make([]int64, 0, len(targetSet))
 		for id := range targetSet {
 			ids = append(ids, id)
 		}
@@ -298,7 +298,7 @@ func (r *LabelRepo) GetCardLabels(ctx context.Context, req *boardV1.GetCardLabel
 	if err != nil {
 		return nil, boardV1.ErrorInternalServerError("query card labels failed")
 	}
-	resp := &boardV1.ListLabelResponse{Total: uint64(len(labels))}
+	resp := &boardV1.ListLabelResponse{Total: int64(len(labels))}
 	for _, l := range labels {
 		resp.Items = append(resp.Items, r.mapper.ToDTO(l))
 	}

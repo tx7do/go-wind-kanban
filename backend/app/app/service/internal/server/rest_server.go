@@ -23,8 +23,8 @@ import (
 	auditV1 "go-wind-kanban/api/gen/go/audit/service/v1"
 
 	"go-wind-kanban/pkg/middleware/auth"
-	applogging "go-wind-kanban/pkg/middleware/logging"
 	entmiddleware "go-wind-kanban/pkg/middleware/ent"
+	applogging "go-wind-kanban/pkg/middleware/logging"
 )
 
 // NewRestMiddleware 创建中间件

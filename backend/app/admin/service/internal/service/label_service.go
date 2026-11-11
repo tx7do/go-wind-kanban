@@ -23,7 +23,7 @@ type LabelService struct {
 	log *log.Helper
 
 	labelServiceClient boardV1.LabelServiceClient
-	hub                 *broadcast.Hub
+	hub                *broadcast.Hub
 }
 
 func NewLabelService(
@@ -35,7 +35,7 @@ func NewLabelService(
 	return &LabelService{
 		log:                l,
 		labelServiceClient: labelServiceClient,
-		hub:                 hub,
+		hub:                hub,
 	}
 }
 
@@ -107,7 +107,7 @@ func (s *LabelService) SetCardLabels(ctx context.Context, req *boardV1.SetCardLa
 		// 客户端按 cardId 本地定位所属看板即可。
 		publishCardLabelsChanged(ctx, s.hub, &boardV1.Card{
 			Id:      trans.Ptr(req.GetCardId()),
-			BoardId: trans.Ptr(uint32(0)),
+			BoardId: trans.Ptr(int64(0)),
 		})
 	}
 	return resp, err

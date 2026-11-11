@@ -36,7 +36,7 @@ service CardService {
 
 // 看板卡片
 message Card {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "卡片ID"}
   ]; // 卡片ID
@@ -63,13 +63,13 @@ message Card {
     (gnostic.openapi.v3.property) = {description: "乐观锁版本号，每次更新自增（离线同步冲突检测用）"}
   ]; // 乐观锁版本号，每次更新自增（离线同步冲突检测用）
 
-  optional uint32 column_id = 6 [
+  optional int64 column_id = 6 [
     json_name = "columnId",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {description: "所属列ID"}
   ]; // 所属列ID
 
-  optional uint32 board_id = 7 [
+  optional int64 board_id = 7 [
     json_name = "boardId",
     (gnostic.openapi.v3.property) = {description: "所属看板ID（冗余自列，供看板级查询，服务端维护）"}
   ]; // 所属看板ID（冗余自列，供看板级查询，服务端维护）
@@ -89,14 +89,14 @@ message Card {
     (gnostic.openapi.v3.property) = {description: "卡片封面纯色标识，取命名色集合"}
   ]; // 卡片封面纯色标识，取命名色集合
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ]; // 租户ID，0代表系统全局
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
@@ -106,13 +106,13 @@ message Card {
 // 查询卡片列表 - 回应
 message ListCardResponse {
   repeated Card items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 查询卡片详情 - 请求
 message GetCardRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -133,7 +133,7 @@ message CreateCardRequest {
 
 // 更新卡片 - 请求
 message UpdateCardRequest {
-  uint32 id = 1;
+  int64 id = 1;
 
   Card data = 2;
 
@@ -159,7 +159,7 @@ message UpdateCardRequest {
 // 删除卡片 - 请求
 message DeleteCardRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -168,24 +168,24 @@ message DeleteCardRequest {
 
 // 移动卡片 - 请求
 message MoveCardRequest {
-  uint32 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = REQUIRED,
     (gnostic.openapi.v3.property) = {description: "要移动的卡片ID"}
   ]; // 要移动的卡片ID
 
-  optional uint32 target_column_id = 2 [
+  optional int64 target_column_id = 2 [
     json_name = "targetColumnId",
     (gnostic.openapi.v3.property) = {description: "目标列ID；为 0/缺省表示在当前列内重排"}
   ]; // 目标列ID；为 0/缺省表示在当前列内重排
 
   oneof anchor {
-    uint32 before_id = 3 [
+    int64 before_id = 3 [
       json_name = "beforeId",
       (gnostic.openapi.v3.property) = {description: "移动到目标列中该卡片之前（目标列内邻居卡片ID）"}
     ]; // 移动到目标列中该卡片之前（目标列内邻居卡片ID）
 
-    uint32 after_id = 4 [
+    int64 after_id = 4 [
       json_name = "afterId",
       (gnostic.openapi.v3.property) = {description: "移动到目标列中该卡片之后（目标列内邻居卡片ID）"}
     ]; // 移动到目标列中该卡片之后（目标列内邻居卡片ID）

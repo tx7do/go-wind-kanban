@@ -111,7 +111,7 @@ func (r *BoardRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (
 	}, nil
 }
 
-func (r *BoardRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *BoardRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Board.Query().
 		Where(board.IDEQ(id)).
 		Exist(ctx)
@@ -240,7 +240,7 @@ func (r *BoardRepo) Update(ctx context.Context, req *boardV1.UpdateBoardRequest)
 	return result, err
 }
 
-func (r *BoardRepo) bumpVersion(ctx context.Context, id uint32, tid uint32, hasTenant bool) error {
+func (r *BoardRepo) bumpVersion(ctx context.Context, id int64, tid int64, hasTenant bool) error {
 	builder := r.entClient.Client().Board.UpdateOneID(id)
 	builder.Where(board.IDEQ(id))
 	if hasTenant {
@@ -401,7 +401,7 @@ func (r *BoardRepo) resolveAnchorRanks(allBoards []*ent.Board, moverIdx int, req
 // rebalanceBoards 对租户内全部看板执行整列重排。
 // moverIdx 指示被移动看板在 allBoards 中的原始位置；重排时将其按 anchor
 // 策略插入目标位置，然后对全列重新分配均匀 rank。
-func (r *BoardRepo) rebalanceBoards(ctx context.Context, allBoards []*ent.Board, moverIdx int, req *boardV1.MoveBoardRequest, tid uint32) error {
+func (r *BoardRepo) rebalanceBoards(ctx context.Context, allBoards []*ent.Board, moverIdx int, req *boardV1.MoveBoardRequest, tid int64) error {
 	ordered := make([]*ent.Board, 0, len(allBoards))
 	mover := allBoards[moverIdx]
 	for i, b := range allBoards {
@@ -451,7 +451,7 @@ func (r *BoardRepo) rebalanceBoards(ctx context.Context, allBoards []*ent.Board,
 }
 
 // getBoardByID 取单个看板（带租户过滤），用于 Move 后回读最新状态。
-func (r *BoardRepo) getBoardByID(ctx context.Context, id uint32, tid uint32, hasTenant bool) (*boardV1.Board, error) {
+func (r *BoardRepo) getBoardByID(ctx context.Context, id int64, tid int64, hasTenant bool) (*boardV1.Board, error) {
 	q := r.entClient.Client().Board.Query().Where(board.IDEQ(id))
 	if hasTenant {
 		q = q.Where(board.TenantIDEQ(tid))
@@ -465,7 +465,7 @@ func (r *BoardRepo) getBoardByID(ctx context.Context, id uint32, tid uint32, has
 
 // allocateTailRank 为新建看板分配尾部 rank = Between(当前租户末位 rank, "")。
 // 空租户（无任何看板）时返回全键空间中点。
-func (r *BoardRepo) allocateTailRank(ctx context.Context, tid uint32, hasTenant bool) (string, error) {
+func (r *BoardRepo) allocateTailRank(ctx context.Context, tid int64, hasTenant bool) (string, error) {
 	q := r.entClient.Client().Board.Query()
 	if hasTenant {
 		q = q.Where(board.TenantIDEQ(tid))
@@ -589,14 +589,14 @@ func (r *BoardRepo) SyncBoard(ctx context.Context, req *boardV1.SyncBoardRequest
 		r.log.Errorf("sync board: query columns failed: %s", err.Error())
 		return nil, boardV1.ErrorInternalServerError("sync board failed")
 	}
-	knownCols := make(map[uint32]uint32, len(req.GetKnownColumnVersions()))
+	knownCols := make(map[int64]int64, len(req.GetKnownColumnVersions()))
 	for _, e := range req.GetKnownColumnVersions() {
-		knownCols[e.GetId()] = e.GetVersion()
+		knownCols[e.GetId()] = int64(e.GetVersion())
 	}
-	liveCols := make(map[uint32]struct{}, len(cols))
+	liveCols := make(map[int64]struct{}, len(cols))
 	for _, c := range cols {
 		liveCols[c.ID] = struct{}{}
-		if v, known := knownCols[c.ID]; !known || v != c.Version {
+		if v, known := knownCols[c.ID]; !known || v != int64(c.Version) {
 			resp.UpsertedColumns = append(resp.UpsertedColumns, columnToDTO(c))
 		}
 	}
@@ -612,14 +612,14 @@ func (r *BoardRepo) SyncBoard(ctx context.Context, req *boardV1.SyncBoardRequest
 		r.log.Errorf("sync board: query cards failed: %s", err.Error())
 		return nil, boardV1.ErrorInternalServerError("sync board failed")
 	}
-	knownCards := make(map[uint32]uint32, len(req.GetKnownCardVersions()))
+	knownCards := make(map[int64]int64, len(req.GetKnownCardVersions()))
 	for _, e := range req.GetKnownCardVersions() {
-		knownCards[e.GetId()] = e.GetVersion()
+		knownCards[e.GetId()] = int64(e.GetVersion())
 	}
-	liveCards := make(map[uint32]struct{}, len(cards))
+	liveCards := make(map[int64]struct{}, len(cards))
 	for _, c := range cards {
 		liveCards[c.ID] = struct{}{}
-		if v, known := knownCards[c.ID]; !known || v != c.Version {
+		if v, known := knownCards[c.ID]; !known || v != int64(c.Version) {
 			resp.UpsertedCards = append(resp.UpsertedCards, cardToDTO(c))
 		}
 	}

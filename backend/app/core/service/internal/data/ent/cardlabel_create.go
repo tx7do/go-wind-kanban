@@ -65,13 +65,13 @@ func (_c *CardLabelCreate) SetNillableDeletedAt(v *time.Time) *CardLabelCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CardLabelCreate) SetCreatedBy(v uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetCreatedBy(v int64) *CardLabelCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CardLabelCreate) SetNillableCreatedBy(v *uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetNillableCreatedBy(v *int64) *CardLabelCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CardLabelCreate) SetNillableCreatedBy(v *uint32) *CardLabelCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CardLabelCreate) SetUpdatedBy(v uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetUpdatedBy(v int64) *CardLabelCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CardLabelCreate) SetNillableUpdatedBy(v *uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetNillableUpdatedBy(v *int64) *CardLabelCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CardLabelCreate) SetNillableUpdatedBy(v *uint32) *CardLabelCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CardLabelCreate) SetDeletedBy(v uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetDeletedBy(v int64) *CardLabelCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CardLabelCreate) SetNillableDeletedBy(v *uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetNillableDeletedBy(v *int64) *CardLabelCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *CardLabelCreate) SetNillableDeletedBy(v *uint32) *CardLabelCreate {
 }
 
 // SetCardID sets the "card_id" field.
-func (_c *CardLabelCreate) SetCardID(v uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetCardID(v int64) *CardLabelCreate {
 	_c.mutation.SetCardID(v)
 	return _c
 }
 
 // SetNillableCardID sets the "card_id" field if the given value is not nil.
-func (_c *CardLabelCreate) SetNillableCardID(v *uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetNillableCardID(v *int64) *CardLabelCreate {
 	if v != nil {
 		_c.SetCardID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *CardLabelCreate) SetNillableCardID(v *uint32) *CardLabelCreate {
 }
 
 // SetLabelID sets the "label_id" field.
-func (_c *CardLabelCreate) SetLabelID(v uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetLabelID(v int64) *CardLabelCreate {
 	_c.mutation.SetLabelID(v)
 	return _c
 }
 
 // SetNillableLabelID sets the "label_id" field if the given value is not nil.
-func (_c *CardLabelCreate) SetNillableLabelID(v *uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetNillableLabelID(v *int64) *CardLabelCreate {
 	if v != nil {
 		_c.SetLabelID(*v)
 	}
@@ -135,7 +135,7 @@ func (_c *CardLabelCreate) SetNillableLabelID(v *uint32) *CardLabelCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CardLabelCreate) SetID(v uint32) *CardLabelCreate {
+func (_c *CardLabelCreate) SetID(v int64) *CardLabelCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -195,7 +195,7 @@ func (_c *CardLabelCreate) sqlSave(ctx context.Context) (*CardLabel, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -205,7 +205,7 @@ func (_c *CardLabelCreate) sqlSave(ctx context.Context) (*CardLabel, error) {
 func (_c *CardLabelCreate) createSpec() (*CardLabel, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CardLabel{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(cardlabel.Table, sqlgraph.NewFieldSpec(cardlabel.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(cardlabel.Table, sqlgraph.NewFieldSpec(cardlabel.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -225,23 +225,23 @@ func (_c *CardLabelCreate) createSpec() (*CardLabel, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(cardlabel.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(cardlabel.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(cardlabel.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.CardID(); ok {
-		_spec.SetField(cardlabel.FieldCardID, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldCardID, field.TypeInt64, value)
 		_node.CardID = value
 	}
 	if value, ok := _c.mutation.LabelID(); ok {
-		_spec.SetField(cardlabel.FieldLabelID, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldLabelID, field.TypeInt64, value)
 		_node.LabelID = value
 	}
 	return _node, _spec
@@ -333,7 +333,7 @@ func (u *CardLabelUpsert) ClearDeletedAt() *CardLabelUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CardLabelUpsert) SetCreatedBy(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) SetCreatedBy(v int64) *CardLabelUpsert {
 	u.Set(cardlabel.FieldCreatedBy, v)
 	return u
 }
@@ -345,7 +345,7 @@ func (u *CardLabelUpsert) UpdateCreatedBy() *CardLabelUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CardLabelUpsert) AddCreatedBy(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) AddCreatedBy(v int64) *CardLabelUpsert {
 	u.Add(cardlabel.FieldCreatedBy, v)
 	return u
 }
@@ -357,7 +357,7 @@ func (u *CardLabelUpsert) ClearCreatedBy() *CardLabelUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CardLabelUpsert) SetUpdatedBy(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) SetUpdatedBy(v int64) *CardLabelUpsert {
 	u.Set(cardlabel.FieldUpdatedBy, v)
 	return u
 }
@@ -369,7 +369,7 @@ func (u *CardLabelUpsert) UpdateUpdatedBy() *CardLabelUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CardLabelUpsert) AddUpdatedBy(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) AddUpdatedBy(v int64) *CardLabelUpsert {
 	u.Add(cardlabel.FieldUpdatedBy, v)
 	return u
 }
@@ -381,7 +381,7 @@ func (u *CardLabelUpsert) ClearUpdatedBy() *CardLabelUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CardLabelUpsert) SetDeletedBy(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) SetDeletedBy(v int64) *CardLabelUpsert {
 	u.Set(cardlabel.FieldDeletedBy, v)
 	return u
 }
@@ -393,7 +393,7 @@ func (u *CardLabelUpsert) UpdateDeletedBy() *CardLabelUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CardLabelUpsert) AddDeletedBy(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) AddDeletedBy(v int64) *CardLabelUpsert {
 	u.Add(cardlabel.FieldDeletedBy, v)
 	return u
 }
@@ -405,7 +405,7 @@ func (u *CardLabelUpsert) ClearDeletedBy() *CardLabelUpsert {
 }
 
 // SetCardID sets the "card_id" field.
-func (u *CardLabelUpsert) SetCardID(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) SetCardID(v int64) *CardLabelUpsert {
 	u.Set(cardlabel.FieldCardID, v)
 	return u
 }
@@ -417,7 +417,7 @@ func (u *CardLabelUpsert) UpdateCardID() *CardLabelUpsert {
 }
 
 // AddCardID adds v to the "card_id" field.
-func (u *CardLabelUpsert) AddCardID(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) AddCardID(v int64) *CardLabelUpsert {
 	u.Add(cardlabel.FieldCardID, v)
 	return u
 }
@@ -429,7 +429,7 @@ func (u *CardLabelUpsert) ClearCardID() *CardLabelUpsert {
 }
 
 // SetLabelID sets the "label_id" field.
-func (u *CardLabelUpsert) SetLabelID(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) SetLabelID(v int64) *CardLabelUpsert {
 	u.Set(cardlabel.FieldLabelID, v)
 	return u
 }
@@ -441,7 +441,7 @@ func (u *CardLabelUpsert) UpdateLabelID() *CardLabelUpsert {
 }
 
 // AddLabelID adds v to the "label_id" field.
-func (u *CardLabelUpsert) AddLabelID(v uint32) *CardLabelUpsert {
+func (u *CardLabelUpsert) AddLabelID(v int64) *CardLabelUpsert {
 	u.Add(cardlabel.FieldLabelID, v)
 	return u
 }
@@ -546,14 +546,14 @@ func (u *CardLabelUpsertOne) ClearDeletedAt() *CardLabelUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CardLabelUpsertOne) SetCreatedBy(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) SetCreatedBy(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CardLabelUpsertOne) AddCreatedBy(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) AddCreatedBy(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -574,14 +574,14 @@ func (u *CardLabelUpsertOne) ClearCreatedBy() *CardLabelUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CardLabelUpsertOne) SetUpdatedBy(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) SetUpdatedBy(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CardLabelUpsertOne) AddUpdatedBy(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) AddUpdatedBy(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -602,14 +602,14 @@ func (u *CardLabelUpsertOne) ClearUpdatedBy() *CardLabelUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CardLabelUpsertOne) SetDeletedBy(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) SetDeletedBy(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CardLabelUpsertOne) AddDeletedBy(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) AddDeletedBy(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -630,14 +630,14 @@ func (u *CardLabelUpsertOne) ClearDeletedBy() *CardLabelUpsertOne {
 }
 
 // SetCardID sets the "card_id" field.
-func (u *CardLabelUpsertOne) SetCardID(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) SetCardID(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetCardID(v)
 	})
 }
 
 // AddCardID adds v to the "card_id" field.
-func (u *CardLabelUpsertOne) AddCardID(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) AddCardID(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddCardID(v)
 	})
@@ -658,14 +658,14 @@ func (u *CardLabelUpsertOne) ClearCardID() *CardLabelUpsertOne {
 }
 
 // SetLabelID sets the "label_id" field.
-func (u *CardLabelUpsertOne) SetLabelID(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) SetLabelID(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetLabelID(v)
 	})
 }
 
 // AddLabelID adds v to the "label_id" field.
-func (u *CardLabelUpsertOne) AddLabelID(v uint32) *CardLabelUpsertOne {
+func (u *CardLabelUpsertOne) AddLabelID(v int64) *CardLabelUpsertOne {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddLabelID(v)
 	})
@@ -701,7 +701,7 @@ func (u *CardLabelUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CardLabelUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *CardLabelUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -710,7 +710,7 @@ func (u *CardLabelUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CardLabelUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *CardLabelUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -766,7 +766,7 @@ func (_c *CardLabelCreateBulk) Save(ctx context.Context) ([]*CardLabel, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -944,14 +944,14 @@ func (u *CardLabelUpsertBulk) ClearDeletedAt() *CardLabelUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CardLabelUpsertBulk) SetCreatedBy(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) SetCreatedBy(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CardLabelUpsertBulk) AddCreatedBy(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) AddCreatedBy(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -972,14 +972,14 @@ func (u *CardLabelUpsertBulk) ClearCreatedBy() *CardLabelUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CardLabelUpsertBulk) SetUpdatedBy(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) SetUpdatedBy(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CardLabelUpsertBulk) AddUpdatedBy(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) AddUpdatedBy(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1000,14 +1000,14 @@ func (u *CardLabelUpsertBulk) ClearUpdatedBy() *CardLabelUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CardLabelUpsertBulk) SetDeletedBy(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) SetDeletedBy(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CardLabelUpsertBulk) AddDeletedBy(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) AddDeletedBy(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1028,14 +1028,14 @@ func (u *CardLabelUpsertBulk) ClearDeletedBy() *CardLabelUpsertBulk {
 }
 
 // SetCardID sets the "card_id" field.
-func (u *CardLabelUpsertBulk) SetCardID(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) SetCardID(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetCardID(v)
 	})
 }
 
 // AddCardID adds v to the "card_id" field.
-func (u *CardLabelUpsertBulk) AddCardID(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) AddCardID(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddCardID(v)
 	})
@@ -1056,14 +1056,14 @@ func (u *CardLabelUpsertBulk) ClearCardID() *CardLabelUpsertBulk {
 }
 
 // SetLabelID sets the "label_id" field.
-func (u *CardLabelUpsertBulk) SetLabelID(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) SetLabelID(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.SetLabelID(v)
 	})
 }
 
 // AddLabelID adds v to the "label_id" field.
-func (u *CardLabelUpsertBulk) AddLabelID(v uint32) *CardLabelUpsertBulk {
+func (u *CardLabelUpsertBulk) AddLabelID(v int64) *CardLabelUpsertBulk {
 	return u.Update(func(s *CardLabelUpsert) {
 		s.AddLabelID(v)
 	})

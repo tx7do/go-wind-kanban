@@ -23,7 +23,7 @@ type CardService struct {
 	log *log.Helper
 
 	cardServiceClient boardV1.CardServiceClient
-	hub             *broadcast.Hub
+	hub               *broadcast.Hub
 }
 
 func NewCardService(
@@ -35,7 +35,7 @@ func NewCardService(
 	return &CardService{
 		log:               l,
 		cardServiceClient: cardServiceClient,
-		hub:             hub,
+		hub:               hub,
 	}
 }
 

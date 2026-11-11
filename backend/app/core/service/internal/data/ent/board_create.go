@@ -68,13 +68,13 @@ func (_c *BoardCreate) SetNillableDeletedAt(v *time.Time) *BoardCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *BoardCreate) SetCreatedBy(v uint32) *BoardCreate {
+func (_c *BoardCreate) SetCreatedBy(v int64) *BoardCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *BoardCreate) SetNillableCreatedBy(v *uint32) *BoardCreate {
+func (_c *BoardCreate) SetNillableCreatedBy(v *int64) *BoardCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -82,13 +82,13 @@ func (_c *BoardCreate) SetNillableCreatedBy(v *uint32) *BoardCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *BoardCreate) SetUpdatedBy(v uint32) *BoardCreate {
+func (_c *BoardCreate) SetUpdatedBy(v int64) *BoardCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *BoardCreate) SetNillableUpdatedBy(v *uint32) *BoardCreate {
+func (_c *BoardCreate) SetNillableUpdatedBy(v *int64) *BoardCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -96,13 +96,13 @@ func (_c *BoardCreate) SetNillableUpdatedBy(v *uint32) *BoardCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *BoardCreate) SetDeletedBy(v uint32) *BoardCreate {
+func (_c *BoardCreate) SetDeletedBy(v int64) *BoardCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *BoardCreate) SetNillableDeletedBy(v *uint32) *BoardCreate {
+func (_c *BoardCreate) SetNillableDeletedBy(v *int64) *BoardCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -110,13 +110,13 @@ func (_c *BoardCreate) SetNillableDeletedBy(v *uint32) *BoardCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *BoardCreate) SetTenantID(v uint32) *BoardCreate {
+func (_c *BoardCreate) SetTenantID(v int64) *BoardCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *BoardCreate) SetNillableTenantID(v *uint32) *BoardCreate {
+func (_c *BoardCreate) SetNillableTenantID(v *int64) *BoardCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -180,20 +180,20 @@ func (_c *BoardCreate) SetNillableVersion(v *uint32) *BoardCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *BoardCreate) SetID(v uint32) *BoardCreate {
+func (_c *BoardCreate) SetID(v int64) *BoardCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
 
 // AddColumnIDs adds the "columns" edge to the Column entity by IDs.
-func (_c *BoardCreate) AddColumnIDs(ids ...uint32) *BoardCreate {
+func (_c *BoardCreate) AddColumnIDs(ids ...int64) *BoardCreate {
 	_c.mutation.AddColumnIDs(ids...)
 	return _c
 }
 
 // AddColumns adds the "columns" edges to the Column entity.
 func (_c *BoardCreate) AddColumns(v ...*Column) *BoardCreate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -201,14 +201,14 @@ func (_c *BoardCreate) AddColumns(v ...*Column) *BoardCreate {
 }
 
 // AddCardIDs adds the "cards" edge to the Card entity by IDs.
-func (_c *BoardCreate) AddCardIDs(ids ...uint32) *BoardCreate {
+func (_c *BoardCreate) AddCardIDs(ids ...int64) *BoardCreate {
 	_c.mutation.AddCardIDs(ids...)
 	return _c
 }
 
 // AddCards adds the "cards" edges to the Card entity.
 func (_c *BoardCreate) AddCards(v ...*Card) *BoardCreate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -216,14 +216,14 @@ func (_c *BoardCreate) AddCards(v ...*Card) *BoardCreate {
 }
 
 // AddLabelIDs adds the "labels" edge to the Label entity by IDs.
-func (_c *BoardCreate) AddLabelIDs(ids ...uint32) *BoardCreate {
+func (_c *BoardCreate) AddLabelIDs(ids ...int64) *BoardCreate {
 	_c.mutation.AddLabelIDs(ids...)
 	return _c
 }
 
 // AddLabels adds the "labels" edges to the Label entity.
 func (_c *BoardCreate) AddLabels(v ...*Label) *BoardCreate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -309,7 +309,7 @@ func (_c *BoardCreate) sqlSave(ctx context.Context) (*Board, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -319,7 +319,7 @@ func (_c *BoardCreate) sqlSave(ctx context.Context) (*Board, error) {
 func (_c *BoardCreate) createSpec() (*Board, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Board{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(board.Table, sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(board.Table, sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -339,19 +339,19 @@ func (_c *BoardCreate) createSpec() (*Board, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(board.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(board.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(board.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(board.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(board.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -378,7 +378,7 @@ func (_c *BoardCreate) createSpec() (*Board, *sqlgraph.CreateSpec) {
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -394,7 +394,7 @@ func (_c *BoardCreate) createSpec() (*Board, *sqlgraph.CreateSpec) {
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -410,7 +410,7 @@ func (_c *BoardCreate) createSpec() (*Board, *sqlgraph.CreateSpec) {
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -507,7 +507,7 @@ func (u *BoardUpsert) ClearDeletedAt() *BoardUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BoardUpsert) SetCreatedBy(v uint32) *BoardUpsert {
+func (u *BoardUpsert) SetCreatedBy(v int64) *BoardUpsert {
 	u.Set(board.FieldCreatedBy, v)
 	return u
 }
@@ -519,7 +519,7 @@ func (u *BoardUpsert) UpdateCreatedBy() *BoardUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BoardUpsert) AddCreatedBy(v uint32) *BoardUpsert {
+func (u *BoardUpsert) AddCreatedBy(v int64) *BoardUpsert {
 	u.Add(board.FieldCreatedBy, v)
 	return u
 }
@@ -531,7 +531,7 @@ func (u *BoardUpsert) ClearCreatedBy() *BoardUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BoardUpsert) SetUpdatedBy(v uint32) *BoardUpsert {
+func (u *BoardUpsert) SetUpdatedBy(v int64) *BoardUpsert {
 	u.Set(board.FieldUpdatedBy, v)
 	return u
 }
@@ -543,7 +543,7 @@ func (u *BoardUpsert) UpdateUpdatedBy() *BoardUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BoardUpsert) AddUpdatedBy(v uint32) *BoardUpsert {
+func (u *BoardUpsert) AddUpdatedBy(v int64) *BoardUpsert {
 	u.Add(board.FieldUpdatedBy, v)
 	return u
 }
@@ -555,7 +555,7 @@ func (u *BoardUpsert) ClearUpdatedBy() *BoardUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BoardUpsert) SetDeletedBy(v uint32) *BoardUpsert {
+func (u *BoardUpsert) SetDeletedBy(v int64) *BoardUpsert {
 	u.Set(board.FieldDeletedBy, v)
 	return u
 }
@@ -567,7 +567,7 @@ func (u *BoardUpsert) UpdateDeletedBy() *BoardUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BoardUpsert) AddDeletedBy(v uint32) *BoardUpsert {
+func (u *BoardUpsert) AddDeletedBy(v int64) *BoardUpsert {
 	u.Add(board.FieldDeletedBy, v)
 	return u
 }
@@ -747,14 +747,14 @@ func (u *BoardUpsertOne) ClearDeletedAt() *BoardUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BoardUpsertOne) SetCreatedBy(v uint32) *BoardUpsertOne {
+func (u *BoardUpsertOne) SetCreatedBy(v int64) *BoardUpsertOne {
 	return u.Update(func(s *BoardUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BoardUpsertOne) AddCreatedBy(v uint32) *BoardUpsertOne {
+func (u *BoardUpsertOne) AddCreatedBy(v int64) *BoardUpsertOne {
 	return u.Update(func(s *BoardUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -775,14 +775,14 @@ func (u *BoardUpsertOne) ClearCreatedBy() *BoardUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BoardUpsertOne) SetUpdatedBy(v uint32) *BoardUpsertOne {
+func (u *BoardUpsertOne) SetUpdatedBy(v int64) *BoardUpsertOne {
 	return u.Update(func(s *BoardUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BoardUpsertOne) AddUpdatedBy(v uint32) *BoardUpsertOne {
+func (u *BoardUpsertOne) AddUpdatedBy(v int64) *BoardUpsertOne {
 	return u.Update(func(s *BoardUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -803,14 +803,14 @@ func (u *BoardUpsertOne) ClearUpdatedBy() *BoardUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BoardUpsertOne) SetDeletedBy(v uint32) *BoardUpsertOne {
+func (u *BoardUpsertOne) SetDeletedBy(v int64) *BoardUpsertOne {
 	return u.Update(func(s *BoardUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BoardUpsertOne) AddDeletedBy(v uint32) *BoardUpsertOne {
+func (u *BoardUpsertOne) AddDeletedBy(v int64) *BoardUpsertOne {
 	return u.Update(func(s *BoardUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -930,7 +930,7 @@ func (u *BoardUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BoardUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *BoardUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -939,7 +939,7 @@ func (u *BoardUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BoardUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *BoardUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -996,7 +996,7 @@ func (_c *BoardCreateBulk) Save(ctx context.Context) ([]*Board, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1177,14 +1177,14 @@ func (u *BoardUpsertBulk) ClearDeletedAt() *BoardUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BoardUpsertBulk) SetCreatedBy(v uint32) *BoardUpsertBulk {
+func (u *BoardUpsertBulk) SetCreatedBy(v int64) *BoardUpsertBulk {
 	return u.Update(func(s *BoardUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BoardUpsertBulk) AddCreatedBy(v uint32) *BoardUpsertBulk {
+func (u *BoardUpsertBulk) AddCreatedBy(v int64) *BoardUpsertBulk {
 	return u.Update(func(s *BoardUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1205,14 +1205,14 @@ func (u *BoardUpsertBulk) ClearCreatedBy() *BoardUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BoardUpsertBulk) SetUpdatedBy(v uint32) *BoardUpsertBulk {
+func (u *BoardUpsertBulk) SetUpdatedBy(v int64) *BoardUpsertBulk {
 	return u.Update(func(s *BoardUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BoardUpsertBulk) AddUpdatedBy(v uint32) *BoardUpsertBulk {
+func (u *BoardUpsertBulk) AddUpdatedBy(v int64) *BoardUpsertBulk {
 	return u.Update(func(s *BoardUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1233,14 +1233,14 @@ func (u *BoardUpsertBulk) ClearUpdatedBy() *BoardUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BoardUpsertBulk) SetDeletedBy(v uint32) *BoardUpsertBulk {
+func (u *BoardUpsertBulk) SetDeletedBy(v int64) *BoardUpsertBulk {
 	return u.Update(func(s *BoardUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BoardUpsertBulk) AddDeletedBy(v uint32) *BoardUpsertBulk {
+func (u *BoardUpsertBulk) AddDeletedBy(v int64) *BoardUpsertBulk {
 	return u.Update(func(s *BoardUpsert) {
 		s.AddDeletedBy(v)
 	})

@@ -37,7 +37,6 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService) *a
 		log.Error(err)
 	}
 
-
 	// 启动所有的任务
 	_, _ = taskService.StartAllTask(appViewer.NewSystemViewerContext(ctx.Context()), nil)
 

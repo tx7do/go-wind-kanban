@@ -51,11 +51,11 @@ func (Card) Fields() []ent.Field {
 			Comment("乐观锁版本号，每次更新自增").
 			Default(1),
 
-		field.Uint32("column_id").
+		field.Int64("column_id").
 			Comment("所属列ID").
 			Optional(),
 
-		field.Uint32("board_id").
+		field.Int64("board_id").
 			Comment("所属看板ID，冗余自列，供看板级查询，服务端维护").
 			Optional(),
 
@@ -78,10 +78,10 @@ func (Card) Fields() []ent.Field {
 // Mixin of the Card.
 func (Card) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

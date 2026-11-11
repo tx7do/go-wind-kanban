@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.CardLabel {
+func ID(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.CardLabel {
+func IDEQ(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.CardLabel {
+func IDNEQ(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.CardLabel {
+func IDIn(ids ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.CardLabel {
+func IDNotIn(ids ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.CardLabel {
+func IDGT(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.CardLabel {
+func IDGTE(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.CardLabel {
+func IDLT(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.CardLabel {
+func IDLTE(id int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.CardLabel {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.CardLabel {
+func CreatedBy(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.CardLabel {
+func UpdatedBy(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.CardLabel {
+func DeletedBy(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // CardID applies equality check predicate on the "card_id" field. It's identical to CardIDEQ.
-func CardID(v uint32) predicate.CardLabel {
+func CardID(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldCardID, v))
 }
 
 // LabelID applies equality check predicate on the "label_id" field. It's identical to LabelIDEQ.
-func LabelID(v uint32) predicate.CardLabel {
+func LabelID(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldLabelID, v))
 }
 
@@ -245,42 +245,42 @@ func DeletedAtNotNil() predicate.CardLabel {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.CardLabel {
+func CreatedByEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.CardLabel {
+func CreatedByNEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.CardLabel {
+func CreatedByIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.CardLabel {
+func CreatedByNotIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.CardLabel {
+func CreatedByGT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.CardLabel {
+func CreatedByGTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.CardLabel {
+func CreatedByLT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.CardLabel {
+func CreatedByLTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -295,42 +295,42 @@ func CreatedByNotNil() predicate.CardLabel {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.CardLabel {
+func UpdatedByEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.CardLabel {
+func UpdatedByNEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.CardLabel {
+func UpdatedByIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.CardLabel {
+func UpdatedByNotIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.CardLabel {
+func UpdatedByGT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.CardLabel {
+func UpdatedByGTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.CardLabel {
+func UpdatedByLT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.CardLabel {
+func UpdatedByLTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -345,42 +345,42 @@ func UpdatedByNotNil() predicate.CardLabel {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.CardLabel {
+func DeletedByEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.CardLabel {
+func DeletedByNEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.CardLabel {
+func DeletedByIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.CardLabel {
+func DeletedByNotIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.CardLabel {
+func DeletedByGT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.CardLabel {
+func DeletedByGTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.CardLabel {
+func DeletedByLT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.CardLabel {
+func DeletedByLTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -395,42 +395,42 @@ func DeletedByNotNil() predicate.CardLabel {
 }
 
 // CardIDEQ applies the EQ predicate on the "card_id" field.
-func CardIDEQ(v uint32) predicate.CardLabel {
+func CardIDEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldCardID, v))
 }
 
 // CardIDNEQ applies the NEQ predicate on the "card_id" field.
-func CardIDNEQ(v uint32) predicate.CardLabel {
+func CardIDNEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNEQ(FieldCardID, v))
 }
 
 // CardIDIn applies the In predicate on the "card_id" field.
-func CardIDIn(vs ...uint32) predicate.CardLabel {
+func CardIDIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldIn(FieldCardID, vs...))
 }
 
 // CardIDNotIn applies the NotIn predicate on the "card_id" field.
-func CardIDNotIn(vs ...uint32) predicate.CardLabel {
+func CardIDNotIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNotIn(FieldCardID, vs...))
 }
 
 // CardIDGT applies the GT predicate on the "card_id" field.
-func CardIDGT(v uint32) predicate.CardLabel {
+func CardIDGT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGT(FieldCardID, v))
 }
 
 // CardIDGTE applies the GTE predicate on the "card_id" field.
-func CardIDGTE(v uint32) predicate.CardLabel {
+func CardIDGTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGTE(FieldCardID, v))
 }
 
 // CardIDLT applies the LT predicate on the "card_id" field.
-func CardIDLT(v uint32) predicate.CardLabel {
+func CardIDLT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLT(FieldCardID, v))
 }
 
 // CardIDLTE applies the LTE predicate on the "card_id" field.
-func CardIDLTE(v uint32) predicate.CardLabel {
+func CardIDLTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLTE(FieldCardID, v))
 }
 
@@ -445,42 +445,42 @@ func CardIDNotNil() predicate.CardLabel {
 }
 
 // LabelIDEQ applies the EQ predicate on the "label_id" field.
-func LabelIDEQ(v uint32) predicate.CardLabel {
+func LabelIDEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldEQ(FieldLabelID, v))
 }
 
 // LabelIDNEQ applies the NEQ predicate on the "label_id" field.
-func LabelIDNEQ(v uint32) predicate.CardLabel {
+func LabelIDNEQ(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNEQ(FieldLabelID, v))
 }
 
 // LabelIDIn applies the In predicate on the "label_id" field.
-func LabelIDIn(vs ...uint32) predicate.CardLabel {
+func LabelIDIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldIn(FieldLabelID, vs...))
 }
 
 // LabelIDNotIn applies the NotIn predicate on the "label_id" field.
-func LabelIDNotIn(vs ...uint32) predicate.CardLabel {
+func LabelIDNotIn(vs ...int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldNotIn(FieldLabelID, vs...))
 }
 
 // LabelIDGT applies the GT predicate on the "label_id" field.
-func LabelIDGT(v uint32) predicate.CardLabel {
+func LabelIDGT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGT(FieldLabelID, v))
 }
 
 // LabelIDGTE applies the GTE predicate on the "label_id" field.
-func LabelIDGTE(v uint32) predicate.CardLabel {
+func LabelIDGTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldGTE(FieldLabelID, v))
 }
 
 // LabelIDLT applies the LT predicate on the "label_id" field.
-func LabelIDLT(v uint32) predicate.CardLabel {
+func LabelIDLT(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLT(FieldLabelID, v))
 }
 
 // LabelIDLTE applies the LTE predicate on the "label_id" field.
-func LabelIDLTE(v uint32) predicate.CardLabel {
+func LabelIDLTE(v int64) predicate.CardLabel {
 	return predicate.CardLabel(sql.FieldLTE(FieldLabelID, v))
 }
 

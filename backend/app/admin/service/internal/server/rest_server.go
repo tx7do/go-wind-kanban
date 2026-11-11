@@ -25,8 +25,8 @@ import (
 
 	"go-wind-kanban/pkg/metadata"
 	"go-wind-kanban/pkg/middleware/auth"
-	applogging "go-wind-kanban/pkg/middleware/logging"
 	entmiddleware "go-wind-kanban/pkg/middleware/ent"
+	applogging "go-wind-kanban/pkg/middleware/logging"
 )
 
 // NewRestMiddleware 创建中间件
@@ -115,7 +115,6 @@ func NewRestServer(
 	dictTypeService *service.DictTypeService,
 	dictEntryService *service.DictEntryService,
 	languageService *service.LanguageService,
-
 
 	internalMessageService *service.InternalMessageService,
 	internalMessageCategoryService *service.InternalMessageCategoryService,

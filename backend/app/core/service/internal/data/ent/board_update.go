@@ -73,14 +73,14 @@ func (_u *BoardUpdate) ClearDeletedAt() *BoardUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BoardUpdate) SetCreatedBy(v uint32) *BoardUpdate {
+func (_u *BoardUpdate) SetCreatedBy(v int64) *BoardUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BoardUpdate) SetNillableCreatedBy(v *uint32) *BoardUpdate {
+func (_u *BoardUpdate) SetNillableCreatedBy(v *int64) *BoardUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -88,7 +88,7 @@ func (_u *BoardUpdate) SetNillableCreatedBy(v *uint32) *BoardUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BoardUpdate) AddCreatedBy(v int32) *BoardUpdate {
+func (_u *BoardUpdate) AddCreatedBy(v int64) *BoardUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -100,14 +100,14 @@ func (_u *BoardUpdate) ClearCreatedBy() *BoardUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BoardUpdate) SetUpdatedBy(v uint32) *BoardUpdate {
+func (_u *BoardUpdate) SetUpdatedBy(v int64) *BoardUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BoardUpdate) SetNillableUpdatedBy(v *uint32) *BoardUpdate {
+func (_u *BoardUpdate) SetNillableUpdatedBy(v *int64) *BoardUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -115,7 +115,7 @@ func (_u *BoardUpdate) SetNillableUpdatedBy(v *uint32) *BoardUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BoardUpdate) AddUpdatedBy(v int32) *BoardUpdate {
+func (_u *BoardUpdate) AddUpdatedBy(v int64) *BoardUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -127,14 +127,14 @@ func (_u *BoardUpdate) ClearUpdatedBy() *BoardUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BoardUpdate) SetDeletedBy(v uint32) *BoardUpdate {
+func (_u *BoardUpdate) SetDeletedBy(v int64) *BoardUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BoardUpdate) SetNillableDeletedBy(v *uint32) *BoardUpdate {
+func (_u *BoardUpdate) SetNillableDeletedBy(v *int64) *BoardUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -142,7 +142,7 @@ func (_u *BoardUpdate) SetNillableDeletedBy(v *uint32) *BoardUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BoardUpdate) AddDeletedBy(v int32) *BoardUpdate {
+func (_u *BoardUpdate) AddDeletedBy(v int64) *BoardUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -235,14 +235,14 @@ func (_u *BoardUpdate) AddVersion(v int32) *BoardUpdate {
 }
 
 // AddColumnIDs adds the "columns" edge to the Column entity by IDs.
-func (_u *BoardUpdate) AddColumnIDs(ids ...uint32) *BoardUpdate {
+func (_u *BoardUpdate) AddColumnIDs(ids ...int64) *BoardUpdate {
 	_u.mutation.AddColumnIDs(ids...)
 	return _u
 }
 
 // AddColumns adds the "columns" edges to the Column entity.
 func (_u *BoardUpdate) AddColumns(v ...*Column) *BoardUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -250,14 +250,14 @@ func (_u *BoardUpdate) AddColumns(v ...*Column) *BoardUpdate {
 }
 
 // AddCardIDs adds the "cards" edge to the Card entity by IDs.
-func (_u *BoardUpdate) AddCardIDs(ids ...uint32) *BoardUpdate {
+func (_u *BoardUpdate) AddCardIDs(ids ...int64) *BoardUpdate {
 	_u.mutation.AddCardIDs(ids...)
 	return _u
 }
 
 // AddCards adds the "cards" edges to the Card entity.
 func (_u *BoardUpdate) AddCards(v ...*Card) *BoardUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -265,14 +265,14 @@ func (_u *BoardUpdate) AddCards(v ...*Card) *BoardUpdate {
 }
 
 // AddLabelIDs adds the "labels" edge to the Label entity by IDs.
-func (_u *BoardUpdate) AddLabelIDs(ids ...uint32) *BoardUpdate {
+func (_u *BoardUpdate) AddLabelIDs(ids ...int64) *BoardUpdate {
 	_u.mutation.AddLabelIDs(ids...)
 	return _u
 }
 
 // AddLabels adds the "labels" edges to the Label entity.
 func (_u *BoardUpdate) AddLabels(v ...*Label) *BoardUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -291,14 +291,14 @@ func (_u *BoardUpdate) ClearColumns() *BoardUpdate {
 }
 
 // RemoveColumnIDs removes the "columns" edge to Column entities by IDs.
-func (_u *BoardUpdate) RemoveColumnIDs(ids ...uint32) *BoardUpdate {
+func (_u *BoardUpdate) RemoveColumnIDs(ids ...int64) *BoardUpdate {
 	_u.mutation.RemoveColumnIDs(ids...)
 	return _u
 }
 
 // RemoveColumns removes "columns" edges to Column entities.
 func (_u *BoardUpdate) RemoveColumns(v ...*Column) *BoardUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -312,14 +312,14 @@ func (_u *BoardUpdate) ClearCards() *BoardUpdate {
 }
 
 // RemoveCardIDs removes the "cards" edge to Card entities by IDs.
-func (_u *BoardUpdate) RemoveCardIDs(ids ...uint32) *BoardUpdate {
+func (_u *BoardUpdate) RemoveCardIDs(ids ...int64) *BoardUpdate {
 	_u.mutation.RemoveCardIDs(ids...)
 	return _u
 }
 
 // RemoveCards removes "cards" edges to Card entities.
 func (_u *BoardUpdate) RemoveCards(v ...*Card) *BoardUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -333,14 +333,14 @@ func (_u *BoardUpdate) ClearLabels() *BoardUpdate {
 }
 
 // RemoveLabelIDs removes the "labels" edge to Label entities by IDs.
-func (_u *BoardUpdate) RemoveLabelIDs(ids ...uint32) *BoardUpdate {
+func (_u *BoardUpdate) RemoveLabelIDs(ids ...int64) *BoardUpdate {
 	_u.mutation.RemoveLabelIDs(ids...)
 	return _u
 }
 
 // RemoveLabels removes "labels" edges to Label entities.
 func (_u *BoardUpdate) RemoveLabels(v ...*Label) *BoardUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -394,7 +394,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(board.Table, board.Columns, sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(board.Table, board.Columns, sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -418,34 +418,34 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(board.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(board.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(board.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(board.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(board.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(board.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(board.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(board.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(board.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(board.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(board.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(board.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(board.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(board.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(board.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(board.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(board.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(board.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(board.FieldName, field.TypeString, value)
@@ -479,7 +479,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -492,7 +492,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -508,7 +508,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -524,7 +524,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -537,7 +537,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -553,7 +553,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -569,7 +569,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -582,7 +582,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -598,7 +598,7 @@ func (_u *BoardUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -669,14 +669,14 @@ func (_u *BoardUpdateOne) ClearDeletedAt() *BoardUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BoardUpdateOne) SetCreatedBy(v uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) SetCreatedBy(v int64) *BoardUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BoardUpdateOne) SetNillableCreatedBy(v *uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) SetNillableCreatedBy(v *int64) *BoardUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -684,7 +684,7 @@ func (_u *BoardUpdateOne) SetNillableCreatedBy(v *uint32) *BoardUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BoardUpdateOne) AddCreatedBy(v int32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) AddCreatedBy(v int64) *BoardUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -696,14 +696,14 @@ func (_u *BoardUpdateOne) ClearCreatedBy() *BoardUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BoardUpdateOne) SetUpdatedBy(v uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) SetUpdatedBy(v int64) *BoardUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BoardUpdateOne) SetNillableUpdatedBy(v *uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) SetNillableUpdatedBy(v *int64) *BoardUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -711,7 +711,7 @@ func (_u *BoardUpdateOne) SetNillableUpdatedBy(v *uint32) *BoardUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BoardUpdateOne) AddUpdatedBy(v int32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) AddUpdatedBy(v int64) *BoardUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -723,14 +723,14 @@ func (_u *BoardUpdateOne) ClearUpdatedBy() *BoardUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BoardUpdateOne) SetDeletedBy(v uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) SetDeletedBy(v int64) *BoardUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BoardUpdateOne) SetNillableDeletedBy(v *uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) SetNillableDeletedBy(v *int64) *BoardUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -738,7 +738,7 @@ func (_u *BoardUpdateOne) SetNillableDeletedBy(v *uint32) *BoardUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BoardUpdateOne) AddDeletedBy(v int32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) AddDeletedBy(v int64) *BoardUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -831,14 +831,14 @@ func (_u *BoardUpdateOne) AddVersion(v int32) *BoardUpdateOne {
 }
 
 // AddColumnIDs adds the "columns" edge to the Column entity by IDs.
-func (_u *BoardUpdateOne) AddColumnIDs(ids ...uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) AddColumnIDs(ids ...int64) *BoardUpdateOne {
 	_u.mutation.AddColumnIDs(ids...)
 	return _u
 }
 
 // AddColumns adds the "columns" edges to the Column entity.
 func (_u *BoardUpdateOne) AddColumns(v ...*Column) *BoardUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -846,14 +846,14 @@ func (_u *BoardUpdateOne) AddColumns(v ...*Column) *BoardUpdateOne {
 }
 
 // AddCardIDs adds the "cards" edge to the Card entity by IDs.
-func (_u *BoardUpdateOne) AddCardIDs(ids ...uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) AddCardIDs(ids ...int64) *BoardUpdateOne {
 	_u.mutation.AddCardIDs(ids...)
 	return _u
 }
 
 // AddCards adds the "cards" edges to the Card entity.
 func (_u *BoardUpdateOne) AddCards(v ...*Card) *BoardUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -861,14 +861,14 @@ func (_u *BoardUpdateOne) AddCards(v ...*Card) *BoardUpdateOne {
 }
 
 // AddLabelIDs adds the "labels" edge to the Label entity by IDs.
-func (_u *BoardUpdateOne) AddLabelIDs(ids ...uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) AddLabelIDs(ids ...int64) *BoardUpdateOne {
 	_u.mutation.AddLabelIDs(ids...)
 	return _u
 }
 
 // AddLabels adds the "labels" edges to the Label entity.
 func (_u *BoardUpdateOne) AddLabels(v ...*Label) *BoardUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -887,14 +887,14 @@ func (_u *BoardUpdateOne) ClearColumns() *BoardUpdateOne {
 }
 
 // RemoveColumnIDs removes the "columns" edge to Column entities by IDs.
-func (_u *BoardUpdateOne) RemoveColumnIDs(ids ...uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) RemoveColumnIDs(ids ...int64) *BoardUpdateOne {
 	_u.mutation.RemoveColumnIDs(ids...)
 	return _u
 }
 
 // RemoveColumns removes "columns" edges to Column entities.
 func (_u *BoardUpdateOne) RemoveColumns(v ...*Column) *BoardUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -908,14 +908,14 @@ func (_u *BoardUpdateOne) ClearCards() *BoardUpdateOne {
 }
 
 // RemoveCardIDs removes the "cards" edge to Card entities by IDs.
-func (_u *BoardUpdateOne) RemoveCardIDs(ids ...uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) RemoveCardIDs(ids ...int64) *BoardUpdateOne {
 	_u.mutation.RemoveCardIDs(ids...)
 	return _u
 }
 
 // RemoveCards removes "cards" edges to Card entities.
 func (_u *BoardUpdateOne) RemoveCards(v ...*Card) *BoardUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -929,14 +929,14 @@ func (_u *BoardUpdateOne) ClearLabels() *BoardUpdateOne {
 }
 
 // RemoveLabelIDs removes the "labels" edge to Label entities by IDs.
-func (_u *BoardUpdateOne) RemoveLabelIDs(ids ...uint32) *BoardUpdateOne {
+func (_u *BoardUpdateOne) RemoveLabelIDs(ids ...int64) *BoardUpdateOne {
 	_u.mutation.RemoveLabelIDs(ids...)
 	return _u
 }
 
 // RemoveLabels removes "labels" edges to Label entities.
 func (_u *BoardUpdateOne) RemoveLabels(v ...*Label) *BoardUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1003,7 +1003,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(board.Table, board.Columns, sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(board.Table, board.Columns, sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Board.id" for update`)}
@@ -1044,34 +1044,34 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 		_spec.ClearField(board.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(board.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(board.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(board.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(board.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(board.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(board.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(board.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(board.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(board.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(board.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(board.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(board.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(board.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(board.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(board.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(board.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(board.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(board.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(board.FieldName, field.TypeString, value)
@@ -1105,7 +1105,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1118,7 +1118,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1134,7 +1134,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.ColumnsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1150,7 +1150,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1163,7 +1163,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1179,7 +1179,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.CardsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1195,7 +1195,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1208,7 +1208,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1224,7 +1224,7 @@ func (_u *BoardUpdateOne) sqlSave(ctx context.Context) (_node *Board, err error)
 			Columns: []string{board.LabelsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

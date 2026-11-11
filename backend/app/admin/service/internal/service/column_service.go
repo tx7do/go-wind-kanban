@@ -23,7 +23,7 @@ type ColumnService struct {
 	log *log.Helper
 
 	columnServiceClient boardV1.ColumnServiceClient
-	hub             *broadcast.Hub
+	hub                 *broadcast.Hub
 }
 
 func NewColumnService(
@@ -35,7 +35,7 @@ func NewColumnService(
 	return &ColumnService{
 		log:                 l,
 		columnServiceClient: columnServiceClient,
-		hub:             hub,
+		hub:                 hub,
 	}
 }
 

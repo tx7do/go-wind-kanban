@@ -67,13 +67,13 @@ func (_c *CardCreate) SetNillableDeletedAt(v *time.Time) *CardCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CardCreate) SetCreatedBy(v uint32) *CardCreate {
+func (_c *CardCreate) SetCreatedBy(v int64) *CardCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CardCreate) SetNillableCreatedBy(v *uint32) *CardCreate {
+func (_c *CardCreate) SetNillableCreatedBy(v *int64) *CardCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -81,13 +81,13 @@ func (_c *CardCreate) SetNillableCreatedBy(v *uint32) *CardCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CardCreate) SetUpdatedBy(v uint32) *CardCreate {
+func (_c *CardCreate) SetUpdatedBy(v int64) *CardCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CardCreate) SetNillableUpdatedBy(v *uint32) *CardCreate {
+func (_c *CardCreate) SetNillableUpdatedBy(v *int64) *CardCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -95,13 +95,13 @@ func (_c *CardCreate) SetNillableUpdatedBy(v *uint32) *CardCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CardCreate) SetDeletedBy(v uint32) *CardCreate {
+func (_c *CardCreate) SetDeletedBy(v int64) *CardCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CardCreate) SetNillableDeletedBy(v *uint32) *CardCreate {
+func (_c *CardCreate) SetNillableDeletedBy(v *int64) *CardCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -109,13 +109,13 @@ func (_c *CardCreate) SetNillableDeletedBy(v *uint32) *CardCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CardCreate) SetTenantID(v uint32) *CardCreate {
+func (_c *CardCreate) SetTenantID(v int64) *CardCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CardCreate) SetNillableTenantID(v *uint32) *CardCreate {
+func (_c *CardCreate) SetNillableTenantID(v *int64) *CardCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -179,13 +179,13 @@ func (_c *CardCreate) SetNillableVersion(v *uint32) *CardCreate {
 }
 
 // SetColumnID sets the "column_id" field.
-func (_c *CardCreate) SetColumnID(v uint32) *CardCreate {
+func (_c *CardCreate) SetColumnID(v int64) *CardCreate {
 	_c.mutation.SetColumnID(v)
 	return _c
 }
 
 // SetNillableColumnID sets the "column_id" field if the given value is not nil.
-func (_c *CardCreate) SetNillableColumnID(v *uint32) *CardCreate {
+func (_c *CardCreate) SetNillableColumnID(v *int64) *CardCreate {
 	if v != nil {
 		_c.SetColumnID(*v)
 	}
@@ -193,13 +193,13 @@ func (_c *CardCreate) SetNillableColumnID(v *uint32) *CardCreate {
 }
 
 // SetBoardID sets the "board_id" field.
-func (_c *CardCreate) SetBoardID(v uint32) *CardCreate {
+func (_c *CardCreate) SetBoardID(v int64) *CardCreate {
 	_c.mutation.SetBoardID(v)
 	return _c
 }
 
 // SetNillableBoardID sets the "board_id" field if the given value is not nil.
-func (_c *CardCreate) SetNillableBoardID(v *uint32) *CardCreate {
+func (_c *CardCreate) SetNillableBoardID(v *int64) *CardCreate {
 	if v != nil {
 		_c.SetBoardID(*v)
 	}
@@ -249,7 +249,7 @@ func (_c *CardCreate) SetNillableCoverColor(v *string) *CardCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CardCreate) SetID(v uint32) *CardCreate {
+func (_c *CardCreate) SetID(v int64) *CardCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -350,7 +350,7 @@ func (_c *CardCreate) sqlSave(ctx context.Context) (*Card, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -360,7 +360,7 @@ func (_c *CardCreate) sqlSave(ctx context.Context) (*Card, error) {
 func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Card{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(card.Table, sqlgraph.NewFieldSpec(card.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(card.Table, sqlgraph.NewFieldSpec(card.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -380,19 +380,19 @@ func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(card.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(card.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(card.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(card.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(card.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(card.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(card.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(card.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -431,7 +431,7 @@ func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 			Columns: []string{card.ColumnColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(column.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -448,7 +448,7 @@ func (_c *CardCreate) createSpec() (*Card, *sqlgraph.CreateSpec) {
 			Columns: []string{card.BoardColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -546,7 +546,7 @@ func (u *CardUpsert) ClearDeletedAt() *CardUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CardUpsert) SetCreatedBy(v uint32) *CardUpsert {
+func (u *CardUpsert) SetCreatedBy(v int64) *CardUpsert {
 	u.Set(card.FieldCreatedBy, v)
 	return u
 }
@@ -558,7 +558,7 @@ func (u *CardUpsert) UpdateCreatedBy() *CardUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CardUpsert) AddCreatedBy(v uint32) *CardUpsert {
+func (u *CardUpsert) AddCreatedBy(v int64) *CardUpsert {
 	u.Add(card.FieldCreatedBy, v)
 	return u
 }
@@ -570,7 +570,7 @@ func (u *CardUpsert) ClearCreatedBy() *CardUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CardUpsert) SetUpdatedBy(v uint32) *CardUpsert {
+func (u *CardUpsert) SetUpdatedBy(v int64) *CardUpsert {
 	u.Set(card.FieldUpdatedBy, v)
 	return u
 }
@@ -582,7 +582,7 @@ func (u *CardUpsert) UpdateUpdatedBy() *CardUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CardUpsert) AddUpdatedBy(v uint32) *CardUpsert {
+func (u *CardUpsert) AddUpdatedBy(v int64) *CardUpsert {
 	u.Add(card.FieldUpdatedBy, v)
 	return u
 }
@@ -594,7 +594,7 @@ func (u *CardUpsert) ClearUpdatedBy() *CardUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CardUpsert) SetDeletedBy(v uint32) *CardUpsert {
+func (u *CardUpsert) SetDeletedBy(v int64) *CardUpsert {
 	u.Set(card.FieldDeletedBy, v)
 	return u
 }
@@ -606,7 +606,7 @@ func (u *CardUpsert) UpdateDeletedBy() *CardUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CardUpsert) AddDeletedBy(v uint32) *CardUpsert {
+func (u *CardUpsert) AddDeletedBy(v int64) *CardUpsert {
 	u.Add(card.FieldDeletedBy, v)
 	return u
 }
@@ -690,7 +690,7 @@ func (u *CardUpsert) AddVersion(v uint32) *CardUpsert {
 }
 
 // SetColumnID sets the "column_id" field.
-func (u *CardUpsert) SetColumnID(v uint32) *CardUpsert {
+func (u *CardUpsert) SetColumnID(v int64) *CardUpsert {
 	u.Set(card.FieldColumnID, v)
 	return u
 }
@@ -708,7 +708,7 @@ func (u *CardUpsert) ClearColumnID() *CardUpsert {
 }
 
 // SetBoardID sets the "board_id" field.
-func (u *CardUpsert) SetBoardID(v uint32) *CardUpsert {
+func (u *CardUpsert) SetBoardID(v int64) *CardUpsert {
 	u.Set(card.FieldBoardID, v)
 	return u
 }
@@ -870,14 +870,14 @@ func (u *CardUpsertOne) ClearDeletedAt() *CardUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CardUpsertOne) SetCreatedBy(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) SetCreatedBy(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CardUpsertOne) AddCreatedBy(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) AddCreatedBy(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -898,14 +898,14 @@ func (u *CardUpsertOne) ClearCreatedBy() *CardUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CardUpsertOne) SetUpdatedBy(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) SetUpdatedBy(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CardUpsertOne) AddUpdatedBy(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) AddUpdatedBy(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -926,14 +926,14 @@ func (u *CardUpsertOne) ClearUpdatedBy() *CardUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CardUpsertOne) SetDeletedBy(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) SetDeletedBy(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CardUpsertOne) AddDeletedBy(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) AddDeletedBy(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1038,7 +1038,7 @@ func (u *CardUpsertOne) UpdateVersion() *CardUpsertOne {
 }
 
 // SetColumnID sets the "column_id" field.
-func (u *CardUpsertOne) SetColumnID(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) SetColumnID(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.SetColumnID(v)
 	})
@@ -1059,7 +1059,7 @@ func (u *CardUpsertOne) ClearColumnID() *CardUpsertOne {
 }
 
 // SetBoardID sets the "board_id" field.
-func (u *CardUpsertOne) SetBoardID(v uint32) *CardUpsertOne {
+func (u *CardUpsertOne) SetBoardID(v int64) *CardUpsertOne {
 	return u.Update(func(s *CardUpsert) {
 		s.SetBoardID(v)
 	})
@@ -1151,7 +1151,7 @@ func (u *CardUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CardUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *CardUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1160,7 +1160,7 @@ func (u *CardUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CardUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *CardUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1217,7 +1217,7 @@ func (_c *CardCreateBulk) Save(ctx context.Context) ([]*Card, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1398,14 +1398,14 @@ func (u *CardUpsertBulk) ClearDeletedAt() *CardUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CardUpsertBulk) SetCreatedBy(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) SetCreatedBy(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CardUpsertBulk) AddCreatedBy(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) AddCreatedBy(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1426,14 +1426,14 @@ func (u *CardUpsertBulk) ClearCreatedBy() *CardUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CardUpsertBulk) SetUpdatedBy(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) SetUpdatedBy(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CardUpsertBulk) AddUpdatedBy(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) AddUpdatedBy(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1454,14 +1454,14 @@ func (u *CardUpsertBulk) ClearUpdatedBy() *CardUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CardUpsertBulk) SetDeletedBy(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) SetDeletedBy(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CardUpsertBulk) AddDeletedBy(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) AddDeletedBy(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1566,7 +1566,7 @@ func (u *CardUpsertBulk) UpdateVersion() *CardUpsertBulk {
 }
 
 // SetColumnID sets the "column_id" field.
-func (u *CardUpsertBulk) SetColumnID(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) SetColumnID(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.SetColumnID(v)
 	})
@@ -1587,7 +1587,7 @@ func (u *CardUpsertBulk) ClearColumnID() *CardUpsertBulk {
 }
 
 // SetBoardID sets the "board_id" field.
-func (u *CardUpsertBulk) SetBoardID(v uint32) *CardUpsertBulk {
+func (u *CardUpsertBulk) SetBoardID(v int64) *CardUpsertBulk {
 	return u.Update(func(s *CardUpsert) {
 		s.SetBoardID(v)
 	})

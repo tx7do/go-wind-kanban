@@ -44,6 +44,5 @@ func NewGrpcServer(
 
 	log.Infof("grpc server listening on: %s", en.String())
 
-
 	return srv, nil
 }

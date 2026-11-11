@@ -23,7 +23,7 @@ type BoardService struct {
 	log *log.Helper
 
 	boardServiceClient boardV1.BoardServiceClient
-	hub             *broadcast.Hub
+	hub                *broadcast.Hub
 }
 
 func NewBoardService(
@@ -35,7 +35,7 @@ func NewBoardService(
 	return &BoardService{
 		log:                l,
 		boardServiceClient: boardServiceClient,
-		hub:             hub,
+		hub:                hub,
 	}
 }
 

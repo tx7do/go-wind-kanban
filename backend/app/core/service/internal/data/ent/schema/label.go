@@ -42,7 +42,7 @@ func (Label) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("board_id").
+		field.Int64("board_id").
 			Comment("所属看板ID").
 			Optional(),
 
@@ -55,10 +55,10 @@ func (Label) Fields() []ent.Field {
 // Mixin of the Label.
 func (Label) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 
@@ -69,7 +69,6 @@ func (Label) Edges() []ent.Edge {
 			Ref("labels").
 			Field("board_id").
 			Unique(),
-
 	}
 }
 

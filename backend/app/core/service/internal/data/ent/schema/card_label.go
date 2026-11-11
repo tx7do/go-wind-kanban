@@ -30,11 +30,11 @@ func (CardLabel) Annotations() []schema.Annotation {
 // Fields of the CardLabel.
 func (CardLabel) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("card_id").
+		field.Int64("card_id").
 			Comment("卡片ID").
 			Optional(),
 
-		field.Uint32("label_id").
+		field.Int64("label_id").
 			Comment("标签ID").
 			Optional(),
 	}
@@ -43,9 +43,9 @@ func (CardLabel) Fields() []ent.Field {
 // Mixin of the CardLabel.
 func (CardLabel) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

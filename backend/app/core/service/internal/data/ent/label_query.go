@@ -109,8 +109,8 @@ func (_q *LabelQuery) FirstX(ctx context.Context) *Label {
 
 // FirstID returns the first Label ID from the query.
 // Returns a *NotFoundError when no Label ID was found.
-func (_q *LabelQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *LabelQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (_q *LabelQuery) FirstID(ctx context.Context) (id uint32, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *LabelQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *LabelQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -160,8 +160,8 @@ func (_q *LabelQuery) OnlyX(ctx context.Context) *Label {
 // OnlyID is like Only, but returns the only Label ID in the query.
 // Returns a *NotSingularError when more than one Label ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *LabelQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *LabelQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -177,7 +177,7 @@ func (_q *LabelQuery) OnlyID(ctx context.Context) (id uint32, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *LabelQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *LabelQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -205,7 +205,7 @@ func (_q *LabelQuery) AllX(ctx context.Context) []*Label {
 }
 
 // IDs executes the query and returns a list of Label IDs.
-func (_q *LabelQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *LabelQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -217,7 +217,7 @@ func (_q *LabelQuery) IDs(ctx context.Context) (ids []uint32, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *LabelQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *LabelQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -415,8 +415,8 @@ func (_q *LabelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Label,
 }
 
 func (_q *LabelQuery) loadBoard(ctx context.Context, query *BoardQuery, nodes []*Label, init func(*Label), assign func(*Label, *Board)) error {
-	ids := make([]uint32, 0, len(nodes))
-	nodeids := make(map[uint32][]*Label)
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*Label)
 	for i := range nodes {
 		fk := nodes[i].BoardID
 		if _, ok := nodeids[fk]; !ok {
@@ -457,7 +457,7 @@ func (_q *LabelQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *LabelQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

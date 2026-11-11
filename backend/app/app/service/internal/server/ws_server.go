@@ -43,9 +43,9 @@ const (
 type WsServer struct {
 	log *log.Helper
 
-	hub                        *broadcast.Hub
+	hub                         *broadcast.Hub
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
-	boardServiceClient         boardV1.BoardServiceClient
+	boardServiceClient          boardV1.BoardServiceClient
 
 	upgrader websocket.Upgrader
 }
@@ -57,10 +57,10 @@ func NewWsServer(
 	boardServiceClient boardV1.BoardServiceClient,
 ) *WsServer {
 	return &WsServer{
-		log:                        log.NewHelper(log.With(ctx.GetLogger(), "module", "ws/server/app-service")),
-		hub:                        hub,
+		log:                         log.NewHelper(log.With(ctx.GetLogger(), "module", "ws/server/app-service")),
+		hub:                         hub,
 		authenticationServiceClient: authenticationServiceClient,
-		boardServiceClient:         boardServiceClient,
+		boardServiceClient:          boardServiceClient,
 		upgrader: websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 4096,
@@ -112,7 +112,7 @@ func (s *WsServer) serveWs(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "board_id and ticket are required", http.StatusBadRequest)
 		return
 	}
-	boardID := uint32(boardID64)
+	boardID := int64(boardID64)
 
 	// 消费 ticket：原子 GETDEL，返回绑定的 userId + boardId。
 	// ticket 无效/过期/已用 → valid=false。
@@ -145,7 +145,7 @@ func (s *WsServer) serveWs(w http.ResponseWriter, r *http.Request) {
 }
 
 // writePump 事件写出泵：订阅通道 → JSON 帧；心跳 ping 维持连接。
-func (s *WsServer) writePump(conn *websocket.Conn, events broadcast.EventChannel, actorID uint32) {
+func (s *WsServer) writePump(conn *websocket.Conn, events broadcast.EventChannel, actorID int64) {
 	ticker := time.NewTicker(wsPingPeriod)
 	defer func() {
 		ticker.Stop()

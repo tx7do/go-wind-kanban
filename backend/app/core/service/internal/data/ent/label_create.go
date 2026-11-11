@@ -66,13 +66,13 @@ func (_c *LabelCreate) SetNillableDeletedAt(v *time.Time) *LabelCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *LabelCreate) SetCreatedBy(v uint32) *LabelCreate {
+func (_c *LabelCreate) SetCreatedBy(v int64) *LabelCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableCreatedBy(v *uint32) *LabelCreate {
+func (_c *LabelCreate) SetNillableCreatedBy(v *int64) *LabelCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -80,13 +80,13 @@ func (_c *LabelCreate) SetNillableCreatedBy(v *uint32) *LabelCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *LabelCreate) SetUpdatedBy(v uint32) *LabelCreate {
+func (_c *LabelCreate) SetUpdatedBy(v int64) *LabelCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableUpdatedBy(v *uint32) *LabelCreate {
+func (_c *LabelCreate) SetNillableUpdatedBy(v *int64) *LabelCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -94,13 +94,13 @@ func (_c *LabelCreate) SetNillableUpdatedBy(v *uint32) *LabelCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *LabelCreate) SetDeletedBy(v uint32) *LabelCreate {
+func (_c *LabelCreate) SetDeletedBy(v int64) *LabelCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableDeletedBy(v *uint32) *LabelCreate {
+func (_c *LabelCreate) SetNillableDeletedBy(v *int64) *LabelCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -108,13 +108,13 @@ func (_c *LabelCreate) SetNillableDeletedBy(v *uint32) *LabelCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *LabelCreate) SetTenantID(v uint32) *LabelCreate {
+func (_c *LabelCreate) SetTenantID(v int64) *LabelCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableTenantID(v *uint32) *LabelCreate {
+func (_c *LabelCreate) SetNillableTenantID(v *int64) *LabelCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -150,13 +150,13 @@ func (_c *LabelCreate) SetNillableColor(v *string) *LabelCreate {
 }
 
 // SetBoardID sets the "board_id" field.
-func (_c *LabelCreate) SetBoardID(v uint32) *LabelCreate {
+func (_c *LabelCreate) SetBoardID(v int64) *LabelCreate {
 	_c.mutation.SetBoardID(v)
 	return _c
 }
 
 // SetNillableBoardID sets the "board_id" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableBoardID(v *uint32) *LabelCreate {
+func (_c *LabelCreate) SetNillableBoardID(v *int64) *LabelCreate {
 	if v != nil {
 		_c.SetBoardID(*v)
 	}
@@ -178,7 +178,7 @@ func (_c *LabelCreate) SetNillableVersion(v *uint32) *LabelCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *LabelCreate) SetID(v uint32) *LabelCreate {
+func (_c *LabelCreate) SetID(v int64) *LabelCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -267,7 +267,7 @@ func (_c *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -277,7 +277,7 @@ func (_c *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
 func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Label{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(label.Table, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(label.Table, sqlgraph.NewFieldSpec(label.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -297,19 +297,19 @@ func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(label.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(label.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(label.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(label.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(label.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(label.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -332,7 +332,7 @@ func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 			Columns: []string{label.BoardColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(board.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -430,7 +430,7 @@ func (u *LabelUpsert) ClearDeletedAt() *LabelUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *LabelUpsert) SetCreatedBy(v uint32) *LabelUpsert {
+func (u *LabelUpsert) SetCreatedBy(v int64) *LabelUpsert {
 	u.Set(label.FieldCreatedBy, v)
 	return u
 }
@@ -442,7 +442,7 @@ func (u *LabelUpsert) UpdateCreatedBy() *LabelUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *LabelUpsert) AddCreatedBy(v uint32) *LabelUpsert {
+func (u *LabelUpsert) AddCreatedBy(v int64) *LabelUpsert {
 	u.Add(label.FieldCreatedBy, v)
 	return u
 }
@@ -454,7 +454,7 @@ func (u *LabelUpsert) ClearCreatedBy() *LabelUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *LabelUpsert) SetUpdatedBy(v uint32) *LabelUpsert {
+func (u *LabelUpsert) SetUpdatedBy(v int64) *LabelUpsert {
 	u.Set(label.FieldUpdatedBy, v)
 	return u
 }
@@ -466,7 +466,7 @@ func (u *LabelUpsert) UpdateUpdatedBy() *LabelUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *LabelUpsert) AddUpdatedBy(v uint32) *LabelUpsert {
+func (u *LabelUpsert) AddUpdatedBy(v int64) *LabelUpsert {
 	u.Add(label.FieldUpdatedBy, v)
 	return u
 }
@@ -478,7 +478,7 @@ func (u *LabelUpsert) ClearUpdatedBy() *LabelUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *LabelUpsert) SetDeletedBy(v uint32) *LabelUpsert {
+func (u *LabelUpsert) SetDeletedBy(v int64) *LabelUpsert {
 	u.Set(label.FieldDeletedBy, v)
 	return u
 }
@@ -490,7 +490,7 @@ func (u *LabelUpsert) UpdateDeletedBy() *LabelUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *LabelUpsert) AddDeletedBy(v uint32) *LabelUpsert {
+func (u *LabelUpsert) AddDeletedBy(v int64) *LabelUpsert {
 	u.Add(label.FieldDeletedBy, v)
 	return u
 }
@@ -538,7 +538,7 @@ func (u *LabelUpsert) ClearColor() *LabelUpsert {
 }
 
 // SetBoardID sets the "board_id" field.
-func (u *LabelUpsert) SetBoardID(v uint32) *LabelUpsert {
+func (u *LabelUpsert) SetBoardID(v int64) *LabelUpsert {
 	u.Set(label.FieldBoardID, v)
 	return u
 }
@@ -670,14 +670,14 @@ func (u *LabelUpsertOne) ClearDeletedAt() *LabelUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *LabelUpsertOne) SetCreatedBy(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) SetCreatedBy(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *LabelUpsertOne) AddCreatedBy(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) AddCreatedBy(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -698,14 +698,14 @@ func (u *LabelUpsertOne) ClearCreatedBy() *LabelUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *LabelUpsertOne) SetUpdatedBy(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) SetUpdatedBy(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *LabelUpsertOne) AddUpdatedBy(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) AddUpdatedBy(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -726,14 +726,14 @@ func (u *LabelUpsertOne) ClearUpdatedBy() *LabelUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *LabelUpsertOne) SetDeletedBy(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) SetDeletedBy(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *LabelUpsertOne) AddDeletedBy(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) AddDeletedBy(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -796,7 +796,7 @@ func (u *LabelUpsertOne) ClearColor() *LabelUpsertOne {
 }
 
 // SetBoardID sets the "board_id" field.
-func (u *LabelUpsertOne) SetBoardID(v uint32) *LabelUpsertOne {
+func (u *LabelUpsertOne) SetBoardID(v int64) *LabelUpsertOne {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetBoardID(v)
 	})
@@ -853,7 +853,7 @@ func (u *LabelUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *LabelUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *LabelUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -862,7 +862,7 @@ func (u *LabelUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *LabelUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *LabelUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -919,7 +919,7 @@ func (_c *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1100,14 +1100,14 @@ func (u *LabelUpsertBulk) ClearDeletedAt() *LabelUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *LabelUpsertBulk) SetCreatedBy(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) SetCreatedBy(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *LabelUpsertBulk) AddCreatedBy(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) AddCreatedBy(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1128,14 +1128,14 @@ func (u *LabelUpsertBulk) ClearCreatedBy() *LabelUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *LabelUpsertBulk) SetUpdatedBy(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) SetUpdatedBy(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *LabelUpsertBulk) AddUpdatedBy(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) AddUpdatedBy(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1156,14 +1156,14 @@ func (u *LabelUpsertBulk) ClearUpdatedBy() *LabelUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *LabelUpsertBulk) SetDeletedBy(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) SetDeletedBy(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *LabelUpsertBulk) AddDeletedBy(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) AddDeletedBy(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1226,7 +1226,7 @@ func (u *LabelUpsertBulk) ClearColor() *LabelUpsertBulk {
 }
 
 // SetBoardID sets the "board_id" field.
-func (u *LabelUpsertBulk) SetBoardID(v uint32) *LabelUpsertBulk {
+func (u *LabelUpsertBulk) SetBoardID(v int64) *LabelUpsertBulk {
 	return u.Update(func(s *LabelUpsert) {
 		s.SetBoardID(v)
 	})

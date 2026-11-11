@@ -38,7 +38,7 @@ type Hub struct {
 	channel string
 
 	mu     sync.RWMutex
-	local  map[uint32]map[chan *boardV1.BoardChangeEvent]struct{}
+	local  map[int64]map[chan *boardV1.BoardChangeEvent]struct{}
 	wake   chan struct{} // 惰性启动 Redis 订阅
 	cancel context.CancelFunc
 	once   sync.Once
@@ -47,10 +47,10 @@ type Hub struct {
 // NewHub 创建事件总线。rdb 为 nil 时退化为纯进程内分发（单实例部署/测试）。
 func NewHub(rdb *redis.Client, logger log.Logger) *Hub {
 	return &Hub{
-		log:    log.NewHelper(log.With(logger, "module", "board/broadcast")),
-		rdb:    rdb,
-		local:  make(map[uint32]map[chan *boardV1.BoardChangeEvent]struct{}),
-		wake:   make(chan struct{}, 1),
+		log:   log.NewHelper(log.With(logger, "module", "board/broadcast")),
+		rdb:   rdb,
+		local: make(map[int64]map[chan *boardV1.BoardChangeEvent]struct{}),
+		wake:  make(chan struct{}, 1),
 	}
 }
 
@@ -128,7 +128,7 @@ func (h *Hub) Publish(ctx context.Context, ev *boardV1.BoardChangeEvent) {
 
 // Subscribe 订阅指定看板的变更流；返回的通道有缓冲，消费过慢时
 // 丢弃最旧事件（实时通道尽力而为，最终一致性靠同步机制）。
-func (h *Hub) Subscribe(boardID uint32) EventChannel {
+func (h *Hub) Subscribe(boardID int64) EventChannel {
 	ch := make(chan *boardV1.BoardChangeEvent, 64)
 
 	h.mu.Lock()
@@ -150,7 +150,7 @@ func (h *Hub) Subscribe(boardID uint32) EventChannel {
 }
 
 // Unsubscribe 退订并关闭对应通道。
-func (h *Hub) Unsubscribe(boardID uint32, ch EventChannel) {
+func (h *Hub) Unsubscribe(boardID int64, ch EventChannel) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 

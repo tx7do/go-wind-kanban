@@ -56,10 +56,10 @@ func (Board) Fields() []ent.Field {
 // Mixin of the Board.
 func (Board) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 
@@ -82,6 +82,7 @@ func (Board) Edges() []ent.Edge {
 			}),
 	}
 }
+
 // Indexes of the Board.
 func (Board) Indexes() []ent.Index {
 	return []ent.Index{

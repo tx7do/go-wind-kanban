@@ -70,14 +70,14 @@ func (_u *CardLabelUpdate) ClearDeletedAt() *CardLabelUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CardLabelUpdate) SetCreatedBy(v uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetCreatedBy(v int64) *CardLabelUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CardLabelUpdate) SetNillableCreatedBy(v *uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetNillableCreatedBy(v *int64) *CardLabelUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CardLabelUpdate) SetNillableCreatedBy(v *uint32) *CardLabelUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CardLabelUpdate) AddCreatedBy(v int32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) AddCreatedBy(v int64) *CardLabelUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *CardLabelUpdate) ClearCreatedBy() *CardLabelUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CardLabelUpdate) SetUpdatedBy(v uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetUpdatedBy(v int64) *CardLabelUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CardLabelUpdate) SetNillableUpdatedBy(v *uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetNillableUpdatedBy(v *int64) *CardLabelUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *CardLabelUpdate) SetNillableUpdatedBy(v *uint32) *CardLabelUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CardLabelUpdate) AddUpdatedBy(v int32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) AddUpdatedBy(v int64) *CardLabelUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *CardLabelUpdate) ClearUpdatedBy() *CardLabelUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CardLabelUpdate) SetDeletedBy(v uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetDeletedBy(v int64) *CardLabelUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CardLabelUpdate) SetNillableDeletedBy(v *uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetNillableDeletedBy(v *int64) *CardLabelUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *CardLabelUpdate) SetNillableDeletedBy(v *uint32) *CardLabelUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CardLabelUpdate) AddDeletedBy(v int32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) AddDeletedBy(v int64) *CardLabelUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *CardLabelUpdate) ClearDeletedBy() *CardLabelUpdate {
 }
 
 // SetCardID sets the "card_id" field.
-func (_u *CardLabelUpdate) SetCardID(v uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetCardID(v int64) *CardLabelUpdate {
 	_u.mutation.ResetCardID()
 	_u.mutation.SetCardID(v)
 	return _u
 }
 
 // SetNillableCardID sets the "card_id" field if the given value is not nil.
-func (_u *CardLabelUpdate) SetNillableCardID(v *uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetNillableCardID(v *int64) *CardLabelUpdate {
 	if v != nil {
 		_u.SetCardID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *CardLabelUpdate) SetNillableCardID(v *uint32) *CardLabelUpdate {
 }
 
 // AddCardID adds value to the "card_id" field.
-func (_u *CardLabelUpdate) AddCardID(v int32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) AddCardID(v int64) *CardLabelUpdate {
 	_u.mutation.AddCardID(v)
 	return _u
 }
@@ -178,14 +178,14 @@ func (_u *CardLabelUpdate) ClearCardID() *CardLabelUpdate {
 }
 
 // SetLabelID sets the "label_id" field.
-func (_u *CardLabelUpdate) SetLabelID(v uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetLabelID(v int64) *CardLabelUpdate {
 	_u.mutation.ResetLabelID()
 	_u.mutation.SetLabelID(v)
 	return _u
 }
 
 // SetNillableLabelID sets the "label_id" field if the given value is not nil.
-func (_u *CardLabelUpdate) SetNillableLabelID(v *uint32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) SetNillableLabelID(v *int64) *CardLabelUpdate {
 	if v != nil {
 		_u.SetLabelID(*v)
 	}
@@ -193,7 +193,7 @@ func (_u *CardLabelUpdate) SetNillableLabelID(v *uint32) *CardLabelUpdate {
 }
 
 // AddLabelID adds value to the "label_id" field.
-func (_u *CardLabelUpdate) AddLabelID(v int32) *CardLabelUpdate {
+func (_u *CardLabelUpdate) AddLabelID(v int64) *CardLabelUpdate {
 	_u.mutation.AddLabelID(v)
 	return _u
 }
@@ -243,7 +243,7 @@ func (_u *CardLabelUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Card
 }
 
 func (_u *CardLabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(cardlabel.Table, cardlabel.Columns, sqlgraph.NewFieldSpec(cardlabel.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cardlabel.Table, cardlabel.Columns, sqlgraph.NewFieldSpec(cardlabel.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -267,49 +267,49 @@ func (_u *CardLabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(cardlabel.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cardlabel.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cardlabel.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cardlabel.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cardlabel.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cardlabel.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cardlabel.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cardlabel.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cardlabel.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cardlabel.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CardID(); ok {
-		_spec.SetField(cardlabel.FieldCardID, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldCardID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCardID(); ok {
-		_spec.AddField(cardlabel.FieldCardID, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldCardID, field.TypeInt64, value)
 	}
 	if _u.mutation.CardIDCleared() {
-		_spec.ClearField(cardlabel.FieldCardID, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldCardID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LabelID(); ok {
-		_spec.SetField(cardlabel.FieldLabelID, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldLabelID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedLabelID(); ok {
-		_spec.AddField(cardlabel.FieldLabelID, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldLabelID, field.TypeInt64, value)
 	}
 	if _u.mutation.LabelIDCleared() {
-		_spec.ClearField(cardlabel.FieldLabelID, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldLabelID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -374,14 +374,14 @@ func (_u *CardLabelUpdateOne) ClearDeletedAt() *CardLabelUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CardLabelUpdateOne) SetCreatedBy(v uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetCreatedBy(v int64) *CardLabelUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CardLabelUpdateOne) SetNillableCreatedBy(v *uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetNillableCreatedBy(v *int64) *CardLabelUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -389,7 +389,7 @@ func (_u *CardLabelUpdateOne) SetNillableCreatedBy(v *uint32) *CardLabelUpdateOn
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CardLabelUpdateOne) AddCreatedBy(v int32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) AddCreatedBy(v int64) *CardLabelUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -401,14 +401,14 @@ func (_u *CardLabelUpdateOne) ClearCreatedBy() *CardLabelUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CardLabelUpdateOne) SetUpdatedBy(v uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetUpdatedBy(v int64) *CardLabelUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CardLabelUpdateOne) SetNillableUpdatedBy(v *uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetNillableUpdatedBy(v *int64) *CardLabelUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -416,7 +416,7 @@ func (_u *CardLabelUpdateOne) SetNillableUpdatedBy(v *uint32) *CardLabelUpdateOn
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CardLabelUpdateOne) AddUpdatedBy(v int32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) AddUpdatedBy(v int64) *CardLabelUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -428,14 +428,14 @@ func (_u *CardLabelUpdateOne) ClearUpdatedBy() *CardLabelUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CardLabelUpdateOne) SetDeletedBy(v uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetDeletedBy(v int64) *CardLabelUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CardLabelUpdateOne) SetNillableDeletedBy(v *uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetNillableDeletedBy(v *int64) *CardLabelUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -443,7 +443,7 @@ func (_u *CardLabelUpdateOne) SetNillableDeletedBy(v *uint32) *CardLabelUpdateOn
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CardLabelUpdateOne) AddDeletedBy(v int32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) AddDeletedBy(v int64) *CardLabelUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -455,14 +455,14 @@ func (_u *CardLabelUpdateOne) ClearDeletedBy() *CardLabelUpdateOne {
 }
 
 // SetCardID sets the "card_id" field.
-func (_u *CardLabelUpdateOne) SetCardID(v uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetCardID(v int64) *CardLabelUpdateOne {
 	_u.mutation.ResetCardID()
 	_u.mutation.SetCardID(v)
 	return _u
 }
 
 // SetNillableCardID sets the "card_id" field if the given value is not nil.
-func (_u *CardLabelUpdateOne) SetNillableCardID(v *uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetNillableCardID(v *int64) *CardLabelUpdateOne {
 	if v != nil {
 		_u.SetCardID(*v)
 	}
@@ -470,7 +470,7 @@ func (_u *CardLabelUpdateOne) SetNillableCardID(v *uint32) *CardLabelUpdateOne {
 }
 
 // AddCardID adds value to the "card_id" field.
-func (_u *CardLabelUpdateOne) AddCardID(v int32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) AddCardID(v int64) *CardLabelUpdateOne {
 	_u.mutation.AddCardID(v)
 	return _u
 }
@@ -482,14 +482,14 @@ func (_u *CardLabelUpdateOne) ClearCardID() *CardLabelUpdateOne {
 }
 
 // SetLabelID sets the "label_id" field.
-func (_u *CardLabelUpdateOne) SetLabelID(v uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetLabelID(v int64) *CardLabelUpdateOne {
 	_u.mutation.ResetLabelID()
 	_u.mutation.SetLabelID(v)
 	return _u
 }
 
 // SetNillableLabelID sets the "label_id" field if the given value is not nil.
-func (_u *CardLabelUpdateOne) SetNillableLabelID(v *uint32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) SetNillableLabelID(v *int64) *CardLabelUpdateOne {
 	if v != nil {
 		_u.SetLabelID(*v)
 	}
@@ -497,7 +497,7 @@ func (_u *CardLabelUpdateOne) SetNillableLabelID(v *uint32) *CardLabelUpdateOne 
 }
 
 // AddLabelID adds value to the "label_id" field.
-func (_u *CardLabelUpdateOne) AddLabelID(v int32) *CardLabelUpdateOne {
+func (_u *CardLabelUpdateOne) AddLabelID(v int64) *CardLabelUpdateOne {
 	_u.mutation.AddLabelID(v)
 	return _u
 }
@@ -560,7 +560,7 @@ func (_u *CardLabelUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *C
 }
 
 func (_u *CardLabelUpdateOne) sqlSave(ctx context.Context) (_node *CardLabel, err error) {
-	_spec := sqlgraph.NewUpdateSpec(cardlabel.Table, cardlabel.Columns, sqlgraph.NewFieldSpec(cardlabel.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cardlabel.Table, cardlabel.Columns, sqlgraph.NewFieldSpec(cardlabel.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CardLabel.id" for update`)}
@@ -601,49 +601,49 @@ func (_u *CardLabelUpdateOne) sqlSave(ctx context.Context) (_node *CardLabel, er
 		_spec.ClearField(cardlabel.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cardlabel.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cardlabel.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cardlabel.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cardlabel.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cardlabel.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cardlabel.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cardlabel.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cardlabel.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cardlabel.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CardID(); ok {
-		_spec.SetField(cardlabel.FieldCardID, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldCardID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCardID(); ok {
-		_spec.AddField(cardlabel.FieldCardID, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldCardID, field.TypeInt64, value)
 	}
 	if _u.mutation.CardIDCleared() {
-		_spec.ClearField(cardlabel.FieldCardID, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldCardID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LabelID(); ok {
-		_spec.SetField(cardlabel.FieldLabelID, field.TypeUint32, value)
+		_spec.SetField(cardlabel.FieldLabelID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedLabelID(); ok {
-		_spec.AddField(cardlabel.FieldLabelID, field.TypeUint32, value)
+		_spec.AddField(cardlabel.FieldLabelID, field.TypeInt64, value)
 	}
 	if _u.mutation.LabelIDCleared() {
-		_spec.ClearField(cardlabel.FieldLabelID, field.TypeUint32)
+		_spec.ClearField(cardlabel.FieldLabelID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &CardLabel{config: _u.config}

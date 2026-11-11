@@ -121,8 +121,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -141,8 +140,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -167,8 +165,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -191,8 +188,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -216,8 +212,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -233,8 +228,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -354,8 +348,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -373,8 +366,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -396,8 +388,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -420,8 +411,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -445,8 +435,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -462,8 +451,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -584,8 +572,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -608,8 +595,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -633,8 +619,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -650,8 +635,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -769,8 +753,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -792,8 +775,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -816,8 +798,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -1024,9 +1005,8 @@ components:
             type: object
             properties:
                 boardId:
-                    type: integer
+                    type: string
                     description: 订阅看板ID（写入 ticket 绑定，握手时校验）
-                    format: uint32
             description: |-
                 WebSocket 一次性 ticket（替代 URL 传 JWT）。
                  客户端以 Bearer JWT POST 换取短时 ticket，再用 ticket 做 WS 握手。
@@ -1066,9 +1046,8 @@ components:
                     type: string
                     description: 跳转链接
                 user_id:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
                 username:
                     type: string
                     description: 用户名
@@ -1140,9 +1119,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 看板ID
-                    format: uint32
                 name:
                     type: string
                     description: 看板名称
@@ -1157,21 +1135,17 @@ components:
                     description: 乐观锁版本号，每次更新自增（离线同步冲突检测用）
                     format: uint32
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1208,9 +1182,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 卡片ID
-                    format: uint32
                 name:
                     type: string
                     description: 卡片标题
@@ -1225,13 +1198,11 @@ components:
                     description: 乐观锁版本号，每次更新自增（离线同步冲突检测用）
                     format: uint32
                 columnId:
-                    type: integer
+                    type: string
                     description: 所属列ID
-                    format: uint32
                 boardId:
-                    type: integer
+                    type: string
                     description: 所属看板ID（冗余自列，供看板级查询，服务端维护）
-                    format: uint32
                 dueDate:
                     type: string
                     description: 卡片截止日期，可选
@@ -1243,21 +1214,17 @@ components:
                     type: string
                     description: 卡片封面纯色标识，取命名色集合
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1278,9 +1245,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 列ID
-                    format: uint32
                 name:
                     type: string
                     description: 列名称
@@ -1295,25 +1261,20 @@ components:
                     description: 乐观锁版本号，每次更新自增（离线同步冲突检测用）
                     format: uint32
                 boardId:
-                    type: integer
+                    type: string
                     description: 所属看板ID
-                    format: uint32
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1359,9 +1320,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 标签ID
-                    format: uint32
                 name:
                     type: string
                     description: 标签名称
@@ -1369,25 +1329,20 @@ components:
                     type: string
                     description: 标签颜色（如 red/blue/#hex）
                 boardId:
-                    type: integer
+                    type: string
                     description: 所属看板ID
-                    format: uint32
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1447,17 +1402,14 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 要移动的看板ID
-                    format: uint32
                 beforeId:
-                    type: integer
+                    type: string
                     description: 移动到该看板之前（同级邻居看板ID）
-                    format: uint32
                 afterId:
-                    type: integer
+                    type: string
                     description: 移动到该看板之后（同级邻居看板ID）
-                    format: uint32
                 expectedVersion:
                     type: integer
                     description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
@@ -1469,21 +1421,17 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 要移动的卡片ID
-                    format: uint32
                 targetColumnId:
-                    type: integer
+                    type: string
                     description: 目标列ID；为 0/缺省表示在当前列内重排
-                    format: uint32
                 beforeId:
-                    type: integer
+                    type: string
                     description: 移动到目标列中该卡片之前（目标列内邻居卡片ID）
-                    format: uint32
                 afterId:
-                    type: integer
+                    type: string
                     description: 移动到目标列中该卡片之后（目标列内邻居卡片ID）
-                    format: uint32
                 expectedVersion:
                     type: integer
                     description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
@@ -1495,17 +1443,14 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 要移动的列ID
-                    format: uint32
                 beforeId:
-                    type: integer
+                    type: string
                     description: 移动到该列之前（同看板邻居列ID）
-                    format: uint32
                 afterId:
-                    type: integer
+                    type: string
                     description: 移动到该列之后（同看板邻居列ID）
-                    format: uint32
                 expectedVersion:
                     type: integer
                     description: 乐观锁期望版本；>0 时校验，不匹配返回 409（离线同步冲突检测）
@@ -1517,14 +1462,12 @@ components:
             type: object
             properties:
                 cardId:
-                    type: integer
+                    type: string
                     description: 卡片ID
-                    format: uint32
                 labelIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 目标标签ID全集（差量增删）
             description: 设置卡片标签 - 请求（全量替换）
         board.service.v1.SyncBoardRequest:
@@ -1533,9 +1476,8 @@ components:
             type: object
             properties:
                 boardId:
-                    type: integer
+                    type: string
                     description: 看板ID
-                    format: uint32
                 knownBoardVersion:
                     type: integer
                     description: 客户端已知的看板版本；不一致时返回最新看板本体
@@ -1564,8 +1506,7 @@ components:
                 deletedColumnIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 客户端已知但服务端已删除的列ID
                 upsertedCards:
                     type: array
@@ -1575,16 +1516,14 @@ components:
                 deletedCardIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 客户端已知但服务端已删除的卡片ID
             description: 差量同步 - 回应
         board.service.v1.UpdateBoardRequest:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/board.service.v1.Board'
                 updateMask:
@@ -1604,8 +1543,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/board.service.v1.Card'
                 updateMask:
@@ -1625,8 +1563,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/board.service.v1.Column'
                 updateMask:
@@ -1646,8 +1583,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/board.service.v1.Label'
                 updateMask:
@@ -1667,9 +1603,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 实体ID
-                    format: uint32
                 version:
                     type: integer
                     description: 客户端已知的版本
@@ -1740,8 +1675,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/identity.service.v1.User'
                 password:
@@ -1775,25 +1709,21 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID
-                    format: uint32
                 tenantName:
                     type: string
                     description: 租户名称
                 orgUnitId:
-                    type: integer
+                    type: string
                     description: 组织ID
-                    format: uint32
                 orgUnitIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 归属组织ID列表
                 orgUnitName:
                     type: string
@@ -1804,14 +1734,12 @@ components:
                         type: string
                     description: 组织名称列表
                 positionId:
-                    type: integer
+                    type: string
                     description: 职位ID
-                    format: uint32
                 positionIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 职位列表
                 positionName:
                     type: string
@@ -1822,14 +1750,12 @@ components:
                         type: string
                     description: 职位名称列表
                 roleId:
-                    type: integer
+                    type: string
                     description: 角色ID
-                    format: uint32
                 roleIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 角色ID列表
                 roles:
                     type: array
@@ -1920,17 +1846,14 @@ components:
                     type: string
                     description: 获赞数
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间

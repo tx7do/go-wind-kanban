@@ -48,12 +48,12 @@ message BoardChangeEvent {
     (gnostic.openapi.v3.property) = {description: "变更类型"}
   ]; // 变更类型
 
-  optional uint32 board_id = 2 [
+  optional int64 board_id = 2 [
     json_name = "boardId",
     (gnostic.openapi.v3.property) = {description: "变更所属看板ID（订阅路由键）"}
   ]; // 变更所属看板ID（订阅路由键）
 
-  optional uint32 actor_id = 3 [
+  optional int64 actor_id = 3 [
     json_name = "actorId",
     (gnostic.openapi.v3.property) = {description: "触发变更的用户ID（客户端用于忽略自己的回声）"}
   ]; // 触发变更的用户ID（客户端用于忽略自己的回声）

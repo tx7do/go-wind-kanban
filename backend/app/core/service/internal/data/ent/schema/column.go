@@ -51,7 +51,7 @@ func (Column) Fields() []ent.Field {
 			Comment("乐观锁版本号，每次更新自增").
 			Default(1),
 
-		field.Uint32("board_id").
+		field.Int64("board_id").
 			Comment("所属看板ID").
 			Optional(),
 	}
@@ -60,10 +60,10 @@ func (Column) Fields() []ent.Field {
 // Mixin of the Column.
 func (Column) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 
